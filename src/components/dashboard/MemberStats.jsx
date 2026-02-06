@@ -168,7 +168,7 @@ export default function MemberStats({ member, allActivities, teamAverage }) {
   const { chartData, activityTypes, activityLabels, colors } = getMonthlyActivityHours();
 
   return (
-    <div className="bg-white/60 backdrop-blur-sm rounded-lg border border-gray-200/50 overflow-hidden">
+    <div className="bg-white/70 backdrop-blur-sm rounded-xl border border-gray-200 overflow-hidden">
       <div className="p-4 space-y-4">
               {/* Resumen de estadísticas */}
               <div className="grid grid-cols-3 gap-2">

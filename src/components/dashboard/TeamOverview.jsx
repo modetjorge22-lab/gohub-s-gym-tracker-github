@@ -75,9 +75,9 @@ function MiniCalendar({ activities }) {
               key={index}
               className={`aspect-square rounded text-xs flex flex-col items-center justify-center ${
                 hasCompleted
-                  ? "bg-green-500 text-white font-bold" 
+                  ? "bg-emerald-400 text-white font-bold" 
                   : hasPlanned
-                  ? "bg-gray-100 text-gray-600 border-2 border-green-500"
+                  ? "bg-gray-100 text-gray-600 border-2 border-emerald-400"
                   : "bg-gray-100 text-gray-300"
               }`}
             >
@@ -445,7 +445,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
               transition={{ delay: index * 0.05 }}
             >
               {/* Liquid glass style */}
-              <div className={`group backdrop-blur-2xl bg-gradient-to-br ${cardBg} rounded-3xl border-2 shadow-2xl hover:shadow-[0_20px_60px_rgba(0,0,0,0.15)] transition-all duration-500 p-6 hover:scale-[1.02] hover:cursor-pointer hover:border-gray-200`}>
+              <div className={`group backdrop-blur-2xl bg-gradient-to-br ${cardBg} rounded-2xl border shadow-xl hover:shadow-2xl transition-all duration-300 p-6 hover:scale-[1.01] hover:cursor-pointer hover:border-gray-300`}>
                 {/* Link now wraps the main display part of the card */}
                 <Link to={`${createPageUrl("MemberCalendar")}?email=${encodeURIComponent(member.email)}`}>
                   <div className="flex items-start justify-between mb-2">
@@ -465,10 +465,10 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                     <div className="flex flex-col items-end gap-2">
                       <Badge className={`${
                         isPerforming
-                          ? "bg-green-600 text-white" 
-                          : "bg-orange-600 text-white"
-                      } font-bold shadow-md`}>
-                        {isPerforming ? "🏆 Performer" : "😴 Panzeando"}
+                          ? "bg-emerald-500 text-white" 
+                          : "bg-orange-500 text-white"
+                      } font-semibold shadow-sm text-xs`}>
+                        {isPerforming ? "🏆 Performer" : "😴 Panza"}
                       </Badge>
                       <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
                     </div>
@@ -479,7 +479,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                   <div className="mt-4 space-y-3">
                     {/* Plan Semanal */}
                     <div 
-                      className="bg-white/60 backdrop-blur-sm rounded-lg p-3 border border-gray-200/50 cursor-pointer hover:bg-white/80 transition-all"
+                      className="bg-white/70 backdrop-blur-sm rounded-xl p-3 border border-gray-200 cursor-pointer hover:bg-white hover:shadow-sm transition-all"
                       onClick={(e) => {
                         e.preventDefault();
                         setSelectedMember(member);
@@ -500,7 +500,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                           initial={{ width: 0 }}
                           animate={{ width: `${Math.min(planCompletionPercentage, 100)}%` }}
                           transition={{ duration: 0.8, delay: index * 0.05 }}
-                          className="h-full rounded-full bg-green-500"
+                          className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500"
                         />
                       </div>
                       {memberPlans.length > 0 && (
@@ -525,7 +525,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                     </div>
 
                     {/* Fun Fact */}
-                    <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 border border-gray-200/50">
+                    <div className="bg-gradient-to-br from-purple-50/80 to-indigo-50/80 backdrop-blur-sm rounded-xl p-3 border border-purple-200/50">
                       <div className="flex items-center gap-2 text-sm">
                         <Sparkles className="w-4 h-4 text-purple-500" />
                         <span className="text-gray-700 font-medium">{funFact}</span>
@@ -533,7 +533,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                     </div>
 
                     {/* Contador de Huevos Mensuales */}
-                    <div className="bg-white/60 backdrop-blur-sm rounded-lg p-3 border border-gray-200/50">
+                    <div className="bg-white/70 backdrop-blur-sm rounded-xl p-3 border border-gray-200">
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
                           <span className="text-xl">🥚</span>
