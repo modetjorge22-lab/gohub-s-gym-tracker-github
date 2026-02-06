@@ -300,6 +300,59 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
       // Activity-specific goals
       const activityGoals = memberGoals.filter(g => g.goal_type === 'activity_specific');
 
+      // Calcular ritmo mensual vs histórico (para badge Performer/Panza)
+      const calculateMonthlyPace = () => {
+        const monthStart = startOfMonth(currentDate);
+        const monthEnd = endOfMonth(currentDate);
+        
+        const currentMonthActivities = activities.filter(a => {
+          const activityDate = new Date(a.date);
+          return a.user_email === member.email && 
+                 a.status === 'completed' &&
+                 isWithinInterval(activityDate, { start: monthStart, end: monthEnd });
+        });
+        
+        const currentMonthHours = currentMonthActivities.reduce((sum, a) => sum + a.duration_minutes / 60, 0);
+        
+        // Calcular promedio histórico de meses anteriores (últimos 6 meses)
+        const historicalMonths = [];
+        for (let i = 1; i <= 6; i++) {
+          const pastMonthDate = new Date(currentDate);
+          pastMonthDate.setMonth(pastMonthDate.getMonth() - i);
+          const pastMonthStart = startOfMonth(pastMonthDate);
+          const pastMonthEnd = endOfMonth(pastMonthDate);
+          
+          const pastMonthActivities = activities.filter(a => {
+            const activityDate = new Date(a.date);
+            return a.user_email === member.email && 
+                   a.status === 'completed' &&
+                   isWithinInterval(activityDate, { start: pastMonthStart, end: pastMonthEnd });
+          });
+          
+          const hours = pastMonthActivities.reduce((sum, a) => sum + a.duration_minutes / 60, 0);
+          if (hours > 0) {
+            historicalMonths.push(hours);
+          }
+        }
+        
+        const historicalAverage = historicalMonths.length > 0 
+          ? historicalMonths.reduce((sum, h) => sum + h, 0) / historicalMonths.length 
+          : 0;
+        
+        const monthlyPacePercentage = historicalAverage > 0 
+          ? (currentMonthHours / historicalAverage) * 100 
+          : (currentMonthHours > 0 ? 100 : 0);
+        
+        return {
+          monthlyPacePercentage,
+          currentMonthHours,
+          historicalAverage
+        };
+      };
+
+      const { monthlyPacePercentage, currentMonthHours, historicalAverage } = calculateMonthlyPace();
+      const isPerforming = monthlyPacePercentage >= 100;
+
       // Get member weekly plan
       const memberPlans = allPlans.filter(p => p.user_email === member.email);
       
@@ -336,7 +389,11 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
         memberPlans: memberPlans,
         planCompletionPercentage: planCompletionPercentage,
         totalPlannedActivities: totalPlannedActivities,
-        completedPlannedActivities: completedPlannedActivities
+        completedPlannedActivities: completedPlannedActivities,
+        monthlyPacePercentage: monthlyPacePercentage,
+        isPerforming: isPerforming,
+        currentMonthHours: currentMonthHours,
+        historicalAverage: historicalAverage
       };
     });
   }, [stats, activities, eggIntakes, weeklyGoal, allPlans]);
@@ -362,7 +419,9 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
             memberPlans,
             planCompletionPercentage,
             totalPlannedActivities,
-            completedPlannedActivities
+            completedPlannedActivities,
+            monthlyPacePercentage,
+            isPerforming
           } = member;
           
           const funFact = getFunFact(monthlyActivities, member.name);
@@ -395,11 +454,11 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                     </div>
                     <div className="flex flex-col items-end gap-2">
                       <Badge className={`${
-                        isOnPace
+                        isPerforming
                           ? "bg-green-600 text-white" 
                           : "bg-orange-600 text-white"
                       } font-bold shadow-md`}>
-                        {isOnPace ? "🏆 Performer" : "😴 Panzeando"}
+                        {isPerforming ? "🏆 Performer" : "😴 Panzeando"}
                       </Badge>
                       <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transition-colors" />
                     </div>
