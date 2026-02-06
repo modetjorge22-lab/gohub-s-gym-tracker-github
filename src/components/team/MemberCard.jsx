@@ -29,9 +29,17 @@ export default function MemberCard({ member, onDelete }) {
     <div className="backdrop-blur-xl bg-white/80 rounded-2xl border border-gray-200/50 shadow-lg p-6 hover:shadow-xl transition-all">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className={`w-14 h-14 bg-gradient-to-br ${avatarColors[member.avatar_color]} rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg`}>
-            {member.name.charAt(0).toUpperCase()}
-          </div>
+          {member.profile_image ? (
+            <img 
+              src={member.profile_image} 
+              alt={member.name}
+              className="w-14 h-14 rounded-xl object-cover shadow-lg"
+            />
+          ) : (
+            <div className={`w-14 h-14 bg-gradient-to-br ${avatarColors[member.avatar_color]} rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg`}>
+              {member.name.charAt(0).toUpperCase()}
+            </div>
+          )}
           <div>
             <h3 className="font-bold text-gray-900 text-lg">{member.name}</h3>
             <p className="text-sm text-gray-500">{member.email}</p>

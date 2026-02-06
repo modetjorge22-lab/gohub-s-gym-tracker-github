@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
 
 import MonthlyTeamChart from "../components/dashboard/MonthlyTeamChart";
-
+import WeeklyWrap from "../components/dashboard/WeeklyWrap";
 import TeamOverview from "../components/dashboard/TeamOverview";
 import PerformanceAnalysis from "../components/dashboard/PerformanceAnalysis";
 
@@ -107,6 +107,7 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-8 pb-24 md:pb-8">
+      <WeeklyWrap members={members} activities={activities} />
       {/* Miembros del Equipo - Primero */}
       <div className="mb-4">
         <h3 className="text-xl font-bold text-gray-900">Miembros del Equipo</h3>

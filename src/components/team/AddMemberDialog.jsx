@@ -34,7 +34,8 @@ export default function AddMemberDialog({ open, onOpenChange, forceEmail, forceN
     name: forceName || "",
     email: forceEmail || "",
     weekly_goal: 300,
-    avatar_color: "blue"
+    avatar_color: "blue",
+    profile_image: ""
   });
 
   const { data: existingMembers = [] } = useQuery({
@@ -69,7 +70,7 @@ export default function AddMemberDialog({ open, onOpenChange, forceEmail, forceN
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['team-members'] });
       onOpenChange(false);
-      setFormData({ name: "", email: "", weekly_goal: 300, avatar_color: "blue" });
+      setFormData({ name: "", email: "", weekly_goal: 300, avatar_color: "blue", profile_image: "" });
     },
   });
 
@@ -206,23 +207,37 @@ export default function AddMemberDialog({ open, onOpenChange, forceEmail, forceN
               </div>
 
               <div className="space-y-2">
-                <Label>Color del avatar</Label>
-                <Select
-                  value={formData.avatar_color}
-                  onValueChange={(value) => setFormData({...formData, avatar_color: value})}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {avatarColors.map((color) => (
-                      <SelectItem key={color.value} value={color.value}>
-                        {color.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="profile_image">Imagen de perfil (URL)</Label>
+                <Input
+                  id="profile_image"
+                  type="url"
+                  value={formData.profile_image}
+                  onChange={(e) => setFormData({...formData, profile_image: e.target.value})}
+                  placeholder="https://ejemplo.com/foto.jpg"
+                />
+                <p className="text-xs text-gray-500">Opcional. Puedes usar enlaces de imágenes públicas.</p>
               </div>
+
+              {!formData.profile_image && (
+                <div className="space-y-2">
+                  <Label>Color del avatar</Label>
+                  <Select
+                    value={formData.avatar_color}
+                    onValueChange={(value) => setFormData({...formData, avatar_color: value})}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {avatarColors.map((color) => (
+                        <SelectItem key={color.value} value={color.value}>
+                          {color.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
               <div className="flex justify-end gap-3 pt-4">
                 <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

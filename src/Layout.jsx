@@ -82,7 +82,7 @@ export default function Layout({ children, currentPageName }) {
       {/* Header con Liquid Glass - Ocultar en Landing */}
       {!isLanding && (
       <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-7xl">
-        <div className="backdrop-blur-2xl bg-white/40 border border-white/50 rounded-full shadow-2xl px-8 py-4 relative">
+        <div className="backdrop-blur-xl bg-white/60 border border-white/50 rounded-full shadow-xl px-8 py-4 relative">
           <div className="flex items-center justify-between">
             {/* Logo y título */}
             <div className="flex items-center gap-4">
@@ -100,7 +100,7 @@ export default function Layout({ children, currentPageName }) {
             </div>
 
             {/* Month Navigator - Centered */}
-            <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-2 bg-white/50 backdrop-blur-sm rounded-full px-2 py-1 border border-white/30 shadow-sm">
+            <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-2 bg-white/60 backdrop-blur-sm rounded-full px-2 py-1 border border-gray-200/50 shadow-sm">
               <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={handlePrevMonth}>
                 <ChevronLeft className="w-4 h-4" />
               </Button>
@@ -160,7 +160,7 @@ export default function Layout({ children, currentPageName }) {
       {/* Mobile Navigation */}
       {!isLanding && (
       <nav className="md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-md">
-        <div className="backdrop-blur-2xl bg-white/40 border border-white/50 rounded-full shadow-2xl px-6 py-3">
+        <div className="backdrop-blur-xl bg-white/60 border border-white/50 rounded-full shadow-xl px-6 py-3">
           <div className="flex items-center justify-around">
             {navItems.map((item) => {
               const isActive = location.pathname === item.path;
