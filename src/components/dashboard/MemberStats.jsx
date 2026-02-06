@@ -125,12 +125,23 @@ export default function MemberStats({ member, allActivities, teamAverage }) {
   );
   const monthlyHours = monthlyActivities.reduce((sum, a) => sum + (a.duration_minutes / 60), 0);
 
-  // Calcular ritmo histórico mensual (promedio de meses anteriores)
-  const calculateHistoricalMonthlyPace = () => {
-    const monthsToAnalyze = [];
+  // Calcular ritmo diario histórico vs actual
+  const calculateMonthlyPace = () => {
+    const daysInCurrentMonth = now.getDate(); // Días transcurridos del mes actual
+    
+    // Ritmo diario del mes actual
+    const currentDailyPace = daysInCurrentMonth > 0 
+      ? monthlyHours / daysInCurrentMonth 
+      : 0;
+    
+    // Calcular ritmo diario promedio histórico (últimos 6 meses)
+    const historicalDailyPaces = [];
     for (let i = 1; i <= 6; i++) {
-      const pastMonthStart = startOfMonth(subWeeks(now, i * 4));
-      const pastMonthEnd = endOfMonth(subWeeks(now, i * 4));
+      const pastMonthDate = new Date(now);
+      pastMonthDate.setMonth(pastMonthDate.getMonth() - i);
+      const pastMonthStart = startOfMonth(pastMonthDate);
+      const pastMonthEnd = endOfMonth(pastMonthDate);
+      const daysInPastMonth = pastMonthEnd.getDate();
       
       const pastMonthActivities = memberActivities.filter(a => 
         isWithinInterval(new Date(a.date), { start: pastMonthStart, end: pastMonthEnd })
@@ -138,18 +149,20 @@ export default function MemberStats({ member, allActivities, teamAverage }) {
       
       const hours = pastMonthActivities.reduce((sum, a) => sum + (a.duration_minutes / 60), 0);
       if (hours > 0) {
-        monthsToAnalyze.push(hours);
+        historicalDailyPaces.push(hours / daysInPastMonth);
       }
     }
     
-    if (monthsToAnalyze.length === 0) return 0;
-    return monthsToAnalyze.reduce((sum, h) => sum + h, 0) / monthsToAnalyze.length;
+    const historicalDailyAverage = historicalDailyPaces.length > 0 
+      ? historicalDailyPaces.reduce((sum, pace) => sum + pace, 0) / historicalDailyPaces.length 
+      : 0;
+    
+    return historicalDailyAverage > 0 
+      ? (currentDailyPace / historicalDailyAverage) * 100 
+      : (currentDailyPace > 0 ? 100 : 0);
   };
 
-  const historicalMonthlyAverage = calculateHistoricalMonthlyPace();
-  const monthlyPacePercentage = historicalMonthlyAverage > 0 
-    ? (monthlyHours / historicalMonthlyAverage) * 100 
-    : (monthlyHours > 0 ? 100 : 0);
+  const monthlyPacePercentage = calculateMonthlyPace();
 
   const weeklyData = getWeeklyData();
   const { chartData, activityTypes, activityLabels, colors } = getMonthlyActivityHours();

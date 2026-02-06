@@ -303,24 +303,34 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
       // Calcular ritmo mensual vs histórico (para badge Performer/Panza)
       const calculateMonthlyPace = () => {
         const monthStart = startOfMonth(currentDate);
-        const monthEnd = endOfMonth(currentDate);
+        const today = new Date();
+        
+        // Calcular días transcurridos del mes actual
+        const daysInCurrentMonth = today.getDate(); // Día actual (1-31)
         
         const currentMonthActivities = activities.filter(a => {
           const activityDate = new Date(a.date);
           return a.user_email === member.email && 
                  a.status === 'completed' &&
-                 isWithinInterval(activityDate, { start: monthStart, end: monthEnd });
+                 activityDate >= monthStart &&
+                 activityDate <= today;
         });
         
         const currentMonthHours = currentMonthActivities.reduce((sum, a) => sum + a.duration_minutes / 60, 0);
         
-        // Calcular promedio histórico de meses anteriores (últimos 6 meses)
-        const historicalMonths = [];
+        // Ritmo diario del mes actual
+        const currentDailyPace = daysInCurrentMonth > 0 
+          ? currentMonthHours / daysInCurrentMonth 
+          : 0;
+        
+        // Calcular ritmo diario promedio de meses anteriores (últimos 6 meses)
+        const historicalDailyPaces = [];
         for (let i = 1; i <= 6; i++) {
           const pastMonthDate = new Date(currentDate);
           pastMonthDate.setMonth(pastMonthDate.getMonth() - i);
           const pastMonthStart = startOfMonth(pastMonthDate);
           const pastMonthEnd = endOfMonth(pastMonthDate);
+          const daysInPastMonth = pastMonthEnd.getDate();
           
           const pastMonthActivities = activities.filter(a => {
             const activityDate = new Date(a.date);
@@ -331,22 +341,22 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
           
           const hours = pastMonthActivities.reduce((sum, a) => sum + a.duration_minutes / 60, 0);
           if (hours > 0) {
-            historicalMonths.push(hours);
+            historicalDailyPaces.push(hours / daysInPastMonth);
           }
         }
         
-        const historicalAverage = historicalMonths.length > 0 
-          ? historicalMonths.reduce((sum, h) => sum + h, 0) / historicalMonths.length 
+        const historicalDailyAverage = historicalDailyPaces.length > 0 
+          ? historicalDailyPaces.reduce((sum, pace) => sum + pace, 0) / historicalDailyPaces.length 
           : 0;
         
-        const monthlyPacePercentage = historicalAverage > 0 
-          ? (currentMonthHours / historicalAverage) * 100 
-          : (currentMonthHours > 0 ? 100 : 0);
+        const monthlyPacePercentage = historicalDailyAverage > 0 
+          ? (currentDailyPace / historicalDailyAverage) * 100 
+          : (currentDailyPace > 0 ? 100 : 0);
         
         return {
           monthlyPacePercentage,
           currentMonthHours,
-          historicalAverage
+          historicalAverage: historicalDailyAverage
         };
       };
 
