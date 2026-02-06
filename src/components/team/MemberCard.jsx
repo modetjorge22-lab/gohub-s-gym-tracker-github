@@ -26,7 +26,7 @@ export default function MemberCard({ member, onDelete }) {
   const isCurrentUser = user?.email === member.email;
 
   return (
-    <div className="backdrop-blur-xl bg-white/80 rounded-2xl border border-gray-200/50 shadow-lg p-6 hover:shadow-xl transition-all">
+    <div className="backdrop-blur-xl bg-white/70 rounded-2xl border border-gray-200 shadow-lg p-6 hover:shadow-xl transition-all">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
           {member.profile_image ? (
