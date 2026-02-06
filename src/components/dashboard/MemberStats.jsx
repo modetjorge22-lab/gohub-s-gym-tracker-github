@@ -116,18 +116,8 @@ export default function MemberStats({ member, allActivities, teamAverage }) {
   const totalHours = memberActivities.reduce((sum, a) => sum + (a.duration_minutes / 60), 0);
   const totalActivities = memberActivities.length;
   
-  // Calcular objetivo semanal
-  const now = new Date();
-  const weekStart = startOfWeek(now, { weekStartsOn: 1 });
-  const weekEnd = endOfWeek(now, { weekStartsOn: 1 });
-  const weeklyActivities = memberActivities.filter(a => 
-    isWithinInterval(new Date(a.date), { start: weekStart, end: weekEnd })
-  );
-  const weeklyHours = weeklyActivities.reduce((sum, a) => sum + (a.duration_minutes / 60), 0);
-  const weeklyGoal = 10;
-  const weeklyGoalPercentage = (weeklyHours / weeklyGoal) * 100;
-
   // Calcular horas mensuales
+  const now = new Date();
   const monthStart = startOfMonth(now);
   const monthEnd = endOfMonth(now);
   const monthlyActivities = memberActivities.filter(a => 
@@ -135,36 +125,38 @@ export default function MemberStats({ member, allActivities, teamAverage }) {
   );
   const monthlyHours = monthlyActivities.reduce((sum, a) => sum + (a.duration_minutes / 60), 0);
 
+  // Calcular ritmo histórico mensual (promedio de meses anteriores)
+  const calculateHistoricalMonthlyPace = () => {
+    const monthsToAnalyze = [];
+    for (let i = 1; i <= 6; i++) {
+      const pastMonthStart = startOfMonth(subWeeks(now, i * 4));
+      const pastMonthEnd = endOfMonth(subWeeks(now, i * 4));
+      
+      const pastMonthActivities = memberActivities.filter(a => 
+        isWithinInterval(new Date(a.date), { start: pastMonthStart, end: pastMonthEnd })
+      );
+      
+      const hours = pastMonthActivities.reduce((sum, a) => sum + (a.duration_minutes / 60), 0);
+      if (hours > 0) {
+        monthsToAnalyze.push(hours);
+      }
+    }
+    
+    if (monthsToAnalyze.length === 0) return 0;
+    return monthsToAnalyze.reduce((sum, h) => sum + h, 0) / monthsToAnalyze.length;
+  };
+
+  const historicalMonthlyAverage = calculateHistoricalMonthlyPace();
+  const monthlyPacePercentage = historicalMonthlyAverage > 0 
+    ? (monthlyHours / historicalMonthlyAverage) * 100 
+    : (monthlyHours > 0 ? 100 : 0);
+
   const weeklyData = getWeeklyData();
   const { chartData, activityTypes, activityLabels, colors } = getMonthlyActivityHours();
 
   return (
     <div className="bg-white/60 backdrop-blur-sm rounded-lg border border-gray-200/50 overflow-hidden">
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className="w-full p-3 flex items-center justify-between hover:bg-white/80 transition-all"
-      >
-        <div className="flex items-center gap-2">
-          <TrendingUp className="w-4 h-4 text-purple-600" />
-          <span className="text-sm font-bold text-gray-900">Estadísticas Personales</span>
-        </div>
-        {expanded ? (
-          <ChevronUp className="w-4 h-4 text-gray-600" />
-        ) : (
-          <ChevronDown className="w-4 h-4 text-gray-600" />
-        )}
-      </button>
-
-      <AnimatePresence>
-        {expanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="overflow-hidden"
-          >
-            <div className="p-4 space-y-4 border-t border-gray-200/50">
+      <div className="p-4 space-y-4">
               {/* Resumen de estadísticas */}
               <div className="grid grid-cols-3 gap-2">
                 <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-3 text-center">
@@ -179,8 +171,8 @@ export default function MemberStats({ member, allActivities, teamAverage }) {
                 </div>
                 <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-3 text-center">
                   <Award className="w-4 h-4 text-purple-600 mx-auto mb-1" />
-                  <p className="text-xl font-bold text-gray-900">{weeklyGoalPercentage.toFixed(0)}%</p>
-                  <p className="text-xs text-gray-600">Objetivo Semanal</p>
+                  <p className="text-xl font-bold text-gray-900">{monthlyPacePercentage.toFixed(0)}%</p>
+                  <p className="text-xs text-gray-600">Ritmo del Mes</p>
                 </div>
               </div>
 
@@ -292,10 +284,7 @@ export default function MemberStats({ member, allActivities, teamAverage }) {
                   </div>
                 </div>
               )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      </div>
     </div>
   );
 }
