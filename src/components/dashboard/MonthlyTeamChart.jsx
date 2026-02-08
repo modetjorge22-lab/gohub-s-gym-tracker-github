@@ -16,6 +16,33 @@ const memberColors = [
   "#f97316"  // orange
 ];
 
+// Custom dot component with member image
+const CustomDot = ({ cx, cy, payload, memberImage, memberName, memberColor }) => {
+  if (!memberImage) {
+    return <circle cx={cx} cy={cy} r={4} fill={memberColor} stroke="#fff" strokeWidth={2} />;
+  }
+  
+  return (
+    <g>
+      <defs>
+        <clipPath id={`clip-${memberName}-${cx}-${cy}`}>
+          <circle cx={cx} cy={cy} r={6} />
+        </clipPath>
+      </defs>
+      <circle cx={cx} cy={cy} r={7} fill="#fff" />
+      <image
+        x={cx - 6}
+        y={cy - 6}
+        width={12}
+        height={12}
+        href={memberImage}
+        clipPath={`url(#clip-${memberName}-${cx}-${cy})`}
+        preserveAspectRatio="xMidYMid slice"
+      />
+    </g>
+  );
+};
+
 export default function MonthlyTeamChart({ members, activities, currentDate = new Date() }) {
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
