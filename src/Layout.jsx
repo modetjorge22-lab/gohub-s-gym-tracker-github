@@ -118,15 +118,15 @@ export default function Layout({ children, currentPageName }) {
               </Button>
             </div>
 
-            {/* Navigation Pills - Hidden on mobile */}
-            <nav className="hidden md:flex items-center gap-3">
+            {/* Navigation Pills */}
+            <nav className="flex items-center gap-1 md:gap-3">
               {navItems.map((item) => {
                 const isActive = location.pathname === item.path;
                 return (
                   <Link
                     key={item.name}
                     to={`${item.path}?${searchParams.toString()}`}
-                    className={`flex items-center gap-2 px-4 lg:px-8 py-2 lg:py-3 rounded-full font-semibold transition-all duration-300 ${
+                    className={`flex items-center gap-1 md:gap-2 px-2 md:px-4 lg:px-8 py-1.5 md:py-2 lg:py-3 rounded-full font-semibold transition-all duration-300 ${
                       isActive
                         ? "bg-gradient-to-r from-gray-900 to-gray-700 text-white shadow-lg scale-105"
                         : "text-gray-600 hover:bg-white/60 hover:scale-105"
@@ -153,36 +153,11 @@ export default function Layout({ children, currentPageName }) {
       />
 
       {/* Main Content */}
-      <main className={!isLanding ? "pt-16 md:pt-28 min-h-screen" : "min-h-screen"}>
+      <main className={!isLanding ? "pt-16 md:pt-28 pb-8 min-h-screen" : "min-h-screen"}>
         {children}
       </main>
 
-      {/* Mobile Navigation */}
-      {!isLanding && (
-      <nav className="md:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-md">
-        <div className="backdrop-blur-xl bg-white/60 border border-white/50 rounded-full shadow-xl px-6 py-3">
-          <div className="flex items-center justify-around">
-            {navItems.map((item) => {
-              const isActive = location.pathname === item.path;
-              return (
-                <Link
-                  key={item.name}
-                  to={item.path}
-                  className={`flex flex-col items-center gap-1 px-4 py-2 rounded-2xl transition-all duration-300 ${
-                    isActive
-                      ? "bg-gradient-to-r from-gray-900 to-gray-700 text-white scale-105"
-                      : "text-gray-600"
-                  }`}
-                >
-                  <item.icon className="w-5 h-5" strokeWidth={2.5} />
-                  <span className="text-xs font-semibold">{item.name}</span>
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </nav>
-      )}
+
     </div>
   );
 }

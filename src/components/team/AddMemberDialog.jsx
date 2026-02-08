@@ -222,30 +222,30 @@ export default function AddMemberDialog({ open, onOpenChange, forceEmail, forceN
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label>Foto de perfil</Label>
-                <div className="flex items-center gap-4">
+              <div className="space-y-3">
+                <Label className="text-sm font-semibold">Foto de perfil</Label>
+                <div className="flex items-start gap-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
                   {formData.profile_image ? (
-                    <div className="relative">
+                    <div className="relative flex-shrink-0">
                       <img 
                         src={formData.profile_image} 
                         alt="Preview" 
-                        className="w-20 h-20 rounded-xl object-cover border-2 border-gray-200"
+                        className="w-24 h-24 rounded-xl object-cover border-2 border-emerald-500 shadow-md"
                       />
                       <button
                         type="button"
                         onClick={() => setFormData({ ...formData, profile_image: "" })}
-                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 shadow-lg transition-all"
                       >
-                        <X className="w-3 h-3" />
+                        <X className="w-4 h-4" />
                       </button>
                     </div>
                   ) : (
-                    <div className={`w-20 h-20 bg-gradient-to-br ${avatarColors.find(c => c.value === formData.avatar_color)?.value ? `from-${formData.avatar_color}-500 to-${formData.avatar_color}-600` : 'from-blue-500 to-blue-600'} rounded-xl flex items-center justify-center text-white font-bold text-2xl border-2 border-dashed border-gray-300`}>
+                    <div className={`w-24 h-24 flex-shrink-0 bg-gradient-to-br from-${formData.avatar_color}-500 to-${formData.avatar_color}-600 rounded-xl flex items-center justify-center text-white font-bold text-3xl border-2 border-dashed border-gray-400 shadow-md`}>
                       {formData.name ? formData.name.charAt(0).toUpperCase() : "?"}
                     </div>
                   )}
-                  <div className="flex-1">
+                  <div className="flex-1 space-y-2">
                     <input
                       type="file"
                       id="image-upload"
@@ -254,21 +254,19 @@ export default function AddMemberDialog({ open, onOpenChange, forceEmail, forceN
                       className="hidden"
                       disabled={uploading}
                     />
-                    <label htmlFor="image-upload">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="w-full cursor-pointer"
-                        disabled={uploading}
-                        asChild
-                      >
-                        <span>
-                          <Upload className="w-4 h-4 mr-2" />
-                          {uploading ? "Subiendo..." : "Cargar foto"}
+                    <label htmlFor="image-upload" className="block">
+                      <div className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-white border-2 border-gray-300 hover:border-emerald-500 rounded-lg cursor-pointer transition-all hover:shadow-md group">
+                        <Upload className="w-5 h-5 text-gray-600 group-hover:text-emerald-600 transition-colors" />
+                        <span className="font-semibold text-gray-700 group-hover:text-emerald-700 transition-colors">
+                          {uploading ? "Subiendo..." : formData.profile_image ? "Cambiar foto" : "Subir foto"}
                         </span>
-                      </Button>
+                      </div>
                     </label>
-                    <p className="text-xs text-gray-500 mt-1">Opcional. JPG, PNG hasta 5MB</p>
+                    <p className="text-xs text-gray-500 text-center">
+                      {formData.profile_image 
+                        ? "Foto cargada correctamente ✓" 
+                        : "JPG o PNG, máximo 5MB"}
+                    </p>
                   </div>
                 </div>
               </div>

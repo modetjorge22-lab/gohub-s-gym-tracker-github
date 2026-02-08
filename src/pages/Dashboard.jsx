@@ -110,7 +110,7 @@ export default function Dashboard() {
   const weeklyStats = getWeeklyStats();
 
   return (
-    <div className="max-w-7xl mx-auto px-3 md:px-6 py-4 md:py-8 pb-24 md:pb-8">
+    <div className="max-w-7xl mx-auto px-3 md:px-6 py-4 md:py-8">
       <WeeklyWrap members={members} activities={activities} />
       
       {/* Month Navigator - Mobile Only */}
