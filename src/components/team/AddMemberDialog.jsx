@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { UserPlus, Link as LinkIcon } from "lucide-react";
+import { UserPlus, Link as LinkIcon, Upload, X } from "lucide-react";
 
 const avatarColors = [
   { value: "blue", label: "Azul" },
@@ -29,6 +29,7 @@ export default function AddMemberDialog({ open, onOpenChange, forceEmail, forceN
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState("create");
   const [selectedMemberId, setSelectedMemberId] = useState(null);
+  const [uploading, setUploading] = useState(false);
   
   const [formData, setFormData] = useState({
     name: forceName || "",
@@ -126,6 +127,21 @@ export default function AddMemberDialog({ open, onOpenChange, forceEmail, forceN
     linkMutation.mutate({ memberId: selectedMemberId, email: forceEmail });
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const result = await base44.integrations.Core.UploadFile({ file });
+      setFormData({ ...formData, profile_image: result.file_url });
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -207,15 +223,54 @@ export default function AddMemberDialog({ open, onOpenChange, forceEmail, forceN
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="profile_image">Imagen de perfil (URL)</Label>
-                <Input
-                  id="profile_image"
-                  type="url"
-                  value={formData.profile_image}
-                  onChange={(e) => setFormData({...formData, profile_image: e.target.value})}
-                  placeholder="https://ejemplo.com/foto.jpg"
-                />
-                <p className="text-xs text-gray-500">Opcional. Puedes usar enlaces de imágenes públicas.</p>
+                <Label>Foto de perfil</Label>
+                <div className="flex items-center gap-4">
+                  {formData.profile_image ? (
+                    <div className="relative">
+                      <img 
+                        src={formData.profile_image} 
+                        alt="Preview" 
+                        className="w-20 h-20 rounded-xl object-cover border-2 border-gray-200"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, profile_image: "" })}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className={`w-20 h-20 bg-gradient-to-br ${avatarColors.find(c => c.value === formData.avatar_color)?.value ? `from-${formData.avatar_color}-500 to-${formData.avatar_color}-600` : 'from-blue-500 to-blue-600'} rounded-xl flex items-center justify-center text-white font-bold text-2xl border-2 border-dashed border-gray-300`}>
+                      {formData.name ? formData.name.charAt(0).toUpperCase() : "?"}
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <input
+                      type="file"
+                      id="image-upload"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      disabled={uploading}
+                    />
+                    <label htmlFor="image-upload">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full cursor-pointer"
+                        disabled={uploading}
+                        asChild
+                      >
+                        <span>
+                          <Upload className="w-4 h-4 mr-2" />
+                          {uploading ? "Subiendo..." : "Cargar foto"}
+                        </span>
+                      </Button>
+                    </label>
+                    <p className="text-xs text-gray-500 mt-1">Opcional. JPG, PNG hasta 5MB</p>
+                  </div>
+                </div>
               </div>
 
               {!formData.profile_image && (

@@ -5,6 +5,10 @@ import { startOfWeek, endOfWeek, isWithinInterval, getDay } from "date-fns";
 import { useSearchParams } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 import MonthlyTeamChart from "../components/dashboard/MonthlyTeamChart";
 import WeeklyWrap from "../components/dashboard/WeeklyWrap";
@@ -106,11 +110,44 @@ export default function Dashboard() {
   const weeklyStats = getWeeklyStats();
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-8 pb-24 md:pb-8">
+    <div className="max-w-7xl mx-auto px-3 md:px-6 py-4 md:py-8 pb-24 md:pb-8">
       <WeeklyWrap members={members} activities={activities} />
+      
+      {/* Month Navigator - Mobile Only */}
+      <div className="md:hidden mb-4 flex items-center justify-center gap-2 bg-white/60 backdrop-blur-sm rounded-full px-3 py-2 border border-gray-200 shadow-sm w-fit mx-auto">
+        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => {
+          const newDate = new Date(currentDate);
+          newDate.setMonth(newDate.getMonth() - 1);
+          const searchParams = new URLSearchParams(window.location.search);
+          searchParams.set('date', format(newDate, 'yyyy-MM-dd'));
+          window.history.pushState({}, '', `?${searchParams.toString()}`);
+          window.location.reload();
+        }}>
+          <ChevronLeft className="w-4 h-4" />
+        </Button>
+        <span className="text-sm font-semibold text-gray-800 min-w-[120px] text-center capitalize">
+          {format(currentDate, 'MMMM yyyy', { locale: es })}
+        </span>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="h-8 w-8 rounded-full"
+          onClick={() => {
+            const newDate = new Date(currentDate);
+            newDate.setMonth(newDate.getMonth() + 1);
+            const searchParams = new URLSearchParams(window.location.search);
+            searchParams.set('date', format(newDate, 'yyyy-MM-dd'));
+            window.history.pushState({}, '', `?${searchParams.toString()}`);
+            window.location.reload();
+          }}
+        >
+          <ChevronRight className="w-4 h-4" />
+        </Button>
+      </div>
+
       {/* Miembros del Equipo - Primero */}
-      <div className="mb-4">
-        <h3 className="text-xl font-bold text-gray-900">Miembros del Equipo</h3>
+      <div className="mb-3 md:mb-4">
+        <h3 className="text-lg md:text-xl font-bold text-gray-900">Miembros del Equipo</h3>
       </div>
 
       <TeamOverview stats={weeklyStats} activities={activities} currentDate={currentDate} />

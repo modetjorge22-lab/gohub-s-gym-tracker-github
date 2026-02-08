@@ -81,26 +81,26 @@ export default function Layout({ children, currentPageName }) {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Header con Liquid Glass - Ocultar en Landing */}
       {!isLanding && (
-      <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-7xl">
-        <div className="backdrop-blur-xl bg-white/60 border border-white/50 rounded-full shadow-xl px-8 py-4 relative">
+      <header className="fixed top-2 md:top-4 left-1/2 -translate-x-1/2 z-50 w-[98%] md:w-[95%] max-w-7xl">
+        <div className="backdrop-blur-xl bg-white/60 border border-white/50 rounded-full shadow-xl px-3 md:px-8 py-2 md:py-4 relative">
           <div className="flex items-center justify-between">
             {/* Logo y título */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-4">
               <Link to={createPageUrl("Landing")}>
-                <div className="w-12 h-12 bg-gradient-to-br from-gray-900 to-gray-700 rounded-full flex items-center justify-center shadow-lg cursor-pointer hover:scale-105 transition-transform">
-                  <span className="text-white font-bold text-xl">G</span>
+                <div className="w-8 h-8 md:w-12 md:h-12 bg-gradient-to-br from-gray-900 to-gray-700 rounded-full flex items-center justify-center shadow-lg cursor-pointer hover:scale-105 transition-transform">
+                  <span className="text-white font-bold text-sm md:text-xl">G</span>
                 </div>
               </Link>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900">
+              <div className="hidden sm:block">
+                <h1 className="text-base md:text-xl font-bold text-gray-900">
                   {groupName}
                 </h1>
-                <p className="text-xs text-gray-600 hidden sm:block">Performance Tracker</p>
+                <p className="text-xs text-gray-600 hidden md:block">Performance Tracker</p>
               </div>
             </div>
 
-            {/* Month Navigator - Centered */}
-            <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-2 bg-white/60 backdrop-blur-sm rounded-full px-2 py-1 border border-gray-200/50 shadow-sm">
+            {/* Month Navigator - Centered - Hidden on mobile */}
+            <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 items-center gap-2 bg-white/60 backdrop-blur-sm rounded-full px-2 py-1 border border-gray-200/50 shadow-sm">
               <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={handlePrevMonth}>
                 <ChevronLeft className="w-4 h-4" />
               </Button>
@@ -118,22 +118,22 @@ export default function Layout({ children, currentPageName }) {
               </Button>
             </div>
 
-            {/* Navigation Pills */}
-            <nav className="flex items-center gap-3">
+            {/* Navigation Pills - Hidden on mobile */}
+            <nav className="hidden md:flex items-center gap-3">
               {navItems.map((item) => {
                 const isActive = location.pathname === item.path;
                 return (
                   <Link
                     key={item.name}
                     to={`${item.path}?${searchParams.toString()}`}
-                    className={`flex items-center gap-2 px-8 py-3 rounded-full font-semibold transition-all duration-300 ${
+                    className={`flex items-center gap-2 px-4 lg:px-8 py-2 lg:py-3 rounded-full font-semibold transition-all duration-300 ${
                       isActive
                         ? "bg-gradient-to-r from-gray-900 to-gray-700 text-white shadow-lg scale-105"
                         : "text-gray-600 hover:bg-white/60 hover:scale-105"
                     }`}
                   >
-                    <item.icon className="w-5 h-5" strokeWidth={2.5} />
-                    <span className="hidden sm:inline">{item.name}</span>
+                    <item.icon className="w-4 h-4 lg:w-5 lg:h-5" strokeWidth={2.5} />
+                    <span className="hidden lg:inline">{item.name}</span>
                   </Link>
                 );
               })}
@@ -153,7 +153,7 @@ export default function Layout({ children, currentPageName }) {
       />
 
       {/* Main Content */}
-      <main className={!isLanding ? "pt-28 min-h-screen" : "min-h-screen"}>
+      <main className={!isLanding ? "pt-16 md:pt-28 min-h-screen" : "min-h-screen"}>
         {children}
       </main>
 

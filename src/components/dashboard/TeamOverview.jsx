@@ -411,7 +411,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
 
   return (
     <>
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {membersWithCalculatedStats.map((member, index) => {
           const { 
             completedHours, 
@@ -445,20 +445,28 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
               transition={{ delay: index * 0.05 }}
             >
               {/* Refined card style */}
-              <div className={`group backdrop-blur-xl bg-gradient-to-br ${cardBg} rounded-2xl border border-white/40 shadow-lg hover:shadow-xl transition-all duration-300 p-6 hover:scale-[1.01]`}>
+              <div className={`group backdrop-blur-xl bg-gradient-to-br ${cardBg} rounded-2xl border border-white/40 shadow-lg hover:shadow-xl transition-all duration-300 p-4 md:p-6 hover:scale-[1.01]`}>
                 {/* Link now wraps the main display part of the card */}
                 <Link to={`${createPageUrl("MemberCalendar")}?email=${encodeURIComponent(member.email)}`}>
                   <div className="flex items-start justify-between mb-2">
-                    <div className="flex items-center gap-3">
-                      <div className={`w-12 h-12 bg-gradient-to-br ${avatarColors[member.avatar_color]} rounded-xl flex items-center justify-center text-white font-bold shadow-lg`}>
-                        {member.name.charAt(0).toUpperCase()}
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-gray-900 group-hover:text-gray-700 transition-colors">
+                    <div className="flex items-center gap-2 md:gap-3 flex-1 min-w-0">
+                      {member.profile_image ? (
+                        <img 
+                          src={member.profile_image} 
+                          alt={member.name}
+                          className="w-10 h-10 md:w-12 md:h-12 rounded-xl object-cover shadow-lg flex-shrink-0"
+                        />
+                      ) : (
+                        <div className={`w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br ${avatarColors[member.avatar_color]} rounded-xl flex items-center justify-center text-white font-bold shadow-lg flex-shrink-0`}>
+                          {member.name.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <h3 className="font-bold text-gray-900 group-hover:text-gray-700 transition-colors text-sm md:text-base truncate">
                           {member.name}
                         </h3>
-                        <p className="text-xs text-gray-600">
-                          {completedHours}h completadas{plannedHours > 0 ? ` + ${plannedHours}h plan` : ''}
+                        <p className="text-xs text-gray-600 truncate">
+                          {completedHours}h{plannedHours > 0 ? ` +${plannedHours}h` : ''}
                         </p>
                       </div>
                     </div>
