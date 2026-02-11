@@ -389,7 +389,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
         historicalAverage: historicalAverage
       };
     });
-  }, [stats, activities, eggIntakes, weeklyGoal, allPlans]);
+  }, [stats, activities, weeklyGoal, allPlans]);
 
 
   return (
