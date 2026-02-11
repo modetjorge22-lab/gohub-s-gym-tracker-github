@@ -53,7 +53,6 @@ import LogActivity from './pages/LogActivity';
 import MemberCalendar from './pages/MemberCalendar';
 import Team from './pages/Team';
 import Workouts from './pages/Workouts';
-import Supplements from './pages/Supplements';
 import __Layout from './Layout.jsx';
 
 
@@ -64,7 +63,6 @@ export const PAGES = {
     "MemberCalendar": MemberCalendar,
     "Team": Team,
     "Workouts": Workouts,
-    "Supplements": Supplements,
 }
 
 export const pagesConfig = {

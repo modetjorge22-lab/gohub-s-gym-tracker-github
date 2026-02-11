@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { LayoutDashboard, Users, Pill, ChevronLeft, ChevronRight } from "lucide-react";
+import { LayoutDashboard, Users, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format, addMonths, subMonths, startOfMonth, isWithinInterval } from "date-fns";
 import { es } from "date-fns/locale";
@@ -73,7 +73,6 @@ export default function Layout({ children, currentPageName }) {
   const navItems = [
     { name: "Dashboard", path: createPageUrl("Dashboard"), icon: LayoutDashboard },
     { name: "Equipo", path: createPageUrl("Team"), icon: Users },
-    { name: "Suplementos", path: createPageUrl("Supplements"), icon: Pill },
   ];
 
   const isLanding = location.pathname.includes("Landing");

@@ -171,7 +171,11 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
   const [weeklyPlanOpen, setWeeklyPlanOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
 
-
+  const { data: eggIntakes, isLoading: loadingEggs } = useQuery({
+    queryKey: ['egg-intakes'],
+    queryFn: () => base44.entities.EggIntake.list('-created_date'),
+    initialData: [],
+  });
 
   const { data: allGoals = [] } = useQuery({
     queryKey: ['goals'],
@@ -216,7 +220,18 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
     });
   };
 
+  const getMonthlyEggs = (memberEmail) => {
+    const monthStart = startOfMonth(currentDate);
+    const monthEnd = endOfMonth(currentDate);
+    
+    const memberEggs = eggIntakes.filter(e => {
+      const eggDate = new Date(e.date);
+      return e.user_email === memberEmail && 
+             isWithinInterval(eggDate, { start: monthStart, end: monthEnd });
+    });
 
+    return memberEggs.reduce((sum, e) => sum + (e.egg_count || 0), 0);
+  };
 
   // Define weekly goal for members - updated to 10 hours
   const weeklyGoal = 10; 
@@ -250,6 +265,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
       const plannedHours = getWeeklyHours(member.email, 'planned');
       const totalHoursRaw = completedHours + plannedHours;
       const monthlyActivities = getMonthlyActivities(member.email);
+      const monthlyEggs = getMonthlyEggs(member.email);
 
       // Get member goals
       const memberGoals = allGoals.filter(g => g.user_email === member.email);
@@ -377,6 +393,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
         rhythmPercentage: rhythmPercentage,
         isOnPace: isOnPace,
         monthlyActivities: monthlyActivities,
+        monthlyEggs: monthlyEggs,
         effectiveWeeklyGoal: effectiveWeeklyGoal,
         activityGoals: activityGoals,
         memberPlans: memberPlans,
@@ -389,7 +406,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
         historicalAverage: historicalAverage
       };
     });
-  }, [stats, activities, weeklyGoal, allPlans]);
+  }, [stats, activities, eggIntakes, weeklyGoal, allPlans]);
 
 
   return (
@@ -406,6 +423,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
             rhythmPercentage, 
             isOnPace, 
             monthlyActivities, 
+            monthlyEggs,
             effectiveWeeklyGoal,
             activityGoals,
             memberPlans,
@@ -522,6 +540,26 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                       </div>
                     </div>
 
+                    {/* Contador de Huevos Mensuales */}
+                    <div className="bg-white/70 backdrop-blur-sm rounded-xl p-3 border border-gray-200">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">🥚</span>
+                          <div>
+                            <p className="text-xs text-gray-600">Huevos este mes</p>
+                            <p className="text-lg font-bold text-gray-900">{monthlyEggs}</p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${Math.min((monthlyEggs / 100) * 100, 100)}%` }}
+                          transition={{ duration: 0.8, delay: index * 0.05 }}
+                          className="h-full bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </Link>
 
