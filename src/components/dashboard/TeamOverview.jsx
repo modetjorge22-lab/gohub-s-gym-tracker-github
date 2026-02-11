@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Sparkles, Settings } from "lucide-react";
-import { motion } from "framer-motion";
+import { ChevronRight, ChevronDown, Sparkles, Settings } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { 
   startOfMonth, 
@@ -16,7 +17,7 @@ import {
   isWithinInterval, 
   getDay
 } from "date-fns";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 
 import MemberStats from "./MemberStats";
@@ -174,6 +175,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
   const [supplementsDialogOpen, setSupplementsDialogOpen] = useState(false);
   const [supplementIntakeOpen, setSupplementIntakeOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
+  const [expandedSupplements, setExpandedSupplements] = useState({});
 
   const { data: supplements = [] } = useQuery({
     queryKey: ['supplements'],
@@ -184,6 +186,44 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
     queryKey: ['supplement-intakes'],
     queryFn: () => base44.entities.SupplementIntake.list('-created_date'),
   });
+
+  const queryClient = useQueryClient();
+
+  const createIntakeMutation = useMutation({
+    mutationFn: (data) => base44.entities.SupplementIntake.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['supplement-intakes'] });
+    },
+  });
+
+  const deleteIntakeMutation = useMutation({
+    mutationFn: (id) => base44.entities.SupplementIntake.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['supplement-intakes'] });
+    },
+  });
+
+  const handleSupplementToggle = (memberEmail, supplement, currentlyTaken) => {
+    const today = format(new Date(), "yyyy-MM-dd");
+    if (currentlyTaken) {
+      const intake = supplementIntakes.find(i => 
+        i.supplement_id === supplement.id && 
+        i.user_email === memberEmail && 
+        i.date === today
+      );
+      if (intake) {
+        deleteIntakeMutation.mutate(intake.id);
+      }
+    } else {
+      createIntakeMutation.mutate({
+        user_email: memberEmail,
+        supplement_id: supplement.id,
+        supplement_name: supplement.name,
+        date: today,
+        taken: true
+      });
+    }
+  };
 
   const { data: allGoals = [] } = useQuery({
     queryKey: ['goals'],
@@ -550,37 +590,114 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                     </div>
 
                     {/* Suplementos */}
-                    <div 
-                      className="bg-white/70 backdrop-blur-sm rounded-xl p-3 border border-gray-200 cursor-pointer hover:bg-white hover:shadow-sm transition-all"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setSelectedMember(member);
-                        setSupplementIntakeOpen(true);
-                      }}
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="text-base">💊</span>
-                          <p className="text-xs text-gray-600 font-semibold">Suplementos</p>
-                          <span className="text-sm font-bold text-gray-900">
-                            {todaySupplements.taken}/{todaySupplements.total}
-                          </span>
-                          {todaySupplements.allTaken && todaySupplements.total > 0 && (
-                            <span className="text-emerald-500 text-sm">✓</span>
+                    <div className="bg-white/70 backdrop-blur-sm rounded-xl border border-gray-200 overflow-hidden">
+                      <div 
+                        className="p-3 cursor-pointer hover:bg-white transition-all"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (todaySupplements.total > 0) {
+                            setExpandedSupplements(prev => ({
+                              ...prev,
+                              [member.id]: !prev[member.id]
+                            }));
+                          } else {
+                            setSelectedMember(member);
+                            setSupplementsDialogOpen(true);
+                          }
+                        }}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <span className="text-base">💊</span>
+                            <p className="text-xs text-gray-600 font-semibold">Suplementos</p>
+                            <span className="text-sm font-bold text-gray-900">
+                              {todaySupplements.taken}/{todaySupplements.total}
+                            </span>
+                            {todaySupplements.allTaken && todaySupplements.total > 0 && (
+                              <span className="text-emerald-500 text-sm">✓</span>
+                            )}
+                          </div>
+                          {todaySupplements.total > 0 ? (
+                            expandedSupplements[member.id] ? (
+                              <ChevronDown className="w-4 h-4 text-gray-400" />
+                            ) : (
+                              <ChevronRight className="w-4 h-4 text-gray-400" />
+                            )
+                          ) : (
+                            <Settings className="w-3 h-3 text-gray-400" />
                           )}
                         </div>
-                        <ChevronRight className="w-4 h-4 text-gray-400" />
+                        {todaySupplements.total > 0 && (
+                          <div className="h-2 bg-gray-200 rounded-full overflow-hidden mt-2">
+                            <motion.div
+                              initial={{ width: 0 }}
+                              animate={{ width: `${(todaySupplements.taken / todaySupplements.total) * 100}%` }}
+                              transition={{ duration: 0.8, delay: index * 0.05 }}
+                              className="h-full bg-gradient-to-r from-purple-400 to-indigo-500 rounded-full"
+                            />
+                          </div>
+                        )}
                       </div>
-                      {todaySupplements.total > 0 && (
-                        <div className="h-2 bg-gray-200 rounded-full overflow-hidden mt-2">
+
+                      <AnimatePresence>
+                        {expandedSupplements[member.id] && todaySupplements.total > 0 && (
                           <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: `${(todaySupplements.taken / todaySupplements.total) * 100}%` }}
-                            transition={{ duration: 0.8, delay: index * 0.05 }}
-                            className="h-full bg-gradient-to-r from-purple-400 to-indigo-500 rounded-full"
-                          />
-                        </div>
-                      )}
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="border-t border-gray-200"
+                          >
+                            <div className="p-3 space-y-2">
+                              {supplements
+                                .filter(s => s.user_email === member.email)
+                                .map((supp) => {
+                                  const today = format(new Date(), "yyyy-MM-dd");
+                                  const isTaken = supplementIntakes.some(i => 
+                                    i.supplement_id === supp.id && 
+                                    i.user_email === member.email && 
+                                    i.date === today
+                                  );
+                                  return (
+                                    <div
+                                      key={supp.id}
+                                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleSupplementToggle(member.email, supp, isTaken);
+                                      }}
+                                    >
+                                      <Checkbox
+                                        checked={isTaken}
+                                        onCheckedChange={() => handleSupplementToggle(member.email, supp, isTaken)}
+                                        className="data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600"
+                                      />
+                                      <div className="flex-1 min-w-0">
+                                        <p className={`text-sm font-medium ${isTaken ? "text-gray-500 line-through" : "text-gray-900"}`}>
+                                          {supp.name}
+                                        </p>
+                                        {supp.dosage && (
+                                          <p className="text-xs text-gray-500">{supp.dosage}</p>
+                                        )}
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              <button
+                                className="w-full text-xs text-purple-600 hover:text-purple-700 font-semibold py-2 flex items-center justify-center gap-1"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedMember(member);
+                                  setSupplementsDialogOpen(true);
+                                }}
+                              >
+                                <Settings className="w-3 h-3" />
+                                Gestionar suplementos
+                              </button>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   </div>
                 </Link>
