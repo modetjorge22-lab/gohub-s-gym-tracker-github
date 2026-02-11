@@ -549,7 +549,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                       </div>
                     </div>
 
-                    {/* Suplementos de Hoy */}
+                    {/* Suplementos */}
                     <div 
                       className="bg-white/70 backdrop-blur-sm rounded-xl p-3 border border-gray-200 cursor-pointer hover:bg-white hover:shadow-sm transition-all"
                       onClick={(e) => {
@@ -558,22 +558,21 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                         setSupplementIntakeOpen(true);
                       }}
                     >
-                      <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <span className="text-xl">💊</span>
-                          <div>
-                            <p className="text-xs text-gray-600">Suplementos hoy</p>
-                            <p className="text-lg font-bold text-gray-900">
-                              {todaySupplements.taken}/{todaySupplements.total}
-                            </p>
-                          </div>
+                          <span className="text-base">💊</span>
+                          <p className="text-xs text-gray-600 font-semibold">Suplementos</p>
+                          <span className="text-sm font-bold text-gray-900">
+                            {todaySupplements.taken}/{todaySupplements.total}
+                          </span>
+                          {todaySupplements.allTaken && todaySupplements.total > 0 && (
+                            <span className="text-emerald-500 text-sm">✓</span>
+                          )}
                         </div>
-                        {todaySupplements.allTaken && todaySupplements.total > 0 && (
-                          <span className="text-emerald-500 text-xl">✓</span>
-                        )}
+                        <ChevronRight className="w-4 h-4 text-gray-400" />
                       </div>
-                      {todaySupplements.total > 0 ? (
-                        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                      {todaySupplements.total > 0 && (
+                        <div className="h-2 bg-gray-200 rounded-full overflow-hidden mt-2">
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${(todaySupplements.taken / todaySupplements.total) * 100}%` }}
@@ -581,8 +580,6 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                             className="h-full bg-gradient-to-r from-purple-400 to-indigo-500 rounded-full"
                           />
                         </div>
-                      ) : (
-                        <p className="text-xs text-gray-500 mt-1">Clic para configurar</p>
                       )}
                     </div>
                   </div>
