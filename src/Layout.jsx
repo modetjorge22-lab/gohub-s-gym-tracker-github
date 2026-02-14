@@ -86,11 +86,17 @@ export default function Layout({ children, currentPageName }) {
           <div className="flex items-center justify-between">
             {/* Logo y título */}
             <div className="flex items-center gap-2 md:gap-4">
-              <Link to={createPageUrl("Landing")}>
-                <div className="w-8 h-8 md:w-12 md:h-12 bg-gradient-to-br from-gray-900 to-gray-700 rounded-full flex items-center justify-center shadow-lg cursor-pointer hover:scale-105 transition-transform">
-                  <span className="text-white font-bold text-sm md:text-xl">G</span>
-                </div>
-              </Link>
+              <div 
+                className="w-8 h-8 md:w-12 md:h-12 bg-gradient-to-br from-gray-900 to-gray-700 rounded-full flex items-center justify-center shadow-lg cursor-pointer hover:scale-105 transition-transform"
+                onClick={() => {
+                  // Clear group session and go to Landing
+                  sessionStorage.removeItem('base44_group_id');
+                  sessionStorage.removeItem('base44_group_name');
+                  navigate(createPageUrl("Landing"));
+                }}
+              >
+                <span className="text-white font-bold text-sm md:text-xl">G</span>
+              </div>
               <div className="hidden sm:block">
                 <h1 className="text-base md:text-xl font-bold text-gray-900">
                   {groupName}
