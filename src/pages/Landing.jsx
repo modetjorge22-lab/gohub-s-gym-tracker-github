@@ -20,6 +20,7 @@ export default function Landing() {
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [autoLoginAttempted, setAutoLoginAttempted] = useState(false);
 
   // Form state for creating group
   const [newGroupData, setNewGroupData] = useState({
@@ -32,6 +33,24 @@ export default function Landing() {
     queryKey: ['groups'],
     queryFn: () => base44.entities.Group.list(),
   });
+
+  // Auto-login effect
+  React.useEffect(() => {
+    if (!autoLoginAttempted && !isLoading && groups.length > 0) {
+      const lastGroupId = localStorage.getItem('base44_last_group_id');
+      const lastPassword = localStorage.getItem('base44_last_group_password');
+      
+      if (lastGroupId && lastPassword) {
+        const group = groups.find(g => g.id === lastGroupId);
+        if (group && group.password === lastPassword) {
+          sessionStorage.setItem('base44_group_id', group.id);
+          sessionStorage.setItem('base44_group_name', group.name);
+          navigate(createPageUrl("Dashboard"));
+        }
+      }
+      setAutoLoginAttempted(true);
+    }
+  }, [groups, isLoading, autoLoginAttempted, navigate]);
 
   const createGroupMutation = useMutation({
     mutationFn: (data) => base44.entities.Group.create(data),
@@ -54,6 +73,8 @@ export default function Landing() {
     if (password === selectedGroup.password) {
       sessionStorage.setItem('base44_group_id', selectedGroup.id);
       sessionStorage.setItem('base44_group_name', selectedGroup.name);
+      localStorage.setItem('base44_last_group_id', selectedGroup.id);
+      localStorage.setItem('base44_last_group_password', selectedGroup.password);
       navigate(createPageUrl("Dashboard"));
     } else {
       setError("Contraseña incorrecta");
