@@ -33,21 +33,6 @@ export default function Landing() {
     queryFn: () => base44.entities.Group.list(),
   });
 
-  // Auto-login to last used group
-  React.useEffect(() => {
-    const lastGroupId = localStorage.getItem('base44_last_group_id');
-    const lastGroupPassword = localStorage.getItem('base44_last_group_password');
-    
-    if (lastGroupId && lastGroupPassword && groups.length > 0) {
-      const lastGroup = groups.find(g => g.id === lastGroupId);
-      if (lastGroup && lastGroup.password === lastGroupPassword) {
-        sessionStorage.setItem('base44_group_id', lastGroup.id);
-        sessionStorage.setItem('base44_group_name', lastGroup.name);
-        navigate(createPageUrl("Dashboard"));
-      }
-    }
-  }, [groups, navigate]);
-
   const createGroupMutation = useMutation({
     mutationFn: (data) => base44.entities.Group.create(data),
     onSuccess: (newGroup) => {
@@ -69,9 +54,6 @@ export default function Landing() {
     if (password === selectedGroup.password) {
       sessionStorage.setItem('base44_group_id', selectedGroup.id);
       sessionStorage.setItem('base44_group_name', selectedGroup.name);
-      // Save for auto-login next time
-      localStorage.setItem('base44_last_group_id', selectedGroup.id);
-      localStorage.setItem('base44_last_group_password', password);
       navigate(createPageUrl("Dashboard"));
     } else {
       setError("Contraseña incorrecta");
