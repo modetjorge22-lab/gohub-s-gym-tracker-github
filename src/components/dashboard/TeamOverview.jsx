@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -53,7 +54,26 @@ const activityEmojis = {
   other: "🏅"
 };
 
-function MiniCalendar({ activities }) {
+function MiniCalendar({ activities, member, onProfileImageUpdate }) {
+  const [uploading, setUploading] = React.useState(false);
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const result = await base44.integrations.Core.UploadFile({ file });
+      onProfileImageUpdate(result.file_url);
+      toast.success("Foto actualizada");
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast.error("Error al subir la foto");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const activityDate = activities.length > 0 ? new Date(activities[0].date) : new Date();
   const monthStart = startOfMonth(activityDate);
   const calendarStart = startOfWeek(monthStart, { weekStartsOn: 1 });
@@ -67,6 +87,31 @@ function MiniCalendar({ activities }) {
 
   return (
     <div className="mt-3">
+      {/* Profile Image Upload */}
+      <div className="flex justify-center mb-2">
+        <input
+          type="file"
+          id={`image-upload-${member.id}`}
+          accept="image/*"
+          onChange={handleImageUpload}
+          className="hidden"
+          disabled={uploading}
+        />
+        <label htmlFor={`image-upload-${member.id}`} className="cursor-pointer">
+          {member.profile_image ? (
+            <img 
+              src={member.profile_image} 
+              alt={member.name}
+              className="w-10 h-10 rounded-full object-cover border-2 border-gray-300 hover:border-gray-500 transition-all hover:scale-105"
+            />
+          ) : (
+            <div className={`w-10 h-10 bg-gradient-to-br ${avatarColors[member.avatar_color]} rounded-full flex items-center justify-center text-white font-bold border-2 border-gray-300 hover:border-gray-500 transition-all hover:scale-105`}>
+              {uploading ? "..." : member.name.charAt(0).toUpperCase()}
+            </div>
+          )}
+        </label>
+      </div>
+
       <div className="grid grid-cols-7 gap-1">
         {days.map((day, index) => {
           const dayActivities = getDayActivities(day);
