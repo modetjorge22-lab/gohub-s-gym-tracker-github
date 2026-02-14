@@ -19,6 +19,7 @@ import {
 } from "date-fns";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
+import { toast } from "sonner";
 
 import MemberStats from "./MemberStats";
 import GoalsDialog from "../goals/GoalsDialog";
@@ -531,7 +532,14 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                     </div>
                   </div>
 
-                  <MiniCalendar activities={monthlyActivities} />
+                  <MiniCalendar 
+                    activities={monthlyActivities}
+                    member={member}
+                    onProfileImageUpdate={(newImageUrl) => {
+                      base44.entities.TeamMember.update(member.id, { profile_image: newImageUrl });
+                      queryClient.invalidateQueries({ queryKey: ['team-members'] });
+                    }}
+                  />
 
                   <div className="mt-4 space-y-3">
                     {/* Plan Semanal */}
