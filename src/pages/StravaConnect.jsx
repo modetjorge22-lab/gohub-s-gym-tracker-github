@@ -20,17 +20,16 @@ export default function StravaConnect() {
   const isConnected = user?.strava_access_token;
 
   useEffect(() => {
-    // Handle OAuth callback
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
     const error = urlParams.get('error');
-    
+
     if (error) {
       alert('Error de Strava: ' + error);
       window.history.replaceState({}, document.title, window.location.pathname);
       return;
     }
-    
+
     if (code && !isConnecting) {
       setIsConnecting(true);
       handleStravaCallback(code);
@@ -40,11 +39,10 @@ export default function StravaConnect() {
   const handleStravaCallback = async (code) => {
     try {
       const response = await base44.functions.invoke('stravaAuth', { code });
-      
+
       if (response.data.success) {
         await refetchUser();
-        alert('¡Conectado con Strava exitosamente!');
-        // Clean URL
+        alert('¡Conectado con Strava! La sincronización automática ya está activa para todos los usuarios conectados.');
         window.history.replaceState({}, document.title, window.location.pathname);
       } else {
         alert('Error al conectar con Strava');
@@ -52,7 +50,6 @@ export default function StravaConnect() {
     } catch (error) {
       console.error('Error conectando con Strava:', error);
       alert('Error al conectar: ' + error.message);
-      // Clean URL
       window.history.replaceState({}, document.title, window.location.pathname);
     } finally {
       setIsConnecting(false);
@@ -67,20 +64,6 @@ export default function StravaConnect() {
     },
   });
 
-  const registerWebhookMutation = useMutation({
-    mutationFn: () => base44.functions.invoke('registerStravaWebhook', {}),
-    onSuccess: (response) => {
-      alert('¡Webhook registrado! Ahora tus entrenamientos se sincronizarán automáticamente.');
-    },
-    onError: (error) => {
-      const errorData = error.response?.data;
-      const errorMsg = errorData?.strava_error 
-        ? JSON.stringify(errorData.strava_error, null, 2)
-        : error.message;
-      alert('Error registrando webhook:\n\n' + errorMsg);
-    },
-  });
-
   const copyToClipboard = () => {
     navigator.clipboard.writeText(redirectUri);
     setCopied(true);
@@ -89,12 +72,11 @@ export default function StravaConnect() {
 
   const handleConnect = async () => {
     try {
-      // Get client ID from backend
       const response = await base44.functions.invoke('getStravaClientId', {});
       const clientId = response.data.clientId;
-      
+
       const scope = "read,activity:read_all";
-      
+
       window.location.href = `https://www.strava.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}`;
     } catch (error) {
       alert('Error al conectar: ' + error.message);
@@ -131,53 +113,29 @@ export default function StravaConnect() {
                 <CheckCircle2 className="w-5 h-5" />
                 <span className="font-semibold">Conectado con Strava</span>
               </div>
-              
+
               <p className="text-sm text-gray-600">
-                Tu cuenta de Strava está conectada. Puedes sincronizar tus actividades de entrenamiento de fuerza.
+                Tu cuenta está conectada y la sincronización automática ya está activa. Las nuevas actividades de fuerza se importarán sin pasos extra.
               </p>
 
-              <div className="space-y-3">
-                <Button 
-                  onClick={() => registerWebhookMutation.mutate()}
-                  disabled={registerWebhookMutation.isPending}
-                  className="w-full bg-green-600 hover:bg-green-700"
-                >
-                  {registerWebhookMutation.isPending ? (
-                    <>
-                      <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                      Configurando...
-                    </>
-                  ) : (
-                    <>
-                      <CheckCircle2 className="w-4 h-4 mr-2" />
-                      Activar Sincronización Automática
-                    </>
-                  )}
-                </Button>
-
-                <Button 
-                  onClick={() => syncMutation.mutate()}
-                  disabled={syncMutation.isPending}
-                  variant="outline"
-                  className="w-full"
-                >
-                  {syncMutation.isPending ? (
-                    <>
-                      <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                      Sincronizando...
-                    </>
-                  ) : (
-                    <>
-                      <RefreshCw className="w-4 h-4 mr-2" />
-                      Sincronizar Manualmente
-                    </>
-                  )}
-                </Button>
-              </div>
-
-              <p className="text-xs text-gray-500">
-                Activa la sincronización automática para importar entrenamientos en tiempo real
-              </p>
+              <Button
+                onClick={() => syncMutation.mutate()}
+                disabled={syncMutation.isPending}
+                variant="outline"
+                className="w-full"
+              >
+                {syncMutation.isPending ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                    Sincronizando...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Sincronizar Manualmente
+                  </>
+                )}
+              </Button>
             </>
           ) : (
             <>
@@ -212,7 +170,7 @@ export default function StravaConnect() {
                 </div>
               </div>
 
-              <Button 
+              <Button
                 onClick={handleConnect}
                 className="w-full bg-orange-500 hover:bg-orange-600"
               >
