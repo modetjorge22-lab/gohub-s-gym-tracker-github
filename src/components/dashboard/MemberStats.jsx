@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { TrendingUp, Award, Target, Activity, ChevronDown, ChevronUp } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { TrendingUp, Award, Target, Activity } from "lucide-react";
 import { startOfWeek, endOfWeek, subWeeks, isWithinInterval, format, startOfMonth, endOfMonth, eachDayOfInterval } from "date-fns";
 import { es } from "date-fns/locale";
 
