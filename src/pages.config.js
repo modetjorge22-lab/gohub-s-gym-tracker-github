@@ -53,6 +53,7 @@ import LogActivity from './pages/LogActivity';
 import MemberCalendar from './pages/MemberCalendar';
 import Team from './pages/Team';
 import Workouts from './pages/Workouts';
+import StravaConnect from './pages/StravaConnect';
 import __Layout from './Layout.jsx';
 
 
@@ -63,6 +64,7 @@ export const PAGES = {
     "MemberCalendar": MemberCalendar,
     "Team": Team,
     "Workouts": Workouts,
+    "StravaConnect": StravaConnect,
 }
 
 export const pagesConfig = {
