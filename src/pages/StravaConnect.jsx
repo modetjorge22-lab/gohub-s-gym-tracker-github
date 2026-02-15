@@ -23,6 +23,13 @@ export default function StravaConnect() {
     // Handle OAuth callback
     const urlParams = new URLSearchParams(window.location.search);
     const code = urlParams.get('code');
+    const error = urlParams.get('error');
+    
+    if (error) {
+      alert('Error de Strava: ' + error);
+      window.history.replaceState({}, document.title, window.location.pathname);
+      return;
+    }
     
     if (code && !isConnecting) {
       setIsConnecting(true);
@@ -36,11 +43,17 @@ export default function StravaConnect() {
       
       if (response.data.success) {
         await refetchUser();
+        alert('¡Conectado con Strava exitosamente!');
         // Clean URL
         window.history.replaceState({}, document.title, window.location.pathname);
+      } else {
+        alert('Error al conectar con Strava');
       }
     } catch (error) {
       console.error('Error conectando con Strava:', error);
+      alert('Error al conectar: ' + error.message);
+      // Clean URL
+      window.history.replaceState({}, document.title, window.location.pathname);
     } finally {
       setIsConnecting(false);
     }

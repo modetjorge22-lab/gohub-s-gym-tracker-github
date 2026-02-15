@@ -51,9 +51,9 @@ import Dashboard from './pages/Dashboard';
 import Landing from './pages/Landing';
 import LogActivity from './pages/LogActivity';
 import MemberCalendar from './pages/MemberCalendar';
+import StravaConnect from './pages/StravaConnect';
 import Team from './pages/Team';
 import Workouts from './pages/Workouts';
-import StravaConnect from './pages/StravaConnect';
 import __Layout from './Layout.jsx';
 
 
@@ -62,9 +62,9 @@ export const PAGES = {
     "Landing": Landing,
     "LogActivity": LogActivity,
     "MemberCalendar": MemberCalendar,
+    "StravaConnect": StravaConnect,
     "Team": Team,
     "Workouts": Workouts,
-    "StravaConnect": StravaConnect,
 }
 
 export const pagesConfig = {
