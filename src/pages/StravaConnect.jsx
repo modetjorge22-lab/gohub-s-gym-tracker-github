@@ -10,7 +10,7 @@ export default function StravaConnect() {
   const [copied, setCopied] = useState(false);
   const queryClient = useQueryClient();
 
-  const redirectUri = `${window.location.origin}${window.location.pathname}`;
+  const redirectUri = window.location.origin;
 
   const { data: user, refetch: refetchUser } = useQuery({
     queryKey: ['current-user'],
