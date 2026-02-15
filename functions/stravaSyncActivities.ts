@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 import { format } from 'npm:date-fns@3.6.0';
+import { ensureValidStravaAccessToken } from './stravaClient.ts';
 
 Deno.serve(async (req) => {
     try {
@@ -10,10 +11,14 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'No autorizado' }, { status: 401 });
         }
 
-        const accessToken = user.strava_access_token;
-        if (!accessToken) {
+        if (!user.strava_access_token) {
             return Response.json({ error: 'No estás conectado a Strava' }, { status: 400 });
         }
+
+        const accessToken = await ensureValidStravaAccessToken({
+            user,
+            updateUserTokens: (payload) => base44.auth.updateMe(payload),
+        });
 
         // Get activities from last 30 days
         const after = Math.floor(Date.now() / 1000) - (30 * 24 * 60 * 60);

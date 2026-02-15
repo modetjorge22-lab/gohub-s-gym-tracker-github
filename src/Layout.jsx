@@ -18,10 +18,24 @@ export default function Layout({ children, currentPageName }) {
   const [showCreateProfile, setShowCreateProfile] = React.useState(false);
   
   const groupId = sessionStorage.getItem('base44_group_id');
-  const groupName = sessionStorage.getItem('base44_group_name') || "GoHub Ventures";
+  const groupName = sessionStorage.getItem('base44_group_name') || "Olympia";
 
   React.useEffect(() => {
     const isLanding = location.pathname.includes("Landing");
+
+    if (!groupId) {
+      const lastGroupId = localStorage.getItem('base44_last_group_id');
+      const lastGroupName = localStorage.getItem('base44_last_group_name');
+
+      if (lastGroupId) {
+        sessionStorage.setItem('base44_group_id', lastGroupId);
+        if (lastGroupName) {
+          sessionStorage.setItem('base44_group_name', lastGroupName);
+        }
+        return;
+      }
+    }
+
     if (!groupId && !isLanding) {
       navigate(createPageUrl("Landing"));
     }
@@ -79,11 +93,11 @@ export default function Layout({ children, currentPageName }) {
   const isLanding = location.pathname.includes("Landing");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-transparent text-gray-100">
       {/* Header con Liquid Glass - Ocultar en Landing */}
       {!isLanding && (
       <header className="fixed top-2 md:top-4 left-1/2 -translate-x-1/2 z-50 w-[98%] md:w-[95%] max-w-7xl">
-        <div className="backdrop-blur-xl bg-white/60 border border-white/50 rounded-full shadow-xl px-3 md:px-8 py-2 md:py-4 relative">
+        <div className="backdrop-blur-xl bg-[#11131a]/65 border border-white/10 rounded-full shadow-xl px-3 md:px-8 py-2 md:py-4 relative">
           <div className="flex items-center justify-between">
             {/* Logo y título */}
             <div className="flex items-center gap-2 md:gap-4">
@@ -95,14 +109,14 @@ export default function Layout({ children, currentPageName }) {
                 }}
               >
                 <div className="w-8 h-8 md:w-12 md:h-12 bg-gradient-to-br from-gray-900 to-gray-700 rounded-full flex items-center justify-center shadow-lg cursor-pointer hover:scale-105 transition-transform">
-                  <span className="text-white font-bold text-sm md:text-xl">G</span>
+                  <span className="text-white font-bold text-sm md:text-xl">O</span>
                 </div>
               </Link>
               <div className="hidden sm:block">
-                <h1 className="text-base md:text-xl font-bold text-gray-900">
+                <h1 className="text-base md:text-xl font-bold text-white">
                   {groupName}
                 </h1>
-                <p className="text-xs text-gray-600 hidden md:block">Performance Tracker</p>
+                <p className="text-xs text-gray-300 hidden md:block">Olympia</p>
               </div>
             </div>
 
@@ -136,7 +150,7 @@ export default function Layout({ children, currentPageName }) {
                     className={`flex items-center gap-1 md:gap-2 px-2 md:px-4 lg:px-8 py-1.5 md:py-2 lg:py-3 rounded-full font-semibold transition-all duration-300 ${
                       isActive
                         ? "bg-gradient-to-r from-gray-900 to-gray-700 text-white shadow-lg scale-105"
-                        : "text-gray-600 hover:bg-white/60 hover:scale-105"
+                        : "text-gray-300 hover:bg-white/60 hover:scale-105"
                     }`}
                   >
                     <item.icon className="w-4 h-4 lg:w-5 lg:h-5" strokeWidth={2.5} />

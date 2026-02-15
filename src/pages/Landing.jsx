@@ -45,6 +45,7 @@ export default function Landing() {
         if (group && group.password === lastPassword) {
           sessionStorage.setItem('base44_group_id', group.id);
           sessionStorage.setItem('base44_group_name', group.name);
+          localStorage.setItem('base44_last_group_name', group.name);
           navigate(createPageUrl("Dashboard"));
         }
       }
@@ -75,6 +76,7 @@ export default function Landing() {
       sessionStorage.setItem('base44_group_name', selectedGroup.name);
       localStorage.setItem('base44_last_group_id', selectedGroup.id);
       localStorage.setItem('base44_last_group_password', selectedGroup.password);
+      localStorage.setItem('base44_last_group_name', selectedGroup.name);
       navigate(createPageUrl("Dashboard"));
     } else {
       setError("Contraseña incorrecta");
@@ -92,11 +94,11 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4 relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-[#0B0B0F] text-white flex flex-col items-center justify-center p-4 relative overflow-hidden font-sans">
       {/* Background Grid */}
       <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-        <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-gray-200 opacity-20 blur-[100px]"></div>
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff12_1px,transparent_1px),linear-gradient(to_bottom,#ffffff12_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+        <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-indigo-500 opacity-20 blur-[100px]"></div>
       </div>
 
       <div className="z-10 w-full max-w-md space-y-8 text-center">
@@ -107,9 +109,9 @@ export default function Landing() {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="relative"
         >
-          <h1 className="text-5xl md:text-8xl font-black tracking-tighter text-gray-900 drop-shadow-xl"
+          <h1 className="text-5xl md:text-8xl font-black tracking-tighter text-white drop-shadow-xl"
               style={{ textShadow: "2px 4px 6px rgba(0,0,0,0.1)" }}>
-            Performance Tracker
+            Olympia
           </h1>
         </motion.div>
 
