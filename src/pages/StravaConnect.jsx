@@ -10,7 +10,7 @@ export default function StravaConnect() {
   const [copied, setCopied] = useState(false);
   const queryClient = useQueryClient();
 
-  const redirectUri = window.location.origin;
+  const redirectUri = `${window.location.origin}/StravaConnect`;
 
   const { data: user, refetch: refetchUser } = useQuery({
     queryKey: ['current-user'],
@@ -172,8 +172,8 @@ export default function StravaConnect() {
                   <p>1. Ve a <a href="https://www.strava.com/settings/api" target="_blank" rel="noopener noreferrer" className="underline inline-flex items-center gap-1">
                     Strava API Settings <ExternalLink className="w-3 h-3" />
                   </a></p>
-                  <p>2. Añade la URL de arriba en "Authorization Callback Domain"</p>
-                  <p>3. Guarda los cambios</p>
+                  <p>2. En "Authorization Callback Domain" pon: <strong>{window.location.hostname}</strong></p>
+                  <p>3. Guarda y vuelve aquí a conectar</p>
                 </div>
               </div>
 
