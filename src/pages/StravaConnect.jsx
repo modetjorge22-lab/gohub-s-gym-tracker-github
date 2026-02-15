@@ -62,8 +62,8 @@ export default function StravaConnect() {
   const syncMutation = useMutation({
     mutationFn: () => base44.functions.invoke('stravaSyncActivities', {}),
     onSuccess: (response) => {
-      queryClient.invalidateQueries({ queryKey: ['workouts'] });
-      alert(`Se importaron ${response.data.imported} entrenamientos de ${response.data.total} actividades`);
+      queryClient.invalidateQueries({ queryKey: ['activities'] });
+      alert(response.data.message || `Sincronización completa: ${response.data.imported} nuevos, ${response.data.updated} actualizados`);
     },
   });
 

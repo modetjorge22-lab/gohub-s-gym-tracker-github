@@ -1,0 +1,95 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { format } from 'npm:date-fns@3.6.0';
+
+Deno.serve(async (req) => {
+    try {
+        const base44 = createClientFromRequest(req);
+        const user = await base44.auth.me();
+
+        if (!user) {
+            return Response.json({ error: 'No autorizado' }, { status: 401 });
+        }
+
+        const accessToken = user.strava_access_token;
+        if (!accessToken) {
+            return Response.json({ error: 'No estás conectado a Strava' }, { status: 400 });
+        }
+
+        // Get activities from last 30 days
+        const after = Math.floor(Date.now() / 1000) - (30 * 24 * 60 * 60);
+        
+        const response = await fetch(
+            `https://www.strava.com/api/v3/athlete/activities?after=${after}&per_page=100`,
+            {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            }
+        );
+
+        if (!response.ok) {
+            return Response.json({ error: 'Error obteniendo actividades de Strava' }, { status: 400 });
+        }
+
+        const activities = await response.json();
+        
+        // Filter only strength training
+        const workouts = activities.filter(a => a.type === 'WeightTraining');
+
+        // Get existing activities for this user
+        const existingActivities = await base44.entities.Activity.filter(
+            { user_email: user.email },
+            '-created_date',
+            1000
+        );
+
+        let imported = 0;
+        let updated = 0;
+
+        for (const workout of workouts) {
+            const date = format(new Date(workout.start_date), 'yyyy-MM-dd');
+            const durationMinutes = Math.round(workout.elapsed_time / 60);
+
+            // Check if there's already a strength training activity on this day
+            const existingOnDay = existingActivities.find(a => 
+                a.date === date && 
+                a.activity_type === 'strength_training'
+            );
+
+            if (existingOnDay) {
+                // Update duration if different
+                if (existingOnDay.duration_minutes !== durationMinutes) {
+                    await base44.entities.Activity.update(existingOnDay.id, {
+                        duration_minutes: durationMinutes,
+                        notes: existingOnDay.notes 
+                            ? `${existingOnDay.notes} (Actualizado desde Strava)`
+                            : 'Sincronizado desde Strava'
+                    });
+                    updated++;
+                }
+            } else {
+                // Create new activity
+                await base44.entities.Activity.create({
+                    user_email: user.email,
+                    user_name: user.full_name,
+                    activity_type: 'strength_training',
+                    duration_minutes: durationMinutes,
+                    points: durationMinutes,
+                    date: date,
+                    status: 'completed',
+                    notes: 'Importado desde Strava'
+                });
+                imported++;
+            }
+        }
+
+        return Response.json({ 
+            total: workouts.length,
+            imported,
+            updated,
+            message: `${imported} nuevos, ${updated} actualizados`
+        });
+    } catch (error) {
+        return Response.json({ error: error.message }, { status: 500 });
+    }
+});
