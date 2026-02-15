@@ -32,16 +32,20 @@ Deno.serve(async (req) => {
         const data = await response.json();
 
         if (!response.ok) {
+            // Return detailed error from Strava
             return Response.json({ 
-                error: 'Error registrando webhook',
-                details: data
+                error: 'Error registrando webhook con Strava',
+                strava_error: data,
+                attempted_url: callbackUrl,
+                status: response.status
             }, { status: 400 });
         }
 
         return Response.json({ 
             success: true,
             subscription: data,
-            webhook_url: callbackUrl
+            webhook_url: callbackUrl,
+            message: 'Webhook configurado correctamente'
         });
     } catch (error) {
         return Response.json({ error: error.message }, { status: 500 });

@@ -73,7 +73,11 @@ export default function StravaConnect() {
       alert('¡Webhook registrado! Ahora tus entrenamientos se sincronizarán automáticamente.');
     },
     onError: (error) => {
-      alert('Error registrando webhook: ' + error.message);
+      const errorData = error.response?.data;
+      const errorMsg = errorData?.strava_error 
+        ? JSON.stringify(errorData.strava_error, null, 2)
+        : error.message;
+      alert('Error registrando webhook:\n\n' + errorMsg);
     },
   });
 
