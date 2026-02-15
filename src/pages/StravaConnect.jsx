@@ -3,11 +3,14 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, CheckCircle2, RefreshCw } from "lucide-react";
+import { Activity, CheckCircle2, RefreshCw, ExternalLink, Copy, CheckCheck } from "lucide-react";
 
 export default function StravaConnect() {
   const [isConnecting, setIsConnecting] = useState(false);
+  const [copied, setCopied] = useState(false);
   const queryClient = useQueryClient();
+
+  const redirectUri = `${window.location.origin}${window.location.pathname}`;
 
   const { data: user, refetch: refetchUser } = useQuery({
     queryKey: ['current-user'],
@@ -51,13 +54,18 @@ export default function StravaConnect() {
     },
   });
 
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(redirectUri);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   const handleConnect = async () => {
     try {
       // Get client ID from backend
       const response = await base44.functions.invoke('getStravaClientId', {});
       const clientId = response.data.clientId;
       
-      const redirectUri = window.location.origin + window.location.pathname;
       const scope = "read,activity:read_all";
       
       window.location.href = `https://www.strava.com/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}`;
@@ -125,9 +133,36 @@ export default function StravaConnect() {
             </>
           ) : (
             <>
-              <p className="text-sm text-gray-600">
-                Conecta tu cuenta de Strava para importar automáticamente tus entrenamientos de fuerza.
-              </p>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-3">
+                <p className="text-sm font-semibold text-blue-900">
+                  📋 Configuración requerida
+                </p>
+                <p className="text-sm text-blue-800">
+                  Antes de conectar, debes configurar esta URL en tu aplicación de Strava:
+                </p>
+                <div className="bg-white p-3 rounded border border-blue-200 font-mono text-xs break-all flex items-center justify-between gap-2">
+                  <span className="text-blue-900">{redirectUri}</span>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={copyToClipboard}
+                    className="shrink-0"
+                  >
+                    {copied ? (
+                      <CheckCheck className="w-4 h-4 text-green-600" />
+                    ) : (
+                      <Copy className="w-4 h-4" />
+                    )}
+                  </Button>
+                </div>
+                <div className="text-sm text-blue-800 space-y-1">
+                  <p>1. Ve a <a href="https://www.strava.com/settings/api" target="_blank" rel="noopener noreferrer" className="underline inline-flex items-center gap-1">
+                    Strava API Settings <ExternalLink className="w-3 h-3" />
+                  </a></p>
+                  <p>2. Añade la URL de arriba en "Authorization Callback Domain"</p>
+                  <p>3. Guarda los cambios</p>
+                </div>
+              </div>
 
               <Button 
                 onClick={handleConnect}
