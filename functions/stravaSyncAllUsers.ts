@@ -1,0 +1,128 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { format } from 'npm:date-fns@3.6.0';
+
+Deno.serve(async (req) => {
+    try {
+        const base44 = createClientFromRequest(req);
+        const user = await base44.auth.me();
+
+        // Solo admin puede ejecutar esta función
+        if (user?.role !== 'admin') {
+            return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+        }
+
+        // Obtener todos los usuarios con Strava conectado
+        const allUsers = await base44.asServiceRole.entities.User.list();
+        const stravaUsers = allUsers.filter(u => u.strava_access_token);
+
+        if (stravaUsers.length === 0) {
+            return Response.json({ 
+                message: 'No hay usuarios con Strava conectado',
+                synced: 0
+            });
+        }
+
+        let totalImported = 0;
+        let totalUpdated = 0;
+        const results = [];
+
+        // Sincronizar para cada usuario
+        for (const stravaUser of stravaUsers) {
+            try {
+                const after = Math.floor(Date.now() / 1000) - (7 * 24 * 60 * 60); // Últimos 7 días
+                
+                const response = await fetch(
+                    `https://www.strava.com/api/v3/athlete/activities?after=${after}&per_page=50`,
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${stravaUser.strava_access_token}`,
+                        },
+                    }
+                );
+
+                if (!response.ok) {
+                    results.push({
+                        user: stravaUser.email,
+                        status: 'error',
+                        error: 'Error obteniendo actividades de Strava'
+                    });
+                    continue;
+                }
+
+                const activities = await response.json();
+                const workouts = activities.filter(a => a.type === 'WeightTraining');
+
+                // Obtener actividades existentes del usuario
+                const existingActivities = await base44.asServiceRole.entities.Activity.filter(
+                    { user_email: stravaUser.email },
+                    '-created_date',
+                    1000
+                );
+
+                let imported = 0;
+                let updated = 0;
+
+                for (const workout of workouts) {
+                    const date = format(new Date(workout.start_date), 'yyyy-MM-dd');
+                    const durationMinutes = Math.round(workout.elapsed_time / 60);
+
+                    const existingOnDay = existingActivities.find(a => 
+                        a.date === date && 
+                        a.activity_type === 'strength_training'
+                    );
+
+                    if (existingOnDay) {
+                        if (existingOnDay.duration_minutes !== durationMinutes) {
+                            await base44.asServiceRole.entities.Activity.update(existingOnDay.id, {
+                                duration_minutes: durationMinutes,
+                                notes: existingOnDay.notes 
+                                    ? `${existingOnDay.notes} (Auto-actualizado)`
+                                    : 'Auto-sincronizado desde Strava'
+                            });
+                            updated++;
+                        }
+                    } else {
+                        await base44.asServiceRole.entities.Activity.create({
+                            user_email: stravaUser.email,
+                            user_name: stravaUser.full_name,
+                            activity_type: 'strength_training',
+                            duration_minutes: durationMinutes,
+                            points: durationMinutes,
+                            date: date,
+                            status: 'completed',
+                            notes: 'Auto-importado desde Strava'
+                        });
+                        imported++;
+                    }
+                }
+
+                totalImported += imported;
+                totalUpdated += updated;
+
+                results.push({
+                    user: stravaUser.email,
+                    status: 'success',
+                    imported,
+                    updated
+                });
+
+            } catch (error) {
+                results.push({
+                    user: stravaUser.email,
+                    status: 'error',
+                    error: error.message
+                });
+            }
+        }
+
+        return Response.json({ 
+            message: `Sincronización completada: ${totalImported} nuevos, ${totalUpdated} actualizados`,
+            total_users: stravaUsers.length,
+            total_imported: totalImported,
+            total_updated: totalUpdated,
+            details: results
+        });
+    } catch (error) {
+        return Response.json({ error: error.message }, { status: 500 });
+    }
+});
