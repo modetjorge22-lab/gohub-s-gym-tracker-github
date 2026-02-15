@@ -6,22 +6,21 @@ import { startOfMonth, endOfMonth, eachDayOfInterval, format, isSameMonth } from
 import { es } from "date-fns/locale";
 
 const memberColors = [
-  "#6366f1", // indigo
-  "#10b981", // green
-  "#f59e0b", // amber
-  "#ef4444", // red
-  "#8b5cf6", // purple
-  "#ec4899", // pink
-  "#14b8a6", // teal
-  "#f97316"  // orange
+  "#6366f1",
+  "#10b981",
+  "#f59e0b",
+  "#ef4444",
+  "#8b5cf6",
+  "#ec4899",
+  "#14b8a6",
+  "#f97316"
 ];
 
-// Custom dot component with member image
-const CustomDot = ({ cx, cy, payload, memberImage, memberName, memberColor }) => {
+const CustomDot = ({ cx, cy, memberImage, memberName, memberColor }) => {
   if (!memberImage) {
     return <circle cx={cx} cy={cy} r={4} fill={memberColor} stroke="#fff" strokeWidth={2} />;
   }
-  
+
   return (
     <g>
       <defs>
@@ -43,72 +42,97 @@ const CustomDot = ({ cx, cy, payload, memberImage, memberName, memberColor }) =>
   );
 };
 
+const CustomTooltip = ({ active, payload, label, membersMap }) => {
+  if (!active || !payload?.length) return null;
+
+  return (
+    <div className="bg-[#11131a]/95 border border-white/15 rounded-xl p-3 shadow-xl min-w-[200px]">
+      <p className="text-xs text-gray-300 mb-2">{label}</p>
+      <div className="space-y-2">
+        {payload
+          .filter((entry) => entry.value !== null && !String(entry.dataKey).includes("_planned"))
+          .map((entry) => {
+            const member = membersMap.get(entry.name);
+            return (
+              <div key={entry.dataKey} className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  {member?.profile_image ? (
+                    <img
+                      src={member.profile_image}
+                      alt={member.name}
+                      className="w-6 h-6 rounded-full object-cover border border-white/20"
+                    />
+                  ) : (
+                    <div className="w-6 h-6 rounded-full bg-white/10 border border-white/20 text-white text-xs font-bold flex items-center justify-center">
+                      {member?.name?.charAt(0)?.toUpperCase() || "?"}
+                    </div>
+                  )}
+                  <span className="text-sm text-white">{entry.name}</span>
+                </div>
+                <span className="text-sm font-semibold" style={{ color: entry.color }}>
+                  {entry.value} h
+                </span>
+              </div>
+            );
+          })}
+      </div>
+    </div>
+  );
+};
+
 export default function MonthlyTeamChart({ members, activities, currentDate = new Date() }) {
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
-  
-  // Obtener todos los días del mes
   const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
-  
   const isCurrentMonth = isSameMonth(currentDate, new Date());
 
-  // Crear datos para la gráfica
-  const chartData = days.map(day => {
+  const membersMap = React.useMemo(() => new Map(members.map((member) => [member.name, member])), [members]);
+
+  const chartData = days.map((day) => {
     const dataPoint = {
       date: format(day, "d MMM", { locale: es })
     };
-    
+
     const isFuture = day > new Date();
-    
-    members.forEach(member => {
-      // Horas completadas acumuladas hasta este día
-      const completedActivities = activities.filter(a => 
+
+    members.forEach((member) => {
+      const completedActivities = activities.filter((a) =>
         a.user_email === member.email &&
-        a.status === 'completed' &&
+        a.status === "completed" &&
         new Date(a.date) >= monthStart &&
         new Date(a.date) <= day
       );
-      
-      const completedHours = completedActivities.reduce((sum, a) => 
-        sum + (a.duration_minutes / 60), 0
-      );
-      
+
+      const completedHours = completedActivities.reduce((sum, a) => sum + a.duration_minutes / 60, 0);
       const isDateFuture = isCurrentMonth && isFuture;
 
-      // Para hoy y días anteriores, mostrar horas completadas solo si hay actividad
       if (!isDateFuture) {
-        if (completedHours > 0) {
-          dataPoint[member.name] = parseFloat(completedHours.toFixed(1));
-        } else {
-          dataPoint[member.name] = null;
-        }
+        dataPoint[member.name] = completedHours > 0 ? parseFloat(completedHours.toFixed(1)) : null;
         dataPoint[`${member.name}_planned`] = null;
       } else {
-        // Para días futuros, mostrar línea planificada desde hoy
-        const plannedActivities = activities.filter(a => 
+        const plannedActivities = activities.filter((a) =>
           a.user_email === member.email &&
-          a.status === 'planned' &&
+          a.status === "planned" &&
           new Date(a.date) >= monthStart &&
           new Date(a.date) <= day
         );
-        
-        const plannedHours = plannedActivities.reduce((sum, a) => 
-          sum + (a.duration_minutes / 60), 0
-        );
-        
-        // Sumar horas completadas hasta hoy + horas planificadas hasta este día futuro
-        const completedUntilToday = activities.filter(a => 
-          a.user_email === member.email &&
-          a.status === 'completed' &&
-          new Date(a.date) >= monthStart &&
-          new Date(a.date) <= (isCurrentMonth ? new Date() : monthEnd)
-        ).reduce((sum, a) => sum + (a.duration_minutes / 60), 0);
-        
+
+        const plannedHours = plannedActivities.reduce((sum, a) => sum + a.duration_minutes / 60, 0);
+
+        const completedUntilToday = activities
+          .filter((a) =>
+            a.user_email === member.email &&
+            a.status === "completed" &&
+            new Date(a.date) >= monthStart &&
+            new Date(a.date) <= (isCurrentMonth ? new Date() : monthEnd)
+          )
+          .reduce((sum, a) => sum + a.duration_minutes / 60, 0);
+
         dataPoint[member.name] = null;
         dataPoint[`${member.name}_planned`] = parseFloat((completedUntilToday + plannedHours).toFixed(1));
       }
     });
-    
+
     return dataPoint;
   });
 
@@ -124,24 +148,13 @@ export default function MonthlyTeamChart({ members, activities, currentDate = ne
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis 
-              dataKey="date" 
+            <XAxis dataKey="date" tick={{ fontSize: 11 }} stroke="#6b7280" />
+            <YAxis
               tick={{ fontSize: 11 }}
               stroke="#6b7280"
+              label={{ value: "Horas", angle: -90, position: "insideLeft", style: { fontSize: 11 } }}
             />
-            <YAxis 
-              tick={{ fontSize: 11 }}
-              stroke="#6b7280"
-              label={{ value: 'Horas', angle: -90, position: 'insideLeft', style: { fontSize: 11 } }}
-            />
-            <Tooltip 
-              contentStyle={{ 
-                backgroundColor: 'rgba(255,255,255,0.95)',
-                border: '1px solid #e5e7eb',
-                borderRadius: 8,
-                fontSize: 12
-              }}
-            />
+            <Tooltip content={<CustomTooltip membersMap={membersMap} />} />
             <Legend wrapperStyle={{ fontSize: 14, paddingTop: 10 }} />
             {members.map((member, index) => (
               <Line
@@ -151,15 +164,15 @@ export default function MonthlyTeamChart({ members, activities, currentDate = ne
                 stroke={memberColors[index % memberColors.length]}
                 strokeWidth={2.5}
                 dot={(props) => (
-                  <CustomDot 
-                    {...props} 
+                  <CustomDot
+                    {...props}
                     memberImage={member.profile_image}
                     memberName={member.name}
                     memberColor={memberColors[index % memberColors.length]}
                   />
                 )}
                 activeDot={{ r: 6 }}
-                connectNulls={true}
+                connectNulls
                 name={member.name}
               />
             ))}

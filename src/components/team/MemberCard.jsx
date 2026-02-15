@@ -2,9 +2,10 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
-import { Calendar, Trash2, Dumbbell } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { Calendar, Trash2, Dumbbell, Camera, LogOut } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
+import { useAuth } from "@/lib/AuthContext";
 
 const avatarColors = {
   blue: "from-blue-500 to-blue-600",
@@ -18,20 +19,52 @@ const avatarColors = {
 };
 
 export default function MemberCard({ member, onDelete }) {
+  const queryClient = useQueryClient();
+  const fileInputRef = React.useRef(null);
+  const { logout } = useAuth();
+
   const { data: user } = useQuery({
-    queryKey: ['current-user'],
+    queryKey: ["current-user"],
     queryFn: () => base44.auth.me(),
   });
 
   const isCurrentUser = user?.email === member.email;
+
+  const updatePhotoMutation = useMutation({
+    mutationFn: async (file) => {
+      const uploadResult = await base44.integrations.Core.UploadFile({ file });
+      return base44.entities.TeamMember.update(member.id, {
+        profile_image: uploadResult.file_url,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["team-members"] });
+    },
+  });
+
+  const handlePhotoUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    updatePhotoMutation.mutate(file);
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("base44_group_id");
+    sessionStorage.removeItem("base44_group_name");
+    localStorage.removeItem("base44_last_group_id");
+    localStorage.removeItem("base44_last_group_name");
+    localStorage.removeItem("base44_last_group_password");
+    logout(false);
+    window.location.href = createPageUrl("Landing");
+  };
 
   return (
     <div className="backdrop-blur-xl bg-white/70 rounded-2xl border border-gray-200 shadow-lg p-6 hover:shadow-xl transition-all">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
           {member.profile_image ? (
-            <img 
-              src={member.profile_image} 
+            <img
+              src={member.profile_image}
               alt={member.name}
               className="w-14 h-14 rounded-xl object-cover shadow-lg"
             />
@@ -61,25 +94,52 @@ export default function MemberCard({ member, onDelete }) {
             Ver Calendario
           </Button>
         </Link>
+
         {isCurrentUser && (
-          <Link to={createPageUrl("Workouts")} className="flex-1">
-            <Button variant="outline" className="w-full border-indigo-200 text-indigo-700 hover:bg-indigo-50">
-              <Dumbbell className="w-4 h-4 mr-2" />
-              Mis Rutinas
+          <>
+            <Link to={createPageUrl("Workouts")} className="flex-1">
+              <Button variant="outline" className="w-full border-indigo-200 text-indigo-700 hover:bg-indigo-50">
+                <Dumbbell className="w-4 h-4 mr-2" />
+                Mis Rutinas
+              </Button>
+            </Link>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handlePhotoUpload}
+              className="hidden"
+            />
+            <Button
+              variant="outline"
+              className="w-full border-blue-200 text-blue-700 hover:bg-blue-50"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={updatePhotoMutation.isPending}
+            >
+              <Camera className="w-4 h-4 mr-2" />
+              {updatePhotoMutation.isPending ? "Subiendo foto..." : "Actualizar foto de perfil"}
             </Button>
-          </Link>
-        )}
-        
-        {isCurrentUser && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onDelete}
-            className="text-red-500 hover:text-red-700 hover:bg-red-50 mt-2 w-full"
-          >
-            <Trash2 className="w-4 h-4 mr-2" />
-            Eliminar Perfil
-          </Button>
+
+            <Button
+              variant="outline"
+              className="w-full border-amber-200 text-amber-700 hover:bg-amber-50"
+              onClick={handleLogout}
+            >
+              <LogOut className="w-4 h-4 mr-2" />
+              Cerrar sesión
+            </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onDelete}
+              className="text-red-500 hover:text-red-700 hover:bg-red-50 mt-2 w-full"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Eliminar Perfil
+            </Button>
+          </>
         )}
       </div>
     </div>
