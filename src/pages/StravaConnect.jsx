@@ -67,6 +67,16 @@ export default function StravaConnect() {
     },
   });
 
+  const registerWebhookMutation = useMutation({
+    mutationFn: () => base44.functions.invoke('registerStravaWebhook', {}),
+    onSuccess: (response) => {
+      alert('¡Webhook registrado! Ahora tus entrenamientos se sincronizarán automáticamente.');
+    },
+    onError: (error) => {
+      alert('Error registrando webhook: ' + error.message);
+    },
+  });
+
   const copyToClipboard = () => {
     navigator.clipboard.writeText(redirectUri);
     setCopied(true);
@@ -122,26 +132,47 @@ export default function StravaConnect() {
                 Tu cuenta de Strava está conectada. Puedes sincronizar tus actividades de entrenamiento de fuerza.
               </p>
 
-              <Button 
-                onClick={() => syncMutation.mutate()}
-                disabled={syncMutation.isPending}
-                className="w-full bg-orange-500 hover:bg-orange-600"
-              >
-                {syncMutation.isPending ? (
-                  <>
-                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                    Sincronizando...
-                  </>
-                ) : (
-                  <>
-                    <RefreshCw className="w-4 h-4 mr-2" />
-                    Sincronizar Entrenamientos
-                  </>
-                )}
-              </Button>
+              <div className="space-y-3">
+                <Button 
+                  onClick={() => registerWebhookMutation.mutate()}
+                  disabled={registerWebhookMutation.isPending}
+                  className="w-full bg-green-600 hover:bg-green-700"
+                >
+                  {registerWebhookMutation.isPending ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                      Configurando...
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-4 h-4 mr-2" />
+                      Activar Sincronización Automática
+                    </>
+                  )}
+                </Button>
+
+                <Button 
+                  onClick={() => syncMutation.mutate()}
+                  disabled={syncMutation.isPending}
+                  variant="outline"
+                  className="w-full"
+                >
+                  {syncMutation.isPending ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                      Sincronizando...
+                    </>
+                  ) : (
+                    <>
+                      <RefreshCw className="w-4 h-4 mr-2" />
+                      Sincronizar Manualmente
+                    </>
+                  )}
+                </Button>
+              </div>
 
               <p className="text-xs text-gray-500">
-                Se importarán las actividades de entrenamiento de fuerza de los últimos 30 días
+                Activa la sincronización automática para importar entrenamientos en tiempo real
               </p>
             </>
           ) : (
