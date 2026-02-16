@@ -98,7 +98,7 @@ export default function MemberCalendar() {
         <Button
           variant="ghost"
           onClick={() => navigate(createPageUrl("Dashboard"))}
-          className="mb-6"
+          className="mb-6 text-gray-200 hover:text-white hover:bg-white/10"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Volver
@@ -121,15 +121,24 @@ export default function MemberCalendar() {
       <Button
         variant="ghost"
         onClick={() => navigate(createPageUrl("Dashboard"))}
-        className="mb-6"
+        className="mb-6 text-gray-200 hover:text-white hover:bg-white/10"
       >
         <ArrowLeft className="w-4 h-4 mr-2" />
         Volver
       </Button>
 
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">{member.name}</h2>
-        <p className="text-gray-600">{member.email}</p>
+      <div className="mb-8 flex items-center gap-4">
+        {member.profile_image ? (
+          <img src={member.profile_image} alt={member.name} className="w-16 h-16 rounded-full object-cover border-2 border-white/30" />
+        ) : (
+          <div className="w-16 h-16 rounded-full bg-white/10 border border-white/20 text-white flex items-center justify-center text-2xl font-bold">
+            {member.name?.charAt(0)?.toUpperCase()}
+          </div>
+        )}
+        <div>
+          <h2 className="text-3xl font-bold text-white mb-1">{member.name}</h2>
+          <p className="text-gray-300">{member.email}</p>
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
