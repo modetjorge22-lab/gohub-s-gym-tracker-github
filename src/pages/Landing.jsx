@@ -159,8 +159,6 @@ export default function Landing() {
                   Crear Grupo
                 </Button>
               )}
-
-
             </motion.div>
           )}
 
@@ -323,8 +321,6 @@ export default function Landing() {
             </motion.div>
           )}
         </AnimatePresence>
-
-        <p className="text-[11px] text-white/40">Olympia te conecta con tu equipo, tus métricas y tu progreso diario.</p>
       </div>
     </div>
   );
