@@ -42,15 +42,14 @@ export default function Landing() {
   React.useEffect(() => {
     if (!autoLoginAttempted && !isLoading && groups.length > 0) {
       const lastGroupId = localStorage.getItem("base44_last_group_id");
-      const lastPassword = localStorage.getItem("base44_last_group_password");
-
-      if (lastGroupId && lastPassword) {
+      
+      if (lastGroupId) {
         const group = groups.find((g) => g.id === lastGroupId);
-        if (group && group.password === lastPassword) {
+        if (group) {
           sessionStorage.setItem("base44_group_id", group.id);
           sessionStorage.setItem("base44_group_name", group.name);
           localStorage.setItem("base44_last_group_name", group.name);
-          navigate(createPageUrl("Feed"));
+          navigate(createPageUrl("Dashboard"));
         }
       }
       setAutoLoginAttempted(true);
@@ -60,7 +59,7 @@ export default function Landing() {
   React.useEffect(() => {
     const activeGroupId = sessionStorage.getItem("base44_group_id");
     if (activeGroupId) {
-      navigate(createPageUrl("Feed"));
+      navigate(createPageUrl("Dashboard"));
     }
   }, [navigate]);
 
@@ -82,9 +81,8 @@ export default function Landing() {
       sessionStorage.setItem("base44_group_id", selectedGroup.id);
       sessionStorage.setItem("base44_group_name", selectedGroup.name);
       localStorage.setItem("base44_last_group_id", selectedGroup.id);
-      localStorage.setItem("base44_last_group_password", selectedGroup.password);
       localStorage.setItem("base44_last_group_name", selectedGroup.name);
-      navigate(createPageUrl("Feed"));
+      navigate(createPageUrl("Dashboard"));
     } else {
       setError("Contraseña incorrecta");
       toast.error("Contraseña incorrecta");
