@@ -34,6 +34,13 @@ export default function Landing() {
     queryFn: () => base44.entities.Group.list(),
   });
 
+  const { data: currentUser } = useQuery({
+    queryKey: ['current-user'],
+    queryFn: () => base44.auth.me(),
+  });
+
+  const isAdminCreator = currentUser?.email?.toLowerCase() === 'modetjorge22@gmail.com';
+
   // Auto-login effect
   React.useEffect(() => {
     if (!autoLoginAttempted && !isLoading && groups.length > 0) {
@@ -86,6 +93,11 @@ export default function Landing() {
 
   const handleCreateGroup = (e) => {
     e.preventDefault();
+    if (!isAdminCreator) {
+      toast.error('Solo el administrador puede crear grupos');
+      return;
+    }
+
     if (!newGroupData.name || !newGroupData.password) {
       toast.error("Nombre y contraseña son obligatorios");
       return;
@@ -95,10 +107,16 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-[#0B0B0F] text-white flex flex-col items-center justify-center p-4 relative overflow-hidden font-sans">
+<<<<<<< codex/add-strava-connection-and-autosync-cj4c63
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08),transparent_55%)]" />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[30rem] h-[30rem] rounded-full bg-[radial-gradient(circle,rgba(99,102,241,0.2),transparent_60%)] blur-3xl" />
+=======
       {/* Background Grid */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff12_1px,transparent_1px),linear-gradient(to_bottom,#ffffff12_1px,transparent_1px)] bg-[size:24px_24px]"></div>
         <div className="absolute left-0 right-0 top-0 -z-10 m-auto h-[310px] w-[310px] rounded-full bg-indigo-500 opacity-20 blur-[100px]"></div>
+>>>>>>> main
       </div>
 
       <div className="z-10 w-full max-w-md space-y-8 text-center">
@@ -133,15 +151,17 @@ export default function Landing() {
                 Entrar a Grupo
               </Button>
               
-              <Button 
-                size="lg"
-                variant="outline"
-                className="w-full h-14 text-lg font-bold border-2 hover:bg-gray-50 rounded-xl transition-all hover:scale-[1.02]"
-                onClick={() => setViewState("create")}
-              >
-                <Plus className="w-5 h-5 mr-2" />
-                Crear Grupo
-              </Button>
+              {isAdminCreator && (
+                <Button 
+                  size="lg"
+                  variant="outline"
+                  className="w-full h-14 text-lg font-bold border-white/20 text-white hover:bg-white/10 rounded-xl transition-all hover:scale-[1.02]"
+                  onClick={() => setViewState("create")}
+                >
+                  <Plus className="w-5 h-5 mr-2" />
+                  Crear Grupo
+                </Button>
+              )}
             </motion.div>
           )}
 
@@ -157,15 +177,14 @@ export default function Landing() {
                 <Button variant="ghost" size="icon" onClick={() => setViewState("initial")} className="rounded-full">
                   <ChevronLeft className="w-5 h-5" />
                 </Button>
-                <h3 className="font-bold text-gray-700">Selecciona un grupo</h3>
+                <h3 className="font-bold text-white">Selecciona un grupo</h3>
               </div>
 
               {isLoading ? (
-                <div className="flex justify-center py-8"><Loader2 className="animate-spin text-gray-400" /></div>
+                <div className="flex justify-center py-8"><Loader2 className="animate-spin text-white/70" /></div>
               ) : groups.length === 0 ? (
-                 <div className="text-center text-gray-500 py-8">
-                   No hay grupos disponibles.
-                   <Button variant="link" onClick={() => setViewState("create")}>Crear uno nuevo</Button>
+                 <div className="text-center text-white/70 py-8">
+                   No hay grupos disponibles para unirse.
                  </div>
               ) : (
                 <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
@@ -179,10 +198,10 @@ export default function Landing() {
                         setViewState("password");
                         setError("");
                       }}
-                      className="w-full p-4 bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md hover:border-gray-400 transition-all flex items-center justify-between group"
+                      className="w-full p-4 bg-white/5 border border-white/15 rounded-xl shadow-sm hover:shadow-md hover:border-white/35 transition-all flex items-center justify-between group"
                     >
-                      <span className="font-semibold text-gray-800">{group.name}</span>
-                      <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-gray-800 transition-colors" />
+                      <span className="font-semibold text-white">{group.name}</span>
+                      <ArrowRight className="w-4 h-4 text-white/60 group-hover:text-white transition-colors" />
                     </motion.button>
                   ))}
                 </div>
@@ -197,7 +216,7 @@ export default function Landing() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
             >
-              <Card className="border-gray-200 shadow-xl">
+              <Card className="border-white/15 bg-[#11131a]/90 text-white shadow-xl">
                 <CardHeader>
                   <div className="flex items-center gap-2 mb-2">
                     <Button variant="ghost" size="icon" onClick={() => setViewState("join")} className="h-8 w-8 -ml-2">
@@ -205,12 +224,12 @@ export default function Landing() {
                     </Button>
                     <CardTitle>{selectedGroup.name}</CardTitle>
                   </div>
-                  <CardDescription>Introduce la contraseña para acceder</CardDescription>
+                  <CardDescription className="text-white/70">Introduce la contraseña para acceder</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleJoin} className="space-y-4">
                     <div className="relative">
-                      <Lock className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                      <Lock className="absolute left-3 top-3 w-4 h-4 text-white/50" />
                       <Input
                         type="password"
                         placeholder="Contraseña"
@@ -219,7 +238,7 @@ export default function Landing() {
                           setPassword(e.target.value);
                           setError("");
                         }}
-                        className="pl-9"
+                        className="pl-9 bg-white/5 border-white/15 text-white placeholder:text-white/45"
                         autoFocus
                       />
                     </div>
@@ -235,14 +254,14 @@ export default function Landing() {
             </motion.div>
           )}
 
-          {viewState === "create" && (
+          {viewState === "create" && isAdminCreator && (
             <motion.div
               key="create"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
             >
-              <Card className="border-gray-200 shadow-xl text-left">
+              <Card className="border-white/15 bg-[#11131a]/90 text-white shadow-xl text-left">
                 <CardHeader>
                   <div className="flex items-center gap-2 mb-2">
                     <Button variant="ghost" size="icon" onClick={() => setViewState("initial")} className="h-8 w-8 -ml-2">
@@ -250,12 +269,12 @@ export default function Landing() {
                     </Button>
                     <CardTitle>Crear Nuevo Grupo</CardTitle>
                   </div>
-                  <CardDescription>Configura tu espacio de equipo</CardDescription>
+                  <CardDescription className="text-white/70">Configura tu espacio de equipo</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleCreateGroup} className="space-y-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name">Nombre del Grupo</Label>
+                      <Label htmlFor="name" className="text-white/85">Nombre del Grupo</Label>
                       <Input
                         id="name"
                         value={newGroupData.name}
@@ -266,7 +285,7 @@ export default function Landing() {
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="description">Descripción (Opcional)</Label>
+                      <Label htmlFor="description" className="text-white/85">Descripción (Opcional)</Label>
                       <Input
                         id="description"
                         value={newGroupData.description}
@@ -276,20 +295,20 @@ export default function Landing() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="new-password">Contraseña de Acceso</Label>
+                      <Label htmlFor="new-password" className="text-white/85">Contraseña de Acceso</Label>
                       <div className="relative">
-                        <Lock className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                        <Lock className="absolute left-3 top-3 w-4 h-4 text-white/50" />
                         <Input
                           id="new-password"
                           type="text"
                           value={newGroupData.password}
                           onChange={(e) => setNewGroupData({...newGroupData, password: e.target.value})}
                           placeholder="Clave secreta"
-                          className="pl-9"
+                          className="pl-9 bg-white/5 border-white/15 text-white placeholder:text-white/45"
                           required
                         />
                       </div>
-                      <p className="text-xs text-gray-500">Comparte esta contraseña con tu equipo para que puedan unirse.</p>
+                      <p className="text-xs text-white/60">Comparte esta contraseña con tu equipo para que puedan unirse.</p>
                     </div>
 
                     <Button 

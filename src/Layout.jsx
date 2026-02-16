@@ -1,8 +1,9 @@
 import React from "react";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { LayoutDashboard, Users, ChevronLeft, ChevronRight, Activity } from "lucide-react";
+import { Users, ChevronLeft, ChevronRight, Activity, Newspaper, User, MoreHorizontal, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { format, addMonths, subMonths, startOfMonth, isWithinInterval } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -85,9 +86,9 @@ export default function Layout({ children, currentPageName }) {
   };
 
   const navItems = [
-    { name: "Dashboard", path: createPageUrl("Dashboard"), icon: LayoutDashboard },
-    { name: "Equipo", path: createPageUrl("Team"), icon: Users },
-    { name: "Strava", path: createPageUrl("StravaConnect"), icon: Activity },
+    { name: "Feed", path: createPageUrl("Feed"), icon: Newspaper },
+    { name: "Mi actividad", path: createPageUrl("MyActivity"), icon: User },
+    { name: "Grupos", path: createPageUrl("Groups"), icon: Users },
   ];
 
   const isLanding = location.pathname.includes("Landing");
@@ -140,25 +141,52 @@ export default function Layout({ children, currentPageName }) {
             </div>
 
             {/* Navigation Pills */}
-            <nav className="flex items-center gap-1 md:gap-3">
-              {navItems.map((item) => {
-                const isActive = location.pathname === item.path;
-                return (
-                  <Link
-                    key={item.name}
-                    to={`${item.path}?${searchParams.toString()}`}
-                    className={`flex items-center gap-1 md:gap-2 px-2 md:px-4 lg:px-8 py-1.5 md:py-2 lg:py-3 rounded-full font-semibold transition-all duration-300 ${
-                      isActive
-                        ? "bg-gradient-to-r from-gray-900 to-gray-700 text-white shadow-lg scale-105"
-                        : "text-gray-300 hover:bg-white/60 hover:scale-105"
-                    }`}
-                  >
-                    <item.icon className="w-4 h-4 lg:w-5 lg:h-5" strokeWidth={2.5} />
-                    <span className="hidden lg:inline">{item.name}</span>
-                  </Link>
-                );
-              })}
-            </nav>
+            <div className="flex items-center gap-2">
+              <nav className="flex items-center gap-1 md:gap-3">
+                {navItems.map((item) => {
+                  const isActive = location.pathname === item.path;
+                  return (
+                    <Link
+                      key={item.name}
+                      to={`${item.path}?${searchParams.toString()}`}
+                      className={`flex items-center gap-1 md:gap-2 px-2 md:px-4 lg:px-8 py-1.5 md:py-2 lg:py-3 rounded-full font-semibold transition-all duration-300 ${
+                        isActive
+                          ? "bg-gradient-to-r from-gray-900 to-gray-700 text-white shadow-lg scale-105"
+                          : "text-gray-300 hover:bg-white/20 hover:scale-105"
+                      }`}
+                    >
+                      <item.icon className="w-4 h-4 lg:w-5 lg:h-5" strokeWidth={2.5} />
+                      <span className="hidden lg:inline">{item.name}</span>
+                    </Link>
+                  );
+                })}
+              </nav>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="rounded-full text-white hover:bg-white/10">
+                    <MoreHorizontal className="w-5 h-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-[#11131a] border border-white/10 text-white">
+                  <DropdownMenuItem asChild className="cursor-pointer">
+                    <Link to={createPageUrl("Settings")} className="flex items-center gap-2">
+                      <Settings className="w-4 h-4" /> Configuración
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="cursor-pointer">
+                    <Link to={createPageUrl("ProfileSettings")} className="flex items-center gap-2">
+                      <User className="w-4 h-4" /> Perfil
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="cursor-pointer">
+                    <Link to={createPageUrl("IntegrationsSettings")} className="flex items-center gap-2">
+                      <Activity className="w-4 h-4" /> Integraciones
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </div>
       </header>

@@ -16,28 +16,37 @@ const memberColors = [
   "#f97316"
 ];
 
-const CustomDot = ({ cx, cy, memberImage, memberName, memberColor }) => {
+const CustomDot = ({ cx, cy, index, lastVisibleIndex, memberImage, memberName, memberColor }) => {
+  if (index !== lastVisibleIndex) return null;
+
   if (!memberImage) {
-    return <circle cx={cx} cy={cy} r={4} fill={memberColor} stroke="#fff" strokeWidth={2} />;
+    return (
+      <g>
+        <circle cx={cx} cy={cy} r={6} fill={memberColor} stroke="#fff" strokeWidth={2} />
+        <text x={cx + 12} y={cy + 4} fill="#fff" fontSize="11" fontWeight="700">{memberName}</text>
+      </g>
+    );
   }
 
   return (
     <g>
       <defs>
         <clipPath id={`clip-${memberName}-${cx}-${cy}`}>
-          <circle cx={cx} cy={cy} r={6} />
+          <circle cx={cx} cy={cy} r={9} />
         </clipPath>
       </defs>
-      <circle cx={cx} cy={cy} r={7} fill="#fff" />
+      <circle cx={cx} cy={cy} r={10} fill="#fff" />
       <image
-        x={cx - 6}
-        y={cy - 6}
-        width={12}
-        height={12}
+        x={cx - 9}
+        y={cy - 9}
+        width={18}
+        height={18}
         href={memberImage}
         clipPath={`url(#clip-${memberName}-${cx}-${cy})`}
         preserveAspectRatio="xMidYMid slice"
       />
+      <rect x={cx + 12} y={cy - 10} rx="8" ry="8" width="78" height="20" fill="rgba(17,19,26,0.9)" stroke="rgba(255,255,255,0.2)" />
+      <text x={cx + 20} y={cy + 4} fill="#fff" fontSize="11" fontWeight="700">{memberName}</text>
     </g>
   );
 };
@@ -88,6 +97,15 @@ export default function MonthlyTeamChart({ members, activities, currentDate = ne
 
   const membersMap = React.useMemo(() => new Map(members.map((member) => [member.name, member])), [members]);
 
+  const getLastVisibleIndex = (dataKey) => {
+    for (let i = chartData.length - 1; i >= 0; i -= 1) {
+      if (chartData[i][dataKey] !== null && chartData[i][dataKey] !== undefined) {
+        return i;
+      }
+    }
+    return -1;
+  };
+
   const chartData = days.map((day) => {
     const dataPoint = {
       date: format(day, "d MMM", { locale: es })
@@ -136,26 +154,30 @@ export default function MonthlyTeamChart({ members, activities, currentDate = ne
     return dataPoint;
   });
 
+  const memberLastIndexes = Object.fromEntries(
+    members.map((member) => [member.name, getLastVisibleIndex(member.name)])
+  );
+
   return (
-    <Card className="backdrop-blur-xl bg-white/80 border-2 border-gray-200 shadow-xl">
-      <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-200">
-        <CardTitle className="flex items-center gap-3 text-xl">
-          <TrendingUp className="w-6 h-6 text-gray-700" strokeWidth={2.5} />
+    <Card className="backdrop-blur-xl bg-[#11131a]/80 border border-white/15 shadow-xl">
+      <CardHeader className="bg-gradient-to-r from-white/5 to-white/10 border-b border-white/10">
+        <CardTitle className="flex items-center gap-3 text-xl text-white">
+          <TrendingUp className="w-6 h-6 text-white" strokeWidth={2.5} />
           Evolución Mensual del Equipo
         </CardTitle>
       </CardHeader>
       <CardContent className="p-6">
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis dataKey="date" tick={{ fontSize: 11 }} stroke="#6b7280" />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.12)" />
+            <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#cbd5e1" }} stroke="rgba(255,255,255,0.35)" />
             <YAxis
               tick={{ fontSize: 11 }}
-              stroke="#6b7280"
-              label={{ value: "Horas", angle: -90, position: "insideLeft", style: { fontSize: 11 } }}
+              stroke="rgba(255,255,255,0.35)"
+              label={{ value: "Horas", angle: -90, position: "insideLeft", style: { fontSize: 11, fill: "#cbd5e1" } }}
             />
             <Tooltip content={<CustomTooltip membersMap={membersMap} />} />
-            <Legend wrapperStyle={{ fontSize: 14, paddingTop: 10 }} />
+            <Legend wrapperStyle={{ fontSize: 14, paddingTop: 10, color: "#e2e8f0" }} />
             {members.map((member, index) => (
               <Line
                 key={member.id}
@@ -169,6 +191,7 @@ export default function MonthlyTeamChart({ members, activities, currentDate = ne
                     memberImage={member.profile_image}
                     memberName={member.name}
                     memberColor={memberColors[index % memberColors.length]}
+                    lastVisibleIndex={memberLastIndexes[member.name]}
                   />
                 )}
                 activeDot={{ r: 6 }}
@@ -178,7 +201,7 @@ export default function MonthlyTeamChart({ members, activities, currentDate = ne
             ))}
           </LineChart>
         </ResponsiveContainer>
-        <p className="text-xs text-gray-500 text-center mt-4">
+        <p className="text-xs text-gray-300 text-center mt-4">
           Horas acumuladas de actividad durante {format(currentDate, "MMMM yyyy", { locale: es })}
         </p>
       </CardContent>
