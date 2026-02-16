@@ -10,12 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { useAuth } from "@/lib/AuthContext";
 
 export default function Landing() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { isAuthenticated, navigateToLogin } = useAuth();
 
   const [viewState, setViewState] = useState("initial"); // initial, join, create, password
   const [selectedGroup, setSelectedGroup] = useState(null);
@@ -61,17 +59,10 @@ export default function Landing() {
 
   React.useEffect(() => {
     const activeGroupId = sessionStorage.getItem("base44_group_id");
-    const rememberedGroupId = localStorage.getItem("base44_last_group_id");
-
-    if (isAuthenticated && (activeGroupId || rememberedGroupId)) {
-      if (!activeGroupId && rememberedGroupId) {
-        sessionStorage.setItem("base44_group_id", rememberedGroupId);
-        const rememberedName = localStorage.getItem("base44_last_group_name");
-        if (rememberedName) sessionStorage.setItem("base44_group_name", rememberedName);
-      }
+    if (activeGroupId) {
       navigate(createPageUrl("Feed"));
     }
-  }, [isAuthenticated, navigate]);
+  }, [navigate]);
 
   const createGroupMutation = useMutation({
     mutationFn: (data) => base44.entities.Group.create(data),
@@ -161,16 +152,14 @@ export default function Landing() {
                 Entrar a mi grupo
               </Button>
 
-              {!isAuthenticated && (
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="w-full h-14 text-lg font-semibold border-white/25 text-white hover:bg-white/10 rounded-xl"
-                  onClick={() => navigateToLogin()}
-                >
-                  Continuar con Google
-                </Button>
-              )}
+              <Button
+                size="lg"
+                variant="outline"
+                className="w-full h-14 text-lg font-semibold border-white/25 text-white hover:bg-white/10 rounded-xl"
+                onClick={() => base44.auth.redirectToLogin()}
+              >
+                Continuar con Google
+              </Button>
 
               {isAdminCreator && (
                 <Button
