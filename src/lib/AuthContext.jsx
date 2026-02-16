@@ -46,6 +46,22 @@ export const AuthProvider = ({ children }) => {
         }
         setIsLoadingPublicSettings(false);
       } catch (appError) {
+        const isLocalMissingEndpoint = appError?.status === 404;
+
+        // Local/dev fallback: if public settings endpoint is not available,
+        // continue without blocking the app bootstrap.
+        if (isLocalMissingEndpoint) {
+          setAppPublicSettings(null);
+          if (appParams.token) {
+            await checkUserAuth({ suppressLogs: true });
+          } else {
+            setIsLoadingAuth(false);
+            setIsAuthenticated(false);
+          }
+          setIsLoadingPublicSettings(false);
+          return;
+        }
+
         console.error('App state check failed:', appError);
         
         // Handle app-level errors
@@ -87,7 +103,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const checkUserAuth = async () => {
+  const checkUserAuth = async ({ suppressLogs = false } = {}) => {
     try {
       // Now check if the user is authenticated
       setIsLoadingAuth(true);
@@ -96,7 +112,9 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(true);
       setIsLoadingAuth(false);
     } catch (error) {
-      console.error('User auth check failed:', error);
+      if (!suppressLogs) {
+        console.error('User auth check failed:', error);
+      }
       setIsLoadingAuth(false);
       setIsAuthenticated(false);
       

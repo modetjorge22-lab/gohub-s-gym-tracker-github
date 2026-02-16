@@ -1,52 +1,62 @@
-import { Toaster } from "@/components/ui/toaster"
-import { QueryClientProvider } from '@tanstack/react-query'
-import { queryClientInstance } from '@/lib/query-client'
-import NavigationTracker from '@/lib/NavigationTracker'
-import { pagesConfig } from './pages.config'
+import React from 'react';
+import { Toaster } from "@/components/ui/toaster";
+import { QueryClientProvider } from '@tanstack/react-query';
+import { queryClientInstance } from '@/lib/query-client';
+import NavigationTracker from '@/lib/NavigationTracker';
+import { pagesConfig } from './pages.config';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
+import OlympiaLoadingScreen from '@/components/OlympiaLoadingScreen';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
 const MainPage = mainPageKey ? Pages[mainPageKey] : <></>;
 
-const LayoutWrapper = ({ children, currentPageName }) => Layout ?
-  <Layout currentPageName={currentPageName}>{children}</Layout>
+const LayoutWrapper = ({ children, currentPageName }) => Layout
+  ? <Layout currentPageName={currentPageName}>{children}</Layout>
   : <>{children}</>;
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const [showStartupLoader, setShowStartupLoader] = React.useState(true);
 
-  // Show loading spinner while checking app public settings or auth
-  if (isLoadingPublicSettings || isLoadingAuth) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
-      </div>
-    );
+  React.useEffect(() => {
+    let timer;
+    if (!isLoadingPublicSettings && !isLoadingAuth && !authError) {
+      timer = setTimeout(() => setShowStartupLoader(false), 1800);
+    }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
+  }, [isLoadingPublicSettings, isLoadingAuth, authError]);
+
+  if (isLoadingPublicSettings || isLoadingAuth || (showStartupLoader && !authError)) {
+    return <OlympiaLoadingScreen />;
   }
 
-  // Handle authentication errors
   if (authError) {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
-    } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
+    }
+
+    if (authError.type === 'auth_required') {
       navigateToLogin();
-      return null;
+      return <OlympiaLoadingScreen />;
     }
   }
 
-  // Render the main app
   return (
     <Routes>
-      <Route path="/" element={
-        <LayoutWrapper currentPageName={mainPageKey}>
-          <MainPage />
-        </LayoutWrapper>
-      } />
+      <Route
+        path="/"
+        element={
+          <LayoutWrapper currentPageName={mainPageKey}>
+            <MainPage />
+          </LayoutWrapper>
+        }
+      />
       {Object.entries(Pages).map(([path, Page]) => (
         <Route
           key={path}
@@ -63,9 +73,7 @@ const AuthenticatedApp = () => {
   );
 };
 
-
 function App() {
-
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
@@ -76,7 +84,7 @@ function App() {
         <Toaster />
       </QueryClientProvider>
     </AuthProvider>
-  )
+  );
 }
 
-export default App
+export default App;
