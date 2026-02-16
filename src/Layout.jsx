@@ -102,7 +102,7 @@ export default function Layout({ children, currentPageName }) {
         <div className="backdrop-blur-xl bg-[#11131a]/65 border border-white/10 rounded-full shadow-xl px-3 md:px-8 py-2 md:py-4 relative">
           <div className="flex items-center justify-between">
             {/* Logo y título */}
-            <div className="flex items-center gap-2 md:gap-4">
+            <div className="flex items-center gap-2 md:gap-3">
               <Link 
                 to={createPageUrl("Landing")}
                 onClick={() => {
@@ -110,16 +110,11 @@ export default function Layout({ children, currentPageName }) {
                   sessionStorage.removeItem('base44_group_name');
                 }}
               >
-                <div className="w-8 h-8 md:w-12 md:h-12 bg-gradient-to-br from-gray-900 to-gray-700 rounded-full flex items-center justify-center shadow-lg cursor-pointer hover:scale-105 transition-transform">
-                  <span className="text-white font-bold text-sm md:text-xl">O</span>
+                <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-gray-900 to-gray-700 rounded-full flex items-center justify-center shadow-lg cursor-pointer hover:scale-105 transition-transform">
+                  <span className="text-white font-bold text-sm md:text-lg">O</span>
                 </div>
               </Link>
-              <div className="hidden sm:block">
-                <h1 className="text-base md:text-xl font-bold text-white">
-                  {groupName}
-                </h1>
-                <p className="text-xs text-gray-300 hidden md:block">Olympia</p>
-              </div>
+              <h1 className="text-base md:text-xl font-bold text-white">Olympia</h1>
             </div>
 
             {/* Month Navigator - Centered - Hidden on mobile */}

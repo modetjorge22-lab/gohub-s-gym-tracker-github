@@ -51,15 +51,15 @@ import Dashboard from './pages/Dashboard';
 import Feed from './pages/Feed';
 import Groups from './pages/Groups';
 import IntegrationsSettings from './pages/IntegrationsSettings';
+import Landing from './pages/Landing';
 import LogActivity from './pages/LogActivity';
 import MemberCalendar from './pages/MemberCalendar';
+import MyActivity from './pages/MyActivity';
 import ProfileSettings from './pages/ProfileSettings';
 import Settings from './pages/Settings';
 import StravaConnect from './pages/StravaConnect';
 import Team from './pages/Team';
 import Workouts from './pages/Workouts';
-import Landing from './pages/Landing';
-import MyActivity from './pages/MyActivity';
 import __Layout from './Layout.jsx';
 
 
@@ -68,15 +68,15 @@ export const PAGES = {
     "Feed": Feed,
     "Groups": Groups,
     "IntegrationsSettings": IntegrationsSettings,
+    "Landing": Landing,
     "LogActivity": LogActivity,
     "MemberCalendar": MemberCalendar,
+    "MyActivity": MyActivity,
     "ProfileSettings": ProfileSettings,
     "Settings": Settings,
     "StravaConnect": StravaConnect,
     "Team": Team,
     "Workouts": Workouts,
-    "Landing": Landing,
-    "MyActivity": MyActivity,
 }
 
 export const pagesConfig = {

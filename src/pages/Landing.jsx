@@ -117,19 +117,8 @@ export default function Landing() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="space-y-3 rounded-2xl border border-white/15 bg-[#11131a]/75 backdrop-blur-xl p-4"
         >
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-white/70">
-            Olympia · Performance Hub
-          </div>
           <h1 className="text-6xl md:text-7xl font-black tracking-tight text-white">Olympia</h1>
-          <p className="text-sm text-white/65 tracking-wide">
-            Entrena en equipo. Mide progreso. Mantén consistencia.
-          </p>
-          <div className="flex items-center justify-center gap-2 text-xs text-white/55">
-            <span className="rounded-full bg-white/5 border border-white/10 px-2 py-1">{groups.length} grupos</span>
-            <span className="rounded-full bg-white/5 border border-white/10 px-2 py-1">Sincronización Strava</span>
-          </div>
         </motion.div>
 
         <AnimatePresence mode="wait">
@@ -171,9 +160,7 @@ export default function Landing() {
                 </Button>
               )}
 
-              <p className="text-xs text-white/50 pt-1">
-                Si ya tienes sesión y grupo activo, entrarás automáticamente al Feed.
-              </p>
+
             </motion.div>
           )}
 
