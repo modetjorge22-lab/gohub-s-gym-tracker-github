@@ -80,8 +80,8 @@ function MiniCalendar({ activities }) {
                 hasCompleted
                   ? "bg-emerald-400 text-white font-bold" 
                   : hasPlanned
-                  ? "bg-gray-100 text-gray-600 border-2 border-emerald-400"
-                  : "bg-gray-100 text-gray-300"
+                  ? "bg-white/10 text-white border border-emerald-400"
+                  : "bg-white/5 text-white/35 border border-white/10"
               }`}
             >
               <div className="text-[10px]">{format(day, "d")}</div>
@@ -166,7 +166,7 @@ function getConsecutiveDays(activities) {
 
 // Liquid glass style - tonalidad neutra
       function getCardBackground() {
-        return "from-white/70 to-gray-50/70 border-white/50";
+        return "from-[#1a1f2d]/70 to-[#11131a]/70 border-white/10";
       }
 
 export default function TeamOverview({ stats, activities, currentDate = new Date() }) {
@@ -511,10 +511,10 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                         </div>
                       )}
                       <div className="min-w-0 flex-1">
-                        <h3 className="font-bold text-gray-900 group-hover:text-gray-700 transition-colors text-sm md:text-base truncate">
+                        <h3 className="font-bold text-white group-hover:text-white transition-colors text-sm md:text-base truncate">
                           {member.name}
                         </h3>
-                        <p className="text-xs text-gray-600 truncate">
+                        <p className="text-xs text-gray-300 truncate">
                           {completedHours}h{plannedHours > 0 ? ` +${plannedHours}h` : ''}
                         </p>
                       </div>

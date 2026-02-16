@@ -6,143 +6,178 @@ import { startOfMonth, endOfMonth, eachDayOfInterval, format, isSameMonth } from
 import { es } from "date-fns/locale";
 
 const memberColors = [
-  "#6366f1", // indigo
-  "#10b981", // green
-  "#f59e0b", // amber
-  "#ef4444", // red
-  "#8b5cf6", // purple
-  "#ec4899", // pink
-  "#14b8a6", // teal
-  "#f97316"  // orange
+  "#6366f1",
+  "#10b981",
+  "#f59e0b",
+  "#ef4444",
+  "#8b5cf6",
+  "#ec4899",
+  "#14b8a6",
+  "#f97316"
 ];
 
-// Custom dot component with member image
-const CustomDot = ({ cx, cy, payload, memberImage, memberName, memberColor }) => {
+const CustomDot = ({ cx, cy, index, lastVisibleIndex, memberImage, memberName, memberColor }) => {
+  if (index !== lastVisibleIndex) return null;
+
   if (!memberImage) {
-    return <circle cx={cx} cy={cy} r={4} fill={memberColor} stroke="#fff" strokeWidth={2} />;
+    return (
+      <g>
+        <circle cx={cx} cy={cy} r={6} fill={memberColor} stroke="#fff" strokeWidth={2} />
+        <text x={cx + 12} y={cy + 4} fill="#fff" fontSize="11" fontWeight="700">{memberName}</text>
+      </g>
+    );
   }
-  
+
   return (
     <g>
       <defs>
         <clipPath id={`clip-${memberName}-${cx}-${cy}`}>
-          <circle cx={cx} cy={cy} r={6} />
+          <circle cx={cx} cy={cy} r={9} />
         </clipPath>
       </defs>
-      <circle cx={cx} cy={cy} r={7} fill="#fff" />
+      <circle cx={cx} cy={cy} r={10} fill="#fff" />
       <image
-        x={cx - 6}
-        y={cy - 6}
-        width={12}
-        height={12}
+        x={cx - 9}
+        y={cy - 9}
+        width={18}
+        height={18}
         href={memberImage}
         clipPath={`url(#clip-${memberName}-${cx}-${cy})`}
         preserveAspectRatio="xMidYMid slice"
       />
+      <rect x={cx + 12} y={cy - 10} rx="8" ry="8" width="78" height="20" fill="rgba(17,19,26,0.9)" stroke="rgba(255,255,255,0.2)" />
+      <text x={cx + 20} y={cy + 4} fill="#fff" fontSize="11" fontWeight="700">{memberName}</text>
     </g>
+  );
+};
+
+const CustomTooltip = ({ active, payload, label, membersMap }) => {
+  if (!active || !payload?.length) return null;
+
+  return (
+    <div className="bg-[#11131a]/95 border border-white/15 rounded-xl p-3 shadow-xl min-w-[200px]">
+      <p className="text-xs text-gray-300 mb-2">{label}</p>
+      <div className="space-y-2">
+        {payload
+          .filter((entry) => entry.value !== null && !String(entry.dataKey).includes("_planned"))
+          .map((entry) => {
+            const member = membersMap.get(entry.name);
+            return (
+              <div key={entry.dataKey} className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  {member?.profile_image ? (
+                    <img
+                      src={member.profile_image}
+                      alt={member.name}
+                      className="w-6 h-6 rounded-full object-cover border border-white/20"
+                    />
+                  ) : (
+                    <div className="w-6 h-6 rounded-full bg-white/10 border border-white/20 text-white text-xs font-bold flex items-center justify-center">
+                      {member?.name?.charAt(0)?.toUpperCase() || "?"}
+                    </div>
+                  )}
+                  <span className="text-sm text-white">{entry.name}</span>
+                </div>
+                <span className="text-sm font-semibold" style={{ color: entry.color }}>
+                  {entry.value} h
+                </span>
+              </div>
+            );
+          })}
+      </div>
+    </div>
   );
 };
 
 export default function MonthlyTeamChart({ members, activities, currentDate = new Date() }) {
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
-  
-  // Obtener todos los días del mes
   const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
-  
   const isCurrentMonth = isSameMonth(currentDate, new Date());
 
-  // Crear datos para la gráfica
-  const chartData = days.map(day => {
+  const membersMap = React.useMemo(() => new Map(members.map((member) => [member.name, member])), [members]);
+
+  const getLastVisibleIndex = (dataKey) => {
+    for (let i = chartData.length - 1; i >= 0; i -= 1) {
+      if (chartData[i][dataKey] !== null && chartData[i][dataKey] !== undefined) {
+        return i;
+      }
+    }
+    return -1;
+  };
+
+  const chartData = days.map((day) => {
     const dataPoint = {
       date: format(day, "d MMM", { locale: es })
     };
-    
+
     const isFuture = day > new Date();
-    
-    members.forEach(member => {
-      // Horas completadas acumuladas hasta este día
-      const completedActivities = activities.filter(a => 
+
+    members.forEach((member) => {
+      const completedActivities = activities.filter((a) =>
         a.user_email === member.email &&
-        a.status === 'completed' &&
+        a.status === "completed" &&
         new Date(a.date) >= monthStart &&
         new Date(a.date) <= day
       );
-      
-      const completedHours = completedActivities.reduce((sum, a) => 
-        sum + (a.duration_minutes / 60), 0
-      );
-      
+
+      const completedHours = completedActivities.reduce((sum, a) => sum + a.duration_minutes / 60, 0);
       const isDateFuture = isCurrentMonth && isFuture;
 
-      // Para hoy y días anteriores, mostrar horas completadas solo si hay actividad
       if (!isDateFuture) {
-        if (completedHours > 0) {
-          dataPoint[member.name] = parseFloat(completedHours.toFixed(1));
-        } else {
-          dataPoint[member.name] = null;
-        }
+        dataPoint[member.name] = completedHours > 0 ? parseFloat(completedHours.toFixed(1)) : null;
         dataPoint[`${member.name}_planned`] = null;
       } else {
-        // Para días futuros, mostrar línea planificada desde hoy
-        const plannedActivities = activities.filter(a => 
+        const plannedActivities = activities.filter((a) =>
           a.user_email === member.email &&
-          a.status === 'planned' &&
+          a.status === "planned" &&
           new Date(a.date) >= monthStart &&
           new Date(a.date) <= day
         );
-        
-        const plannedHours = plannedActivities.reduce((sum, a) => 
-          sum + (a.duration_minutes / 60), 0
-        );
-        
-        // Sumar horas completadas hasta hoy + horas planificadas hasta este día futuro
-        const completedUntilToday = activities.filter(a => 
-          a.user_email === member.email &&
-          a.status === 'completed' &&
-          new Date(a.date) >= monthStart &&
-          new Date(a.date) <= (isCurrentMonth ? new Date() : monthEnd)
-        ).reduce((sum, a) => sum + (a.duration_minutes / 60), 0);
-        
+
+        const plannedHours = plannedActivities.reduce((sum, a) => sum + a.duration_minutes / 60, 0);
+
+        const completedUntilToday = activities
+          .filter((a) =>
+            a.user_email === member.email &&
+            a.status === "completed" &&
+            new Date(a.date) >= monthStart &&
+            new Date(a.date) <= (isCurrentMonth ? new Date() : monthEnd)
+          )
+          .reduce((sum, a) => sum + a.duration_minutes / 60, 0);
+
         dataPoint[member.name] = null;
         dataPoint[`${member.name}_planned`] = parseFloat((completedUntilToday + plannedHours).toFixed(1));
       }
     });
-    
+
     return dataPoint;
   });
 
+  const memberLastIndexes = Object.fromEntries(
+    members.map((member) => [member.name, getLastVisibleIndex(member.name)])
+  );
+
   return (
-    <Card className="backdrop-blur-xl bg-white/80 border-2 border-gray-200 shadow-xl">
-      <CardHeader className="bg-gradient-to-r from-gray-50 to-gray-100 border-b-2 border-gray-200">
-        <CardTitle className="flex items-center gap-3 text-xl">
-          <TrendingUp className="w-6 h-6 text-gray-700" strokeWidth={2.5} />
+    <Card className="backdrop-blur-xl bg-[#11131a]/80 border border-white/15 shadow-xl">
+      <CardHeader className="bg-gradient-to-r from-white/5 to-white/10 border-b border-white/10">
+        <CardTitle className="flex items-center gap-3 text-xl text-white">
+          <TrendingUp className="w-6 h-6 text-white" strokeWidth={2.5} />
           Evolución Mensual del Equipo
         </CardTitle>
       </CardHeader>
       <CardContent className="p-6">
         <ResponsiveContainer width="100%" height={400}>
           <LineChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-            <XAxis 
-              dataKey="date" 
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.12)" />
+            <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#cbd5e1" }} stroke="rgba(255,255,255,0.35)" />
+            <YAxis
               tick={{ fontSize: 11 }}
-              stroke="#6b7280"
+              stroke="rgba(255,255,255,0.35)"
+              label={{ value: "Horas", angle: -90, position: "insideLeft", style: { fontSize: 11, fill: "#cbd5e1" } }}
             />
-            <YAxis 
-              tick={{ fontSize: 11 }}
-              stroke="#6b7280"
-              label={{ value: 'Horas', angle: -90, position: 'insideLeft', style: { fontSize: 11 } }}
-            />
-            <Tooltip 
-              contentStyle={{ 
-                backgroundColor: 'rgba(255,255,255,0.95)',
-                border: '1px solid #e5e7eb',
-                borderRadius: 8,
-                fontSize: 12
-              }}
-            />
-            <Legend wrapperStyle={{ fontSize: 14, paddingTop: 10 }} />
+            <Tooltip content={<CustomTooltip membersMap={membersMap} />} />
+            <Legend wrapperStyle={{ fontSize: 14, paddingTop: 10, color: "#e2e8f0" }} />
             {members.map((member, index) => (
               <Line
                 key={member.id}
@@ -151,21 +186,22 @@ export default function MonthlyTeamChart({ members, activities, currentDate = ne
                 stroke={memberColors[index % memberColors.length]}
                 strokeWidth={2.5}
                 dot={(props) => (
-                  <CustomDot 
-                    {...props} 
+                  <CustomDot
+                    {...props}
                     memberImage={member.profile_image}
                     memberName={member.name}
                     memberColor={memberColors[index % memberColors.length]}
+                    lastVisibleIndex={memberLastIndexes[member.name]}
                   />
                 )}
                 activeDot={{ r: 6 }}
-                connectNulls={true}
+                connectNulls
                 name={member.name}
               />
             ))}
           </LineChart>
         </ResponsiveContainer>
-        <p className="text-xs text-gray-500 text-center mt-4">
+        <p className="text-xs text-gray-300 text-center mt-4">
           Horas acumuladas de actividad durante {format(currentDate, "MMMM yyyy", { locale: es })}
         </p>
       </CardContent>
