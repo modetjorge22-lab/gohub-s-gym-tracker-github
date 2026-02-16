@@ -9,6 +9,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import OlympiaLoadingScreen from '@/components/OlympiaLoadingScreen';
+import Landing from './pages/Landing';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -19,13 +20,13 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout
   : <>{children}</>;
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+  const { isLoadingAuth, isLoadingPublicSettings, authError } = useAuth();
   const [showStartupLoader, setShowStartupLoader] = React.useState(true);
 
   React.useEffect(() => {
     let timer;
     if (!isLoadingPublicSettings && !isLoadingAuth && !authError) {
-      timer = setTimeout(() => setShowStartupLoader(false), 1800);
+      timer = setTimeout(() => setShowStartupLoader(false), 1400);
     }
     return () => {
       if (timer) clearTimeout(timer);
@@ -36,15 +37,14 @@ const AuthenticatedApp = () => {
     return <OlympiaLoadingScreen />;
   }
 
-  if (authError) {
-    if (authError.type === 'user_not_registered') {
-      return <UserNotRegisteredError />;
-    }
+  if (authError?.type === 'user_not_registered') {
+    return <UserNotRegisteredError />;
+  }
 
-    if (authError.type === 'auth_required') {
-      navigateToLogin();
-      return <OlympiaLoadingScreen />;
-    }
+  // Important UX: for unauthenticated users we keep them in-app on Landing,
+  // where they can click Google login without popup-driven flows.
+  if (authError?.type === 'auth_required') {
+    return <Landing />;
   }
 
   return (
