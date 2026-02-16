@@ -87,8 +87,9 @@ export default function Layout({ children, currentPageName }) {
 
   const navItems = [
     { name: "Equipo", path: createPageUrl("Dashboard"), icon: Users },
+    { name: "Feed", path: createPageUrl("Feed"), icon: Newspaper },
     { name: "Mi actividad", path: createPageUrl("MyActivity"), icon: User },
-    { name: "Grupos", path: createPageUrl("Groups"), icon: Newspaper },
+    { name: "Grupos", path: createPageUrl("Groups"), icon: Activity },
   ];
 
   const isLanding = location.pathname.includes("Landing");
