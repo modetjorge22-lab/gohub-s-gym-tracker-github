@@ -567,7 +567,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                               a => a.activity_type === plan.activity_type && a.status === 'completed'
                             ).length;
                             return (
-                              <span key={idx} className="text-[10px] bg-white px-2 py-0.5 rounded-full border text-gray-600">
+                              <span key={idx} className="text-[10px] bg-white/10 px-2 py-0.5 rounded-full border border-white/10 text-white/70">
                                 {activityEmojis[plan.activity_type]} {planActivitiesCompleted}/{plan.weekly_target}
                               </span>
                             );
@@ -575,7 +575,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                         </div>
                       )}
                       {memberPlans.length === 0 && (
-                        <div className="text-xs text-gray-500 mt-2">
+                        <div className="text-xs text-white/40 mt-2">
                           Clic para configurar tu plan
                         </div>
                       )}
