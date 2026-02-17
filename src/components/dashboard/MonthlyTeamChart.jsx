@@ -210,8 +210,8 @@ export default function MonthlyTeamChart({ members, activities, currentDate = ne
             ))}
           </LineChart>
         </ResponsiveContainer>
-        <p className="text-xs text-gray-300 text-center mt-4">
-          Horas acumuladas de actividad durante {format(currentDate, "MMMM yyyy", { locale: es })}
+        <p className="text-xs text-gray-400 text-center mt-2">
+          Horas acumuladas · {format(currentDate, "MMMM yyyy", { locale: es })}
         </p>
       </CardContent>
     </Card>
