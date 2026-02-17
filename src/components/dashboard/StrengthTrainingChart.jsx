@@ -71,7 +71,7 @@ export default function StrengthTrainingChart({ activities, userEmail }) {
       </CardHeader>
       <CardContent className="p-3 md:p-6">
         <ResponsiveContainer width="100%" height={180}>
-          <BarChart data={weeks} margin={{ top: 8, right: 8, left: -14, bottom: 0 }} barCategoryGap="30%">
+          <BarChart data={weeks} margin={{ top: 8, right: 8, left: -14, bottom: 0 }} barCategoryGap="20%" barGap={2}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
             <XAxis
               dataKey="label"
