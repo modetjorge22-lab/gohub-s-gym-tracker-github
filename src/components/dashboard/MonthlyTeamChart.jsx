@@ -211,7 +211,7 @@ export default function MonthlyTeamChart({ members, activities, currentDate = ne
                     memberName={member.name}
                     memberColor={memberColors[index % memberColors.length]}
                     lastVisibleIndex={memberLastIndexes[member.name]}
-                    chartWidth={chartWidth}
+                    memberIndex={index}
                   />
                 )}
                 activeDot={{ r: 6 }}
