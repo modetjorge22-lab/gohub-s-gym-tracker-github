@@ -20,8 +20,6 @@ export default function Dashboard() {
   const dateParam = searchParams.get('date');
   const currentDate = dateParam ? new Date(dateParam) : new Date();
 
-  const [showChart, setShowChart] = React.useState(false);
-
   const { data: allMembers, isLoading: loadingMembers } = useQuery({
     queryKey: ['team-members'],
     queryFn: () => base44.entities.TeamMember.list(),
@@ -37,16 +35,6 @@ export default function Dashboard() {
     initialData: [],
   });
 
-  React.useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 100) {
-        setShowChart(true);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const getWeeklyStats = () => {
     // If looking at past months, calculate stats for the first week of that month or similar?
@@ -110,11 +98,21 @@ export default function Dashboard() {
   const weeklyStats = getWeeklyStats();
 
   return (
-    <div className="max-w-7xl mx-auto px-3 md:px-6 py-4 md:py-8">
+    <div className="max-w-7xl mx-auto px-3 md:px-6 py-4 md:py-8 text-white">
+      <div className="mb-8 mt-2">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96, y: 16 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: "easeOut" }}
+        >
+          <MonthlyTeamChart members={members} activities={activities} currentDate={currentDate} />
+        </motion.div>
+      </div>
+
       <WeeklyWrap members={members} activities={activities} />
-      
+
       {/* Month Navigator - Mobile Only */}
-      <div className="md:hidden mb-4 flex items-center justify-center gap-2 bg-white/60 backdrop-blur-sm rounded-full px-3 py-2 border border-gray-200 shadow-sm w-fit mx-auto">
+      <div className="md:hidden mb-4 flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-2 border border-white/15 shadow-sm w-fit mx-auto">
         <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => {
           const newDate = new Date(currentDate);
           newDate.setMonth(newDate.getMonth() - 1);
@@ -125,7 +123,7 @@ export default function Dashboard() {
         }}>
           <ChevronLeft className="w-4 h-4" />
         </Button>
-        <span className="text-sm font-semibold text-gray-800 min-w-[120px] text-center capitalize">
+        <span className="text-sm font-semibold text-white min-w-[120px] text-center capitalize">
           {format(currentDate, 'MMMM yyyy', { locale: es })}
         </span>
         <Button 
@@ -147,7 +145,7 @@ export default function Dashboard() {
 
       {/* Miembros del Equipo - Primero */}
       <div className="mb-3 md:mb-4">
-        <h3 className="text-lg md:text-xl font-bold text-gray-900">Miembros del Equipo</h3>
+        <h3 className="text-lg md:text-xl font-bold text-white">Miembros del Equipo</h3>
       </div>
 
       <TeamOverview stats={weeklyStats} activities={activities} currentDate={currentDate} />

@@ -83,6 +83,17 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    background-color: #0B0B0F;
+    background-image:
+      radial-gradient(circle at center, rgba(120, 119, 198, 0.2), transparent 45%),
+      radial-gradient(circle at 30% 20%, rgba(59, 130, 246, 0.14), transparent 35%),
+      radial-gradient(circle at 70% 80%, rgba(16, 185, 129, 0.12), transparent 35%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  #root {
+    min-height: 100vh;
   }
 }
