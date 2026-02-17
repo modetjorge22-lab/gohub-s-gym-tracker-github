@@ -164,7 +164,7 @@ export default function MonthlyTeamChart({ members, activities, currentDate = ne
       <CardHeader className="bg-gradient-to-r from-white/5 to-white/10 border-b border-white/10">
         <CardTitle className="flex items-center gap-3 text-xl text-white">
           <TrendingUp className="w-6 h-6 text-white" strokeWidth={2.5} />
-          Evolución Mensual del Equipo
+          Carrera mensual
         </CardTitle>
       </CardHeader>
       <CardContent className="p-3 md:p-6">
