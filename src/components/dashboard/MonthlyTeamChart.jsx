@@ -16,37 +16,63 @@ const memberColors = [
   "#f97316"
 ];
 
-const CustomDot = ({ cx, cy, index, lastVisibleIndex, memberImage, memberName, memberColor }) => {
+const LABEL_W = 72;
+const LABEL_H = 22;
+
+const CustomDot = ({ cx, cy, index, lastVisibleIndex, memberImage, memberName, memberColor, chartWidth }) => {
   if (index !== lastVisibleIndex) return null;
 
-  if (!memberImage) {
-    return (
-      <g>
-        <circle cx={cx} cy={cy} r={6} fill={memberColor} stroke="#fff" strokeWidth={2} />
-        <text x={cx + 12} y={cy + 4} fill="#fff" fontSize="11" fontWeight="700">{memberName}</text>
-      </g>
-    );
-  }
+  // Flip label to the left if it would overflow the right edge
+  const overflows = chartWidth && cx + 16 + LABEL_W > chartWidth;
+  const labelX = overflows ? cx - 16 - LABEL_W : cx + 16;
+  const labelY = cy - LABEL_H / 2;
+  const firstName = memberName.split(" ")[0];
 
   return (
     <g>
-      <defs>
-        <clipPath id={`clip-${memberName}-${cx}-${cy}`}>
-          <circle cx={cx} cy={cy} r={9} />
-        </clipPath>
-      </defs>
-      <circle cx={cx} cy={cy} r={10} fill="#fff" />
-      <image
-        x={cx - 9}
-        y={cy - 9}
-        width={18}
-        height={18}
-        href={memberImage}
-        clipPath={`url(#clip-${memberName}-${cx}-${cy})`}
-        preserveAspectRatio="xMidYMid slice"
+      {/* Dot */}
+      <circle cx={cx} cy={cy} r={5} fill={memberColor} stroke="rgba(255,255,255,0.8)" strokeWidth={1.5} />
+
+      {/* Pill label */}
+      <rect
+        x={labelX}
+        y={labelY}
+        width={LABEL_W}
+        height={LABEL_H}
+        rx={11}
+        fill="rgba(17,19,26,0.88)"
+        stroke={memberColor}
+        strokeWidth={1.2}
       />
-      <rect x={cx + 12} y={cy - 10} rx="8" ry="8" width="78" height="20" fill="rgba(17,19,26,0.9)" stroke="rgba(255,255,255,0.2)" />
-      <text x={cx + 20} y={cy + 4} fill="#fff" fontSize="11" fontWeight="700">{memberName}</text>
+
+      {memberImage ? (
+        <>
+          <defs>
+            <clipPath id={`lbl-clip-${memberName}`}>
+              <circle cx={labelX + 11} cy={labelY + 11} r={9} />
+            </clipPath>
+          </defs>
+          <circle cx={labelX + 11} cy={labelY + 11} r={9} fill={memberColor} />
+          <image
+            x={labelX + 2}
+            y={labelY + 2}
+            width={18}
+            height={18}
+            href={memberImage}
+            clipPath={`url(#lbl-clip-${memberName})`}
+            preserveAspectRatio="xMidYMid slice"
+          />
+          <text x={labelX + 24} y={labelY + 14} fill="#fff" fontSize="11" fontWeight="700">{firstName}</text>
+        </>
+      ) : (
+        <>
+          <circle cx={labelX + 11} cy={labelY + 11} r={9} fill={memberColor} />
+          <text x={labelX + 11} y={labelY + 15} fill="#fff" fontSize="10" fontWeight="800" textAnchor="middle">
+            {memberName.charAt(0).toUpperCase()}
+          </text>
+          <text x={labelX + 24} y={labelY + 14} fill="#fff" fontSize="11" fontWeight="700">{firstName}</text>
+        </>
+      )}
     </g>
   );
 };
