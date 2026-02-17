@@ -100,7 +100,7 @@ const CustomTooltip = ({ active, payload, label, membersMap }) => {
 };
 
 export default function MonthlyTeamChart({ members, activities, currentDate = new Date() }) {
-  const [chartWidth, setChartWidth] = React.useState(0);
+  const [chartWidth, setChartWidth] = React.useState(0); // kept for onResize
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
   const isCurrentMonth = isSameMonth(currentDate, new Date());
