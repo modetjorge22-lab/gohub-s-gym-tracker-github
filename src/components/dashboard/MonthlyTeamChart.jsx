@@ -167,15 +167,23 @@ export default function MonthlyTeamChart({ members, activities, currentDate = ne
           Evolución Mensual del Equipo
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-6">
-        <ResponsiveContainer width="100%" height={400}>
-          <LineChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.12)" />
-            <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#cbd5e1" }} stroke="rgba(255,255,255,0.35)" />
+      <CardContent className="p-3 md:p-6">
+        <ResponsiveContainer width="100%" height={220}>
+          <LineChart data={chartData} margin={{ top: 8, right: 16, left: -10, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" vertical={false} />
+            <XAxis
+              dataKey="date"
+              tick={{ fontSize: 10, fill: "#94a3b8" }}
+              stroke="rgba(255,255,255,0.15)"
+              interval={Math.floor(chartData.length / 5)}
+              tickLine={false}
+            />
             <YAxis
-              tick={{ fontSize: 11 }}
-              stroke="rgba(255,255,255,0.35)"
-              label={{ value: "Horas", angle: -90, position: "insideLeft", style: { fontSize: 11, fill: "#cbd5e1" } }}
+              tick={{ fontSize: 10, fill: "#94a3b8" }}
+              stroke="rgba(255,255,255,0.15)"
+              tickLine={false}
+              axisLine={false}
+              width={28}
             />
             <Tooltip content={<CustomTooltip membersMap={membersMap} />} />
             <Legend wrapperStyle={{ fontSize: 14, paddingTop: 10, color: "#e2e8f0" }} />
