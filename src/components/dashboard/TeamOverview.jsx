@@ -582,10 +582,10 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                     </div>
 
                     {/* Fun Fact */}
-                    <div className="bg-gradient-to-br from-purple-50/80 to-indigo-50/80 backdrop-blur-sm rounded-xl p-3 border border-purple-200/50">
+                    <div className="bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10">
                       <div className="flex items-center gap-2 text-sm">
-                        <Sparkles className="w-4 h-4 text-purple-500" />
-                        <span className="text-gray-700 font-medium">{funFact}</span>
+                        <Sparkles className="w-4 h-4 text-purple-400" />
+                        <span className="text-white/70 font-medium">{funFact}</span>
                       </div>
                     </div>
 
