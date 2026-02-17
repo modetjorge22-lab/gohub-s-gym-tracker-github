@@ -80,8 +80,9 @@ export default function MyActivity() {
         <h3 className="text-lg md:text-xl font-bold text-white">Mi actividad</h3>
       </div>
 
-      <div className="mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
         <TrainingLoad activities={activities} userEmail={myMember.email} />
+        <StrengthTrainingChart activities={activities} userEmail={myMember.email} />
       </div>
 
       <TeamOverview
