@@ -18,7 +18,7 @@ const memberColors = [
 
 
 
-const CustomTooltip = ({ active, payload, label, membersMap }) => {
+const CustomTooltip = ({ active, payload, label, membersMap, memberColors: colors }) => {
   if (!active || !payload?.length) return null;
 
   return (
