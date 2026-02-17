@@ -545,14 +545,14 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                     >
                       <div className="flex justify-between items-center mb-2">
                         <div className="flex items-center gap-1">
-                          <span className="text-xs text-gray-600 font-semibold">Plan Semanal</span>
-                          <Settings className="w-3 h-3 text-gray-400" />
+                          <span className="text-xs text-white/70 font-semibold">Plan Semanal</span>
+                          <Settings className="w-3 h-3 text-white/40" />
                         </div>
-                        <span className="text-sm font-bold text-gray-900">
+                        <span className="text-sm font-bold text-white">
                           {completedPlannedActivities}/{totalPlannedActivities}
                         </span>
                       </div>
-                      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="h-2 bg-white/10 rounded-full overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${Math.min(planCompletionPercentage, 100)}%` }}
