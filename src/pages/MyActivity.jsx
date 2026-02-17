@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { startOfWeek, endOfWeek, isWithinInterval, getDay } from "date-fns";
 import TeamOverview from "@/components/dashboard/TeamOverview";
 import TrainingLoad from "@/components/dashboard/TrainingLoad";
+import StrengthTrainingChart from "@/components/dashboard/StrengthTrainingChart";
 
 export default function MyActivity() {
   const { data: user } = useQuery({
