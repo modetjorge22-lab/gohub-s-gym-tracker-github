@@ -18,39 +18,29 @@ const memberColors = [
 
 
 
-const CustomTooltip = ({ active, payload, label, membersMap, memberColors: colors }) => {
+const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
 
+  const filtered = payload.filter(
+    (entry) => entry.value !== null && !String(entry.dataKey).includes("_planned")
+  );
+  if (!filtered.length) return null;
+
   return (
-    <div className="bg-[#11131a]/95 border border-white/15 rounded-xl p-3 shadow-xl min-w-[200px]">
-      <p className="text-xs text-gray-300 mb-2">{label}</p>
-      <div className="space-y-2">
-        {payload
-          .filter((entry) => entry.value !== null && !String(entry.dataKey).includes("_planned"))
-          .map((entry) => {
-            const member = membersMap.get(entry.name);
-            return (
-              <div key={entry.dataKey} className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                  {member?.profile_image ? (
-                    <img
-                      src={member.profile_image}
-                      alt={member.name}
-                      className="w-6 h-6 rounded-full object-cover border border-white/20"
-                    />
-                  ) : (
-                    <div className="w-6 h-6 rounded-full bg-white/10 border border-white/20 text-white text-xs font-bold flex items-center justify-center">
-                      {member?.name?.charAt(0)?.toUpperCase() || "?"}
-                    </div>
-                  )}
-                  <span className="text-sm text-white">{entry.name}</span>
-                </div>
-                <span className="text-sm font-semibold" style={{ color: entry.color }}>
-                  {entry.value} h
-                </span>
-              </div>
-            );
-          })}
+    <div className="bg-[#11131a]/95 border border-white/15 rounded-xl px-3 py-2 shadow-xl">
+      <p className="text-[10px] text-gray-400 mb-1.5">{label}</p>
+      <div className="space-y-1.5">
+        {filtered.map((entry) => (
+          <div key={entry.dataKey} className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: entry.color }} />
+              <span className="text-xs text-white font-medium">{entry.name}</span>
+            </div>
+            <span className="text-xs font-bold" style={{ color: entry.color }}>
+              {entry.value} h
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   );
