@@ -18,24 +18,33 @@ const memberColors = [
 
 const AVATAR_R = 11;
 
-const CustomDot = ({ cx, cy, index, lastVisibleIndex, memberImage, memberName, memberColor }) => {
+// avatarOffsets: alternating above/below per member index to avoid overlaps
+const CustomDot = ({ cx, cy, index, lastVisibleIndex, memberImage, memberName, memberColor, memberIndex }) => {
   if (index !== lastVisibleIndex) return null;
+
+  // Alternate: even members → label above, odd → label below
+  const above = memberIndex % 2 === 0;
+  const offset = AVATAR_R + 8;
+  const avatarCy = above ? cy - offset : cy + offset;
 
   return (
     <g>
+      {/* Dot on the line */}
       <circle cx={cx} cy={cy} r={5} fill={memberColor} stroke="rgba(255,255,255,0.8)" strokeWidth={1.5} />
-      {/* Avatar circle only */}
-      <circle cx={cx + 16 + AVATAR_R} cy={cy} r={AVATAR_R + 1.5} fill={memberColor} />
+      {/* Connector line */}
+      <line x1={cx} y1={cy} x2={cx} y2={avatarCy} stroke={memberColor} strokeWidth={1.2} strokeDasharray="3 2" strokeOpacity={0.6} />
+      {/* Avatar border */}
+      <circle cx={cx} cy={avatarCy} r={AVATAR_R + 1.5} fill={memberColor} />
       {memberImage ? (
         <>
           <defs>
             <clipPath id={`lbl-clip-${memberName}`}>
-              <circle cx={cx + 16 + AVATAR_R} cy={cy} r={AVATAR_R} />
+              <circle cx={cx} cy={avatarCy} r={AVATAR_R} />
             </clipPath>
           </defs>
           <image
-            x={cx + 16 + AVATAR_R - AVATAR_R}
-            y={cy - AVATAR_R}
+            x={cx - AVATAR_R}
+            y={avatarCy - AVATAR_R}
             width={AVATAR_R * 2}
             height={AVATAR_R * 2}
             href={memberImage}
@@ -44,7 +53,7 @@ const CustomDot = ({ cx, cy, index, lastVisibleIndex, memberImage, memberName, m
           />
         </>
       ) : (
-        <text x={cx + 16 + AVATAR_R} y={cy + 4} fill="#fff" fontSize="11" fontWeight="800" textAnchor="middle">
+        <text x={cx} y={avatarCy + 4} fill="#fff" fontSize="11" fontWeight="800" textAnchor="middle">
           {memberName.charAt(0).toUpperCase()}
         </text>
       )}
