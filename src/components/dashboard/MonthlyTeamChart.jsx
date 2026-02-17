@@ -163,15 +163,15 @@ export default function MonthlyTeamChart({ members, activities, currentDate = ne
 
   return (
     <Card className="backdrop-blur-xl bg-[#11131a]/80 border border-white/15 shadow-xl">
-      <CardHeader className="bg-gradient-to-r from-white/5 to-white/10 border-b border-white/10">
-        <CardTitle className="flex items-center gap-3 text-xl text-white">
-          <TrendingUp className="w-6 h-6 text-white" strokeWidth={2.5} />
+      <CardHeader className="bg-gradient-to-r from-white/5 to-white/10 border-b border-white/10 py-3 px-4 md:px-6">
+        <CardTitle className="flex items-center gap-2 text-base text-white">
+          <TrendingUp className="w-4 h-4 text-white" strokeWidth={2.5} />
           Carrera mensual
         </CardTitle>
       </CardHeader>
       <CardContent className="p-3 md:p-6">
-        <ResponsiveContainer width="100%" height={220} onResize={(w) => setChartWidth(w)}>
-          <LineChart data={chartData} margin={{ top: 8, right: 80, left: -10, bottom: 0 }}>
+        <ResponsiveContainer width="100%" height={200} onResize={(w) => setChartWidth(w)}>
+          <LineChart data={chartData} margin={{ top: 8, right: 36, left: -10, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" vertical={false} />
             <XAxis
               dataKey="date"
