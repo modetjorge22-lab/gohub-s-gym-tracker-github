@@ -186,7 +186,6 @@ export default function MonthlyTeamChart({ members, activities, currentDate = ne
               width={28}
             />
             <Tooltip content={<CustomTooltip membersMap={membersMap} />} />
-            <Legend wrapperStyle={{ fontSize: 14, paddingTop: 10, color: "#e2e8f0" }} />
             {members.map((member, index) => (
               <Line
                 key={member.id}
