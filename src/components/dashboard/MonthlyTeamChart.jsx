@@ -16,52 +16,7 @@ const memberColors = [
   "#f97316"
 ];
 
-const TAG_H = 16;
-const TAG_PADDING = 6;
 
-const CustomDot = ({ cx, cy, index, lastVisibleIndex, memberName, memberColor, memberIndex }) => {
-  if (index !== lastVisibleIndex) return null;
-
-  const firstName = memberName.split(" ")[0];
-  const charWidth = 6.5;
-  const tagW = firstName.length * charWidth + TAG_PADDING * 2;
-
-  const above = memberIndex % 2 === 0;
-  const offset = TAG_H + 6;
-  const tagCy = above ? cy - offset : cy + offset;
-
-  return (
-    <g>
-      {/* Dot */}
-      <circle cx={cx} cy={cy} r={4} fill={memberColor} stroke="rgba(255,255,255,0.9)" strokeWidth={1.5} />
-      {/* Connector */}
-      <line x1={cx} y1={cy} x2={cx} y2={tagCy + (above ? TAG_H / 2 : -TAG_H / 2)} stroke={memberColor} strokeWidth={1} strokeDasharray="3 2" strokeOpacity={0.5} />
-      {/* Pill background */}
-      <rect
-        x={cx - tagW / 2}
-        y={tagCy - TAG_H / 2}
-        width={tagW}
-        height={TAG_H}
-        rx={TAG_H / 2}
-        fill={memberColor}
-        fillOpacity={0.9}
-      />
-      {/* Name */}
-      <text
-        x={cx}
-        y={tagCy + 4.5}
-        fill="#fff"
-        fontSize="9"
-        fontWeight="700"
-        textAnchor="middle"
-        letterSpacing="0.3"
-        style={{ fontFamily: "system-ui, sans-serif" }}
-      >
-        {firstName}
-      </text>
-    </g>
-  );
-};
 
 const CustomTooltip = ({ active, payload, label, membersMap }) => {
   if (!active || !payload?.length) return null;
