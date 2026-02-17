@@ -609,8 +609,8 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <span className="text-base">💊</span>
-                            <p className="text-xs text-gray-600 font-semibold">Suplementos</p>
-                            <span className="text-sm font-bold text-gray-900">
+                            <p className="text-xs text-white/70 font-semibold">Suplementos</p>
+                            <span className="text-sm font-bold text-white">
                               {todaySupplements.taken}/{todaySupplements.total}
                             </span>
                             {todaySupplements.allTaken && todaySupplements.total > 0 && (
