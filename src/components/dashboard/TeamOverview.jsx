@@ -628,7 +628,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                           )}
                         </div>
                         {todaySupplements.total > 0 && (
-                          <div className="h-2 bg-gray-200 rounded-full overflow-hidden mt-2">
+                          <div className="h-2 bg-white/10 rounded-full overflow-hidden mt-2">
                             <motion.div
                               initial={{ width: 0 }}
                               animate={{ width: `${(todaySupplements.taken / todaySupplements.total) * 100}%` }}
