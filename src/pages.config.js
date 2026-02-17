@@ -59,6 +59,7 @@ import Workouts from './pages/Workouts';
 import Dashboard from './pages/Dashboard';
 import Groups from './pages/Groups';
 import Landing from './pages/Landing';
+import Feed from './pages/Feed';
 import __Layout from './Layout.jsx';
 
 
@@ -75,6 +76,7 @@ export const PAGES = {
     "Dashboard": Dashboard,
     "Groups": Groups,
     "Landing": Landing,
+    "Feed": Feed,
 }
 
 export const pagesConfig = {
