@@ -196,7 +196,7 @@ export default function MemberStats({ member, allActivities, teamAverage }) {
         <div>
           <h4 className="text-xs font-bold text-white/60 mb-2 flex items-center gap-2">
             <TrendingUp className="w-3 h-3" />
-            Horas vs Media del Equipo
+            Ritmo vs Media del Equipo
           </h4>
           <ResponsiveContainer width="100%" height={130}>
             <LineChart data={weeklyData}>
