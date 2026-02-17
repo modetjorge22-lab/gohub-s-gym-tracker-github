@@ -55,9 +55,8 @@ export default function Landing() {
           navigate(createPageUrl("Feed"));
         }
       }
-      setAutoLoginAttempted(true);
     }
-  }, [groups, isLoading, autoLoginAttempted, navigate]);
+  }, [currentUser, navigate]);
 
   React.useEffect(() => {
     const activeGroupId = sessionStorage.getItem("base44_group_id");

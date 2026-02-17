@@ -101,7 +101,7 @@ export default function Layout({ children, currentPageName }) {
         <div className="backdrop-blur-xl bg-[#11131a]/65 border border-white/10 rounded-full shadow-xl px-3 md:px-8 py-2 md:py-4 relative">
           <div className="flex items-center justify-between">
             {/* Logo y título */}
-            <div className="flex items-center gap-2 md:gap-4">
+            <div className="flex items-center gap-2 md:gap-3">
               <Link 
                 to={createPageUrl("Landing")}
                 onClick={() => {

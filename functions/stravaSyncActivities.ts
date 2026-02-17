@@ -59,14 +59,15 @@ Deno.serve(async (req) => {
         let imported = 0;
         let updated = 0;
 
-        for (const workout of workouts) {
-            const date = format(new Date(workout.start_date), 'yyyy-MM-dd');
-            const durationMinutes = Math.round(workout.elapsed_time / 60);
+        for (const activity of activities) {
+            const appActivityType = stravaTypeMap[activity.type] || 'other';
+            const date = format(new Date(activity.start_date), 'yyyy-MM-dd');
+            const durationMinutes = Math.round(activity.elapsed_time / 60);
 
-            // Check if there's already a strength training activity on this day
+            // Check if there's already an activity of this type on this day
             const existingOnDay = existingActivities.find(a => 
                 a.date === date && 
-                a.activity_type === 'strength_training'
+                a.activity_type === appActivityType
             );
 
             if (existingOnDay) {
@@ -85,19 +86,19 @@ Deno.serve(async (req) => {
                 await base44.entities.Activity.create({
                     user_email: user.email,
                     user_name: user.full_name,
-                    activity_type: 'strength_training',
+                    activity_type: appActivityType,
                     duration_minutes: durationMinutes,
                     points: durationMinutes,
                     date: date,
                     status: 'completed',
-                    notes: 'Importado desde Strava'
+                    notes: `Importado desde Strava (${activity.name})`
                 });
                 imported++;
             }
         }
 
         return Response.json({ 
-            total: workouts.length,
+            total: activities.length,
             imported,
             updated,
             message: `${imported} nuevos, ${updated} actualizados`
