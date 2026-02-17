@@ -271,41 +271,34 @@ export default function PerformanceAnalysis({ activities, members, currentDate =
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
               >
-                <Card className="backdrop-blur-xl bg-white/80 border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all">
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-2xl">{activityEmojis[metric.type]}</span>
-                          <h4 className="font-bold text-gray-900">{activityLabels[metric.type]}</h4>
-                        </div>
-                        <p className="text-xs text-gray-600">Este mes: {metric.currentMonthCount} actividades</p>
+                <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-lg p-5">
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-2xl">{activityEmojis[metric.type]}</span>
+                        <h4 className="font-bold text-white">{activityLabels[metric.type]}</h4>
                       </div>
-                      <Badge className={metric.pacePercentage >= 100 ? "bg-green-500" : "bg-red-500"}>
-                        Ritmo: {metric.pacePercentage}%
-                      </Badge>
+                      <p className="text-xs text-white/50">Este mes: {metric.currentMonthCount} actividades</p>
                     </div>
-
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Horas este mes</span>
-                        <span className="text-lg font-bold text-gray-900">{metric.currentMonthHours}h</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Mes anterior</span>
-                        <span className="text-sm text-gray-700">{metric.lastMonthHours}h</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Total año</span>
-                        <span className="text-sm text-gray-700">{metric.yearHours}h ({metric.yearCount})</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Intensidad media</span>
-                        <span className="text-sm font-semibold text-gray-900">{metric.avgIntensity}/5</span>
-                      </div>
+                    <Badge className={metric.pacePercentage >= 100 ? "bg-emerald-500 text-white" : "bg-red-500/80 text-white"}>
+                      {metric.pacePercentage}%
+                    </Badge>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-white/60">Horas este mes</span>
+                      <span className="text-lg font-bold text-white">{metric.currentMonthHours}h</span>
                     </div>
-                  </CardContent>
-                </Card>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-white/60">Mes anterior</span>
+                      <span className="text-sm text-white/80">{metric.lastMonthHours}h</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-white/60">Total año</span>
+                      <span className="text-sm text-white/80">{metric.yearHours}h ({metric.yearCount})</span>
+                    </div>
+                  </div>
+                </div>
               </motion.div>
             ))}
           </div>
