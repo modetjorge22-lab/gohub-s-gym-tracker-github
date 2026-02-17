@@ -684,7 +684,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                                   );
                                 })}
                               <button
-                                className="w-full text-xs text-purple-600 hover:text-purple-700 font-semibold py-2 flex items-center justify-center gap-1"
+                                className="w-full text-xs text-purple-400 hover:text-purple-300 font-semibold py-2 flex items-center justify-center gap-1"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setSelectedMember(member);
