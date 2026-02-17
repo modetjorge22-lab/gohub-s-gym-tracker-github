@@ -673,11 +673,11 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                                         className="data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600"
                                       />
                                       <div className="flex-1 min-w-0">
-                                        <p className={`text-sm font-medium ${isTaken ? "text-gray-500 line-through" : "text-gray-900"}`}>
+                                        <p className={`text-sm font-medium ${isTaken ? "text-white/40 line-through" : "text-white"}`}>
                                           {supp.name}
                                         </p>
                                         {supp.dosage && (
-                                          <p className="text-xs text-gray-500">{supp.dosage}</p>
+                                          <p className="text-xs text-white/50">{supp.dosage}</p>
                                         )}
                                       </div>
                                     </div>
