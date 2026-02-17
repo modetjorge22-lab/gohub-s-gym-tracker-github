@@ -200,7 +200,6 @@ export default function Layout({ children, currentPageName }) {
                 <div className="w-8 h-8 bg-gradient-to-br from-gray-900 to-gray-700 rounded-full flex items-center justify-center shadow-lg">
                   <span className="text-white font-bold text-sm">O</span>
                 </div>
-                <span className="text-white font-bold text-sm">{groupName}</span>
               </Link>
 
               {/* Month selector - mobile */}
@@ -216,31 +215,8 @@ export default function Layout({ children, currentPageName }) {
                 </Button>
               </div>
 
-              {/* Settings menu */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="rounded-full text-white hover:bg-white/10 h-8 w-8">
-                    <MoreHorizontal className="w-4 h-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-[#11131a] border border-white/10 text-white">
-                  <DropdownMenuItem asChild className="cursor-pointer">
-                    <Link to={createPageUrl("Settings")} className="flex items-center gap-2">
-                      <Settings className="w-4 h-4" /> Configuración
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="cursor-pointer">
-                    <Link to={createPageUrl("ProfileSettings")} className="flex items-center gap-2">
-                      <User className="w-4 h-4" /> Perfil
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="cursor-pointer">
-                    <Link to={createPageUrl("IntegrationsSettings")} className="flex items-center gap-2">
-                      <Activity className="w-4 h-4" /> Integraciones
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              {/* Spacer to center month selector */}
+              <div className="w-8" />
             </div>
           </header>
 
