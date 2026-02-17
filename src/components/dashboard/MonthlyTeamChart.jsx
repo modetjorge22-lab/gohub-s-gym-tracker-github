@@ -151,16 +151,8 @@ export default function MonthlyTeamChart({ members, activities, currentDate = ne
                 dataKey={member.name}
                 stroke={memberColors[index % memberColors.length]}
                 strokeWidth={2.5}
-                dot={(props) => (
-                  <CustomDot
-                    {...props}
-                    memberName={member.name}
-                    memberColor={memberColors[index % memberColors.length]}
-                    lastVisibleIndex={memberLastIndexes[member.name]}
-                    memberIndex={index}
-                  />
-                )}
-                activeDot={{ r: 6 }}
+                dot={false}
+                activeDot={{ r: 5 }}
                 connectNulls
                 name={member.name}
               />
