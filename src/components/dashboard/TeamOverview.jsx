@@ -702,8 +702,8 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                   </div>
                 </Link>
 
-                {/* Estadísticas Personales (fuera del Link para evitar navegación al hacer clic) */}
-                <div className="mt-3 pt-3 border-t border-gray-200"> {/* Added border-t for visual separation */}
+                {/* Estadísticas Personales */}
+                <div className="mt-3 pt-3 border-t border-white/10">
                   <MemberStats 
                     member={member} 
                     allActivities={activities}
