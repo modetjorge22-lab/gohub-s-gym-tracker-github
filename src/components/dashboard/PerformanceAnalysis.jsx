@@ -359,100 +359,70 @@ export default function PerformanceAnalysis({ activities, members, currentDate =
         <TabsContent value="yearly">
           <div className="grid gap-6">
             <div className="grid md:grid-cols-3 gap-4">
-              <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200">
-                <CardContent className="p-6 text-center">
-                  <Activity className="w-8 h-8 text-blue-600 mx-auto mb-2" />
-                  <p className="text-4xl font-bold text-gray-900">{yearlyReport.totalActivities}</p>
-                  <p className="text-sm text-gray-600">Actividades totales</p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200">
-                <CardContent className="p-6 text-center">
-                  <TrendingUp className="w-8 h-8 text-green-600 mx-auto mb-2" />
-                  <p className="text-4xl font-bold text-gray-900">{yearlyReport.totalHours}h</p>
-                  <p className="text-sm text-gray-600">Horas totales</p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-200">
-                <CardContent className="p-6 text-center">
-                  <Trophy className="w-8 h-8 text-purple-600 mx-auto mb-2" />
-                  <p className="text-4xl font-bold text-gray-900">{yearlyReport.avgIntensity}</p>
-                  <p className="text-sm text-gray-600">Intensidad media</p>
-                </CardContent>
-              </Card>
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 text-center">
+                <Activity className="w-7 h-7 text-blue-400 mx-auto mb-2" />
+                <p className="text-4xl font-bold text-white">{yearlyReport.totalActivities}</p>
+                <p className="text-sm text-white/50 mt-1">Actividades totales</p>
+              </div>
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 text-center">
+                <TrendingUp className="w-7 h-7 text-emerald-400 mx-auto mb-2" />
+                <p className="text-4xl font-bold text-white">{yearlyReport.totalHours}h</p>
+                <p className="text-sm text-white/50 mt-1">Horas totales</p>
+              </div>
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 text-center">
+                <Trophy className="w-7 h-7 text-yellow-400 mx-auto mb-2" />
+                <p className="text-4xl font-bold text-white">{yearlyReport.totalActivities > 0 ? Math.round(parseFloat(yearlyReport.totalHours) / yearlyReport.totalActivities * 10) / 10 : 0}h</p>
+                <p className="text-sm text-white/50 mt-1">Media por sesión</p>
+              </div>
             </div>
 
-            <Card className="backdrop-blur-xl bg-white/80 border-2 border-gray-200">
-              <CardHeader>
-                <CardTitle>Evolución Mensual del Año (Equipo)</CardTitle>
-              </CardHeader>
-              <CardContent className="h-[400px]">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
+              <h4 className="text-sm font-bold text-white mb-4">Evolución Mensual del Año (Equipo)</h4>
+              <div className="h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={yearlyReport.monthlyData}>
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip 
-                      contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                    />
-                    <Legend />
+                    <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#94a3b8" }} stroke="rgba(255,255,255,0.1)" tickLine={false} />
+                    <YAxis tick={{ fontSize: 11, fill: "#94a3b8" }} stroke="rgba(255,255,255,0.1)" tickLine={false} axisLine={false} />
+                    <Tooltip contentStyle={{ backgroundColor: 'rgba(17,19,26,0.95)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }} />
+                    <Legend wrapperStyle={{ color: '#94a3b8', fontSize: 12 }} />
                     {Object.keys(activityLabels).map((type) => (
-                      <Bar 
-                        key={type} 
-                        dataKey={type} 
-                        name={activityLabels[type]} 
-                        stackId="a" 
-                        fill={activityColors[type]} 
-                      />
+                      <Bar key={type} dataKey={type} name={activityLabels[type]} stackId="a" fill={activityColors[type]} />
                     ))}
                   </BarChart>
                 </ResponsiveContainer>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            <div className="space-y-4">
-              <h4 className="text-lg font-bold text-gray-900">Evolución Individual</h4>
+            <div className="space-y-3">
+              <h4 className="text-base font-bold text-white">Evolución Individual</h4>
               {members.map((member) => (
-                <Card key={member.email} className="overflow-hidden border-gray-200">
-                  <div 
-                    className="p-4 flex items-center justify-between cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors"
+                <div key={member.email} className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+                  <div
+                    className="p-4 flex items-center justify-between cursor-pointer hover:bg-white/5 transition-colors"
                     onClick={() => setExpandedMember(expandedMember === member.email ? null : member.email)}
                   >
-                    <span className="font-bold text-gray-800">{member.name}</span>
-                    {expandedMember === member.email ? <ChevronUp className="w-5 h-5 text-gray-500" /> : <ChevronDown className="w-5 h-5 text-gray-500" />}
+                    <span className="font-bold text-white">{member.name}</span>
+                    {expandedMember === member.email ? <ChevronUp className="w-5 h-5 text-white/50" /> : <ChevronDown className="w-5 h-5 text-white/50" />}
                   </div>
                   <AnimatePresence>
                     {expandedMember === member.email && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <CardContent className="p-4 h-[300px]">
+                      <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }}>
+                        <div className="p-4 border-t border-white/10 h-[260px]">
                           <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={getMemberYearlyData(member.email)}>
-                              <XAxis dataKey="month" />
-                              <YAxis />
-                              <Tooltip />
-                              <Legend />
+                              <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#94a3b8" }} stroke="rgba(255,255,255,0.1)" tickLine={false} />
+                              <YAxis tick={{ fontSize: 11, fill: "#94a3b8" }} stroke="rgba(255,255,255,0.1)" tickLine={false} axisLine={false} />
+                              <Tooltip contentStyle={{ backgroundColor: 'rgba(17,19,26,0.95)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }} />
                               {Object.keys(activityLabels).map((type) => (
-                                <Bar 
-                                  key={type} 
-                                  dataKey={type} 
-                                  name={activityLabels[type]} 
-                                  stackId="a" 
-                                  fill={activityColors[type]} 
-                                />
+                                <Bar key={type} dataKey={type} name={activityLabels[type]} stackId="a" fill={activityColors[type]} />
                               ))}
                             </BarChart>
                           </ResponsiveContainer>
-                        </CardContent>
+                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </Card>
+                </div>
               ))}
             </div>
           </div>
