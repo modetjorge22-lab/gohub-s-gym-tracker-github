@@ -123,7 +123,7 @@ export default function MonthlyTeamChart({ members, activities, currentDate = ne
         </CardTitle>
       </CardHeader>
       <CardContent className="p-3 md:p-6">
-        <ResponsiveContainer width="100%" height={200} onResize={(w) => setChartWidth(w)}>
+        <ResponsiveContainer width="100%" height={200}>
           <LineChart data={chartData} margin={{ top: 30, right: 16, left: -10, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" vertical={false} />
             <XAxis
