@@ -16,47 +16,49 @@ const memberColors = [
   "#f97316"
 ];
 
-const AVATAR_R = 11;
+const TAG_H = 16;
+const TAG_PADDING = 6;
 
-// avatarOffsets: alternating above/below per member index to avoid overlaps
-const CustomDot = ({ cx, cy, index, lastVisibleIndex, memberImage, memberName, memberColor, memberIndex }) => {
+const CustomDot = ({ cx, cy, index, lastVisibleIndex, memberName, memberColor, memberIndex }) => {
   if (index !== lastVisibleIndex) return null;
 
-  // Alternate: even members → label above, odd → label below
+  const firstName = memberName.split(" ")[0];
+  const charWidth = 6.5;
+  const tagW = firstName.length * charWidth + TAG_PADDING * 2;
+
   const above = memberIndex % 2 === 0;
-  const offset = AVATAR_R + 8;
-  const avatarCy = above ? cy - offset : cy + offset;
+  const offset = TAG_H + 6;
+  const tagCy = above ? cy - offset : cy + offset;
 
   return (
     <g>
-      {/* Dot on the line */}
-      <circle cx={cx} cy={cy} r={5} fill={memberColor} stroke="rgba(255,255,255,0.8)" strokeWidth={1.5} />
-      {/* Connector line */}
-      <line x1={cx} y1={cy} x2={cx} y2={avatarCy} stroke={memberColor} strokeWidth={1.2} strokeDasharray="3 2" strokeOpacity={0.6} />
-      {/* Avatar border */}
-      <circle cx={cx} cy={avatarCy} r={AVATAR_R + 1.5} fill={memberColor} />
-      {memberImage ? (
-        <>
-          <defs>
-            <clipPath id={`lbl-clip-${memberName}`}>
-              <circle cx={cx} cy={avatarCy} r={AVATAR_R} />
-            </clipPath>
-          </defs>
-          <image
-            x={cx - AVATAR_R}
-            y={avatarCy - AVATAR_R}
-            width={AVATAR_R * 2}
-            height={AVATAR_R * 2}
-            href={memberImage}
-            clipPath={`url(#lbl-clip-${memberName})`}
-            preserveAspectRatio="xMidYMid slice"
-          />
-        </>
-      ) : (
-        <text x={cx} y={avatarCy + 4} fill="#fff" fontSize="11" fontWeight="800" textAnchor="middle">
-          {memberName.charAt(0).toUpperCase()}
-        </text>
-      )}
+      {/* Dot */}
+      <circle cx={cx} cy={cy} r={4} fill={memberColor} stroke="rgba(255,255,255,0.9)" strokeWidth={1.5} />
+      {/* Connector */}
+      <line x1={cx} y1={cy} x2={cx} y2={tagCy + (above ? TAG_H / 2 : -TAG_H / 2)} stroke={memberColor} strokeWidth={1} strokeDasharray="3 2" strokeOpacity={0.5} />
+      {/* Pill background */}
+      <rect
+        x={cx - tagW / 2}
+        y={tagCy - TAG_H / 2}
+        width={tagW}
+        height={TAG_H}
+        rx={TAG_H / 2}
+        fill={memberColor}
+        fillOpacity={0.9}
+      />
+      {/* Name */}
+      <text
+        x={cx}
+        y={tagCy + 4.5}
+        fill="#fff"
+        fontSize="9"
+        fontWeight="700"
+        textAnchor="middle"
+        letterSpacing="0.3"
+        style={{ fontFamily: "system-ui, sans-serif" }}
+      >
+        {firstName}
+      </text>
     </g>
   );
 };
