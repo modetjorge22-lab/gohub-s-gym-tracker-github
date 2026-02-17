@@ -244,19 +244,19 @@ export default function PerformanceAnalysis({ activities, members, currentDate =
 
   return (
     <div>
-      <h3 className="text-xl font-bold text-gray-900 mb-4">Análisis de Rendimiento</h3>
+      <h3 className="text-xl font-bold text-white mb-4">Análisis de Rendimiento</h3>
       
       <Tabs defaultValue="members" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-6">
-          <TabsTrigger value="activities">
+        <TabsList className="grid w-full grid-cols-3 mb-6 bg-white/5 border border-white/10">
+          <TabsTrigger value="activities" className="data-[state=active]:bg-white/15 data-[state=active]:text-white text-white/50">
             <Activity className="w-4 h-4 mr-2" />
             Por Actividad
           </TabsTrigger>
-          <TabsTrigger value="members">
+          <TabsTrigger value="members" className="data-[state=active]:bg-white/15 data-[state=active]:text-white text-white/50">
             <Users className="w-4 h-4 mr-2" />
             Comparar Equipo
           </TabsTrigger>
-          <TabsTrigger value="yearly">
+          <TabsTrigger value="yearly" className="data-[state=active]:bg-white/15 data-[state=active]:text-white text-white/50">
             <TrendingUp className="w-4 h-4 mr-2" />
             Reporte Anual
           </TabsTrigger>
