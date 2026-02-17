@@ -23,22 +23,26 @@ export default function MemberStats({ member, allActivities, teamAverage }) {
 
   const getWeeklyData = () => {
     const weeks = [];
-    // Use memberActivities last date or Today? 
-    // Let's assume we want to see the trend leading up to the current view.
-    // I'll stick to new Date() here as I didn't pass the prop in the previous step.
+    const today = new Date();
     for (let i = 3; i >= 0; i--) {
-      const weekStart = startOfWeek(subWeeks(new Date(), i), { weekStartsOn: 1 });
-      const weekEnd = endOfWeek(subWeeks(new Date(), i), { weekStartsOn: 1 });
+      const weekStart = startOfWeek(subWeeks(today, i), { weekStartsOn: 1 });
+      const weekEnd = endOfWeek(subWeeks(today, i), { weekStartsOn: 1 });
+      // Days elapsed in this week (up to today)
+      const effectiveEnd = weekEnd > today ? today : weekEnd;
+      const daysElapsed = Math.max(1, Math.round((effectiveEnd - weekStart) / 86400000) + 1);
 
       const weekActivities = memberActivities.filter(a =>
         isWithinInterval(new Date(a.date), { start: weekStart, end: weekEnd })
       );
 
       const hours = weekActivities.reduce((sum, a) => sum + (a.duration_minutes / 60), 0);
-      
+      // Daily pace: hours / days elapsed, projected to 7 days for fair comparison
+      const dailyPace = hours / daysElapsed;
+      const projectedHours = parseFloat((dailyPace * 7).toFixed(1));
+
       weeks.push({
         week: format(weekStart, "'Sem' w", { locale: es }),
-        miembro: parseFloat(hours.toFixed(1)),
+        miembro: projectedHours,
         equipo: teamAverage
       });
     }
