@@ -494,7 +494,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
               transition={{ delay: index * 0.05 }}
             >
               {/* Refined card style */}
-              <div className={`group backdrop-blur-xl bg-gradient-to-br ${cardBg} rounded-2xl border border-white/40 shadow-lg hover:shadow-xl transition-all duration-300 p-4 md:p-6 hover:scale-[1.01]`}>
+              <div className={`group backdrop-blur-xl bg-gradient-to-br ${cardBg} rounded-2xl border border-white/10 shadow-lg hover:shadow-xl transition-all duration-300 p-4 md:p-6 hover:scale-[1.01]`}>
                 {/* Link now wraps the main display part of the card */}
                 <Link to={`${createPageUrl("MemberCalendar")}?email=${encodeURIComponent(member.email)}`}>
                   <div className="flex items-start justify-between mb-2">
