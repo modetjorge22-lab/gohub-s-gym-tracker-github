@@ -1,6 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 import { format } from 'npm:date-fns@3.6.0';
-import { ensureValidStravaAccessToken } from './stravaClient.ts';
+import { ensureValidStravaAccessToken, isStrengthTrainingActivity } from './stravaClient.ts';
 
 Deno.serve(async (req) => {
     try {
@@ -44,29 +44,19 @@ Deno.serve(async (req) => {
                 );
 
                 if (!response.ok) {
+                    const errorPayload = await response.text();
                     results.push({
                         user: stravaUser.email,
                         status: 'error',
                         error: 'Error obteniendo actividades de Strava',
+                        strava_status: response.status,
+                        strava_body: errorPayload,
                     });
                     continue;
                 }
 
                 const activities = await response.json();
-                
-                // Mapeo de tipos de Strava a tipos de la app
-                const stravaTypeMap = {
-                    'Run': 'running',
-                    'Ride': 'cycling',
-                    'Swim': 'swimming',
-                    'WeightTraining': 'strength_training',
-                    'Workout': 'strength_training',
-                    'Yoga': 'yoga',
-                    'Hike': 'hiking',
-                    'Walk': 'hiking',
-                    'Soccer': 'football',
-                    'Basketball': 'basketball',
-                };
+                const workouts = activities.filter((a) => isStrengthTrainingActivity(a));
 
                 const existingActivities = await base44.asServiceRole.entities.Activity.filter(
                     { user_email: stravaUser.email },
@@ -83,7 +73,7 @@ Deno.serve(async (req) => {
                     const durationMinutes = Math.round(activity.elapsed_time / 60);
 
                     const existingOnDay = existingActivities.find(
-                        (a) => a.date === date && a.activity_type === appActivityType
+                        (a) => a.date === date && a.activity_type === 'strength_training'
                     );
 
                     if (existingOnDay) {
@@ -105,7 +95,7 @@ Deno.serve(async (req) => {
                             points: durationMinutes,
                             date,
                             status: 'completed',
-                            notes: `Auto-importado desde Strava (${activity.name})`,
+                            notes: 'Auto-importado desde Strava',
                         });
                         imported++;
                     }

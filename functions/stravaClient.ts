@@ -119,3 +119,10 @@ export async function ensureStravaWebhookSubscription(callbackUrl: string) {
 
   return { created: true, subscription: createData, message: 'Webhook creado' };
 }
+
+export function isStrengthTrainingActivity(activity: { type?: string; sport_type?: string }) {
+  const type = String(activity?.type || '').toLowerCase();
+  const sportType = String(activity?.sport_type || '').toLowerCase();
+
+  return type === 'weighttraining' || sportType === 'weighttraining';
+}
