@@ -646,7 +646,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                             animate={{ height: "auto", opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
                             transition={{ duration: 0.2 }}
-                            className="border-t border-gray-200"
+                            className="border-t border-white/10"
                           >
                             <div className="p-3 space-y-2">
                               {supplements
@@ -661,7 +661,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                                   return (
                                     <div
                                       key={supp.id}
-                                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-white/10 cursor-pointer transition-colors"
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         handleSupplementToggle(member.email, supp, isTaken);
