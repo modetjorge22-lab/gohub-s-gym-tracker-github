@@ -86,8 +86,8 @@ Deno.serve(async (req) => {
       base44.auth.updateMe(payload)
     );
 
-    // Get activities from last 30 days
-    const after = Math.floor(Date.now() / 1000) - 30 * 24 * 60 * 60;
+    // Get activities from last 365 days
+    const after = Math.floor(Date.now() / 1000) - 365 * 24 * 60 * 60;
 
     const response = await fetch(
       `https://www.strava.com/api/v3/athlete/activities?after=${after}&per_page=100`,
