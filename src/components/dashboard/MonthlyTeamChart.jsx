@@ -209,7 +209,6 @@ export default function MonthlyTeamChart({ members, activities, currentDate = ne
                 dot={(props) => (
                   <CustomDot
                     {...props}
-                    memberImage={member.profile_image}
                     memberName={member.name}
                     memberColor={memberColors[index % memberColors.length]}
                     lastVisibleIndex={memberLastIndexes[member.name]}
