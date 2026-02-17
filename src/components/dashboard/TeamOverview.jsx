@@ -536,7 +536,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                   <div className="mt-4 space-y-3">
                     {/* Plan Semanal */}
                     <div 
-                      className="bg-white/70 backdrop-blur-sm rounded-xl p-3 border border-gray-200 cursor-pointer hover:bg-white hover:shadow-sm transition-all"
+                      className="bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10 cursor-pointer hover:bg-white/10 transition-all"
                       onClick={(e) => {
                         e.preventDefault();
                         setSelectedMember(member);
