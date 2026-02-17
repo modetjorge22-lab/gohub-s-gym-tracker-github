@@ -313,60 +313,44 @@ export default function PerformanceAnalysis({ activities, members, currentDate =
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="backdrop-blur-xl bg-white/80 border-2 border-gray-200 shadow-lg">
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h4 className="font-bold text-gray-900 text-lg">{member.name}</h4>
-                        <p className="text-xs text-gray-600">{member.activitiesCount} actividades este mes</p>
-                      </div>
-                      {index === 0 && (
-                        <Trophy className="w-6 h-6 text-yellow-500" />
-                      )}
+                <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-lg p-5">
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h4 className="font-bold text-white text-lg">{member.name}</h4>
+                      <p className="text-xs text-white/50">{member.activitiesCount} actividades este mes</p>
                     </div>
-
-                    <div className="space-y-3">
-                      <div>
-                        <p className="text-3xl font-bold text-gray-900 text-center mb-1">{member.hours}h</p>
-                        <p className="text-xs text-gray-600 text-center">Horas entrenadas</p>
-                      </div>
-
-                      {/* Desglose de horas por actividad */}
-                      <div className="bg-gray-100 rounded-lg p-3">
-                        <p className="text-xs font-semibold text-gray-700 mb-2">Desglose por actividad</p>
-                        <div className="space-y-1">
-                          {Object.entries(member.activityHours || {})
-                            .sort((a, b) => b[1] - a[1])
-                            .slice(0, 3)
-                            .map(([type, hours]) => (
-                              <div key={type} className="flex justify-between items-center">
-                                <span className="text-xs text-gray-600">
-                                  {activityEmojis[type]} {activityLabels[type]}
-                                </span>
-                                <span className="text-xs font-bold text-gray-900">{hours.toFixed(1)}h</span>
-                              </div>
-                            ))}
-                        </div>
-                      </div>
-
-                      {/* Win Rate en Pádel */}
-                      {member.padelWinRate !== null && (
-                        <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                              <Trophy className="w-4 h-4 text-green-600" />
-                              <span className="text-xs font-semibold text-gray-700">Win Rate Pádel</span>
-                            </div>
-                            <span className="text-lg font-bold text-green-600">{member.padelWinRate}%</span>
+                    {index === 0 && <Trophy className="w-6 h-6 text-yellow-400" />}
+                  </div>
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-3xl font-bold text-white text-center mb-1">{member.hours}h</p>
+                      <p className="text-xs text-white/50 text-center">Horas entrenadas</p>
+                    </div>
+                    <div className="bg-white/5 rounded-lg p-3 border border-white/10">
+                      <p className="text-xs font-semibold text-white/60 mb-2">Desglose</p>
+                      <div className="space-y-1">
+                        {Object.entries(member.activityHours || {}).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([type, hours]) => (
+                          <div key={type} className="flex justify-between items-center">
+                            <span className="text-xs text-white/60">{activityEmojis[type]} {activityLabels[type]}</span>
+                            <span className="text-xs font-bold text-white">{hours.toFixed(1)}h</span>
                           </div>
-                          <p className="text-xs text-gray-600 mt-1 text-center">
-                            {member.padelMatches} partidos
-                          </p>
-                        </div>
-                      )}
+                        ))}
+                      </div>
                     </div>
-                  </CardContent>
-                </Card>
+                    {member.padelWinRate !== null && (
+                      <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-3">
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center gap-2">
+                            <Trophy className="w-4 h-4 text-emerald-400" />
+                            <span className="text-xs font-semibold text-white/70">Win Rate Pádel</span>
+                          </div>
+                          <span className="text-lg font-bold text-emerald-400">{member.padelWinRate}%</span>
+                        </div>
+                        <p className="text-xs text-white/50 mt-1 text-center">{member.padelMatches} partidos</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </motion.div>
             ))}
           </div>
