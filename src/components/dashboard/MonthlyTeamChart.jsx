@@ -112,9 +112,7 @@ export default function MonthlyTeamChart({ members, activities, currentDate = ne
     return dataPoint;
   });
 
-  const memberLastIndexes = Object.fromEntries(
-    members.map((member) => [member.name, getLastVisibleIndex(member.name)])
-  );
+
 
   return (
     <Card className="backdrop-blur-xl bg-[#11131a]/80 border border-white/15 shadow-xl">
