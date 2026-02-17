@@ -16,62 +16,37 @@ const memberColors = [
   "#f97316"
 ];
 
-const LABEL_W = 72;
-const LABEL_H = 22;
+const AVATAR_R = 11;
 
-const CustomDot = ({ cx, cy, index, lastVisibleIndex, memberImage, memberName, memberColor, chartWidth }) => {
+const CustomDot = ({ cx, cy, index, lastVisibleIndex, memberImage, memberName, memberColor }) => {
   if (index !== lastVisibleIndex) return null;
-
-  // Flip label to the left if it would overflow the right edge
-  const overflows = chartWidth && cx + 16 + LABEL_W > chartWidth;
-  const labelX = overflows ? cx - 16 - LABEL_W : cx + 16;
-  const labelY = cy - LABEL_H / 2;
-  const firstName = memberName.split(" ")[0];
 
   return (
     <g>
-      {/* Dot */}
       <circle cx={cx} cy={cy} r={5} fill={memberColor} stroke="rgba(255,255,255,0.8)" strokeWidth={1.5} />
-
-      {/* Pill label */}
-      <rect
-        x={labelX}
-        y={labelY}
-        width={LABEL_W}
-        height={LABEL_H}
-        rx={11}
-        fill="rgba(17,19,26,0.88)"
-        stroke={memberColor}
-        strokeWidth={1.2}
-      />
-
+      {/* Avatar circle only */}
+      <circle cx={cx + 16 + AVATAR_R} cy={cy} r={AVATAR_R + 1.5} fill={memberColor} />
       {memberImage ? (
         <>
           <defs>
             <clipPath id={`lbl-clip-${memberName}`}>
-              <circle cx={labelX + 11} cy={labelY + 11} r={9} />
+              <circle cx={cx + 16 + AVATAR_R} cy={cy} r={AVATAR_R} />
             </clipPath>
           </defs>
-          <circle cx={labelX + 11} cy={labelY + 11} r={9} fill={memberColor} />
           <image
-            x={labelX + 2}
-            y={labelY + 2}
-            width={18}
-            height={18}
+            x={cx + 16 + AVATAR_R - AVATAR_R}
+            y={cy - AVATAR_R}
+            width={AVATAR_R * 2}
+            height={AVATAR_R * 2}
             href={memberImage}
             clipPath={`url(#lbl-clip-${memberName})`}
             preserveAspectRatio="xMidYMid slice"
           />
-          <text x={labelX + 24} y={labelY + 14} fill="#fff" fontSize="11" fontWeight="700">{firstName}</text>
         </>
       ) : (
-        <>
-          <circle cx={labelX + 11} cy={labelY + 11} r={9} fill={memberColor} />
-          <text x={labelX + 11} y={labelY + 15} fill="#fff" fontSize="10" fontWeight="800" textAnchor="middle">
-            {memberName.charAt(0).toUpperCase()}
-          </text>
-          <text x={labelX + 24} y={labelY + 14} fill="#fff" fontSize="11" fontWeight="700">{firstName}</text>
-        </>
+        <text x={cx + 16 + AVATAR_R} y={cy + 4} fill="#fff" fontSize="11" fontWeight="800" textAnchor="middle">
+          {memberName.charAt(0).toUpperCase()}
+        </text>
       )}
     </g>
   );
