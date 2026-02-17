@@ -90,6 +90,7 @@ export default function Layout({ children, currentPageName }) {
     { name: "Feed", path: createPageUrl("Feed"), icon: Newspaper },
     { name: "Actividad", path: createPageUrl("MyActivity"), icon: User },
     { name: "Grupos", path: createPageUrl("Groups"), icon: Users },
+    { name: "Más", path: null, icon: MoreHorizontal, isMenu: true },
   ];
 
   const isLanding = location.pathname.includes("Landing");
