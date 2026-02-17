@@ -224,6 +224,37 @@ export default function Layout({ children, currentPageName }) {
           <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 backdrop-blur-xl bg-[#11131a]/90 border-t border-white/10">
             <div className="flex items-center justify-around px-2 py-2 pb-[env(safe-area-inset-bottom)]">
               {navItems.map((item) => {
+                if (item.isMenu) {
+                  return (
+                    <DropdownMenu key={item.name}>
+                      <DropdownMenuTrigger asChild>
+                        <button className="flex flex-col items-center gap-0.5 px-4 py-1.5 rounded-2xl text-gray-500 transition-all duration-200">
+                          <div className="p-1.5 rounded-xl">
+                            <item.icon className="w-5 h-5" strokeWidth={2} />
+                          </div>
+                          <span className="text-[10px] font-medium">{item.name}</span>
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" side="top" className="bg-[#11131a] border border-white/10 text-white mb-2">
+                        <DropdownMenuItem asChild className="cursor-pointer">
+                          <Link to={createPageUrl("Settings")} className="flex items-center gap-2">
+                            <Settings className="w-4 h-4" /> Configuración
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild className="cursor-pointer">
+                          <Link to={createPageUrl("ProfileSettings")} className="flex items-center gap-2">
+                            <User className="w-4 h-4" /> Perfil
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild className="cursor-pointer">
+                          <Link to={createPageUrl("IntegrationsSettings")} className="flex items-center gap-2">
+                            <Activity className="w-4 h-4" /> Integraciones
+                          </Link>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  );
+                }
                 const isActive = location.pathname === item.path;
                 return (
                   <Link
