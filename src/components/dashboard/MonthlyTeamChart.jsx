@@ -195,8 +195,8 @@ export default function MonthlyTeamChart({ members, activities, currentDate = ne
         </CardTitle>
       </CardHeader>
       <CardContent className="p-3 md:p-6">
-        <ResponsiveContainer width="100%" height={220}>
-          <LineChart data={chartData} margin={{ top: 8, right: 16, left: -10, bottom: 0 }}>
+        <ResponsiveContainer width="100%" height={220} onResize={(w) => setChartWidth(w)}>
+          <LineChart data={chartData} margin={{ top: 8, right: 80, left: -10, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" vertical={false} />
             <XAxis
               dataKey="date"
