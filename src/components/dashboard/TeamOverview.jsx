@@ -590,9 +590,9 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                     </div>
 
                     {/* Suplementos */}
-                    <div className="bg-white/70 backdrop-blur-sm rounded-xl border border-gray-200 overflow-hidden">
+                    <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden">
                       <div 
-                        className="p-3 cursor-pointer hover:bg-white transition-all"
+                        className="p-3 cursor-pointer hover:bg-white/10 transition-all"
                         onClick={(e) => {
                           e.preventDefault();
                           if (todaySupplements.total > 0) {
