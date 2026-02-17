@@ -92,14 +92,11 @@ const CustomTooltip = ({ active, payload, label, membersMap }) => {
 export default function MonthlyTeamChart({ members, activities, currentDate = new Date() }) {
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
-  const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
   const isCurrentMonth = isSameMonth(currentDate, new Date());
   
   // Solo mostrar días hasta hoy si estamos en el mes actual
   const lastDay = isCurrentMonth ? new Date() : monthEnd;
   const days = eachDayOfInterval({ start: monthStart, end: lastDay });
-
-  const membersMap = React.useMemo(() => new Map(members.map((member) => [member.name, member])), [members]);
 
   const membersMap = React.useMemo(() => new Map(members.map((member) => [member.name, member])), [members]);
 
@@ -191,15 +188,18 @@ export default function MonthlyTeamChart({ members, activities, currentDate = ne
                 dataKey={member.name}
                 stroke={memberColors[index % memberColors.length]}
                 strokeWidth={2.5}
-                dot={(props) => (
-                  <CustomDot
-                    {...props}
-                    memberImage={member.profile_image}
-                    memberName={member.name}
-                    memberColor={memberColors[index % memberColors.length]}
-                    lastVisibleIndex={memberLastIndexes[member.name]}
-                  />
-                )}
+                dot={(props) => {
+                  const { key, ...dotProps } = props;
+                  return (
+                    <CustomDot
+                      {...dotProps}
+                      memberImage={member.profile_image}
+                      memberName={member.name}
+                      memberColor={memberColors[index % memberColors.length]}
+                      lastVisibleIndex={memberLastIndexes[member.name]}
+                    />
+                  );
+                }}
                 activeDot={{ r: 6 }}
                 connectNulls
                 name={member.name}

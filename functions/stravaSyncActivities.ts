@@ -1,6 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 import { format } from 'npm:date-fns@3.6.0';
-import { ensureValidStravaAccessToken, isStrengthTrainingActivity } from './stravaClient.ts';
+import { ensureValidStravaAccessToken } from './stravaClient.ts';
 
 Deno.serve(async (req) => {
     try {
@@ -33,21 +33,24 @@ Deno.serve(async (req) => {
         );
 
         if (!response.ok) {
-            const errorPayload = await response.text();
-            return Response.json(
-                {
-                    error: 'Error obteniendo actividades de Strava',
-                    strava_status: response.status,
-                    strava_body: errorPayload,
-                },
-                { status: 400 }
-            );
+            return Response.json({ error: 'Error obteniendo actividades de Strava' }, { status: 400 });
         }
 
         const activities = await response.json();
         
-        // Filter only strength training
-        const workouts = activities.filter((a) => isStrengthTrainingActivity(a));
+        // Mapeo de tipos de Strava a tipos de la app
+        const stravaTypeMap = {
+            'Run': 'running',
+            'Ride': 'cycling',
+            'Swim': 'swimming',
+            'WeightTraining': 'strength_training',
+            'Workout': 'strength_training',
+            'Yoga': 'yoga',
+            'Hike': 'hiking',
+            'Walk': 'hiking',
+            'Soccer': 'football',
+            'Basketball': 'basketball',
+        };
 
         // Get existing activities for this user
         const existingActivities = await base44.entities.Activity.filter(

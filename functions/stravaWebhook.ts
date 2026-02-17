@@ -1,6 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 import { format } from 'npm:date-fns@3.6.0';
-import { ensureValidStravaAccessToken, isStrengthTrainingActivity } from './stravaClient.ts';
+import { ensureValidStravaAccessToken } from './stravaClient.ts';
 
 Deno.serve(async (req) => {
     const url = new URL(req.url);
@@ -62,7 +62,7 @@ Deno.serve(async (req) => {
 
         const activity = await activityResponse.json();
 
-        if (!isStrengthTrainingActivity(activity)) {
+        if (activity.type !== 'WeightTraining') {
             return Response.json({ success: true, message: 'Not a strength training' });
         }
 

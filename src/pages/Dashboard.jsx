@@ -143,11 +143,6 @@ export default function Dashboard() {
         </Button>
       </div>
 
-      {/* Miembros del Equipo - Primero */}
-      <div className="mb-3 md:mb-4">
-        <h3 className="text-lg md:text-xl font-bold text-white">Miembros del Equipo</h3>
-      </div>
-
       <TeamOverview stats={weeklyStats} activities={activities} currentDate={currentDate} />
 
       <div className="mt-8">
