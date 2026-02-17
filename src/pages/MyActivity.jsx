@@ -77,7 +77,10 @@ export default function MyActivity() {
     <div className="max-w-7xl mx-auto px-3 md:px-6 py-4 md:py-8 text-white">
       <div className="mb-3 md:mb-4">
         <h3 className="text-lg md:text-xl font-bold text-white">Mi actividad</h3>
-        <p className="text-sm text-white/70">Vista personal con el mismo formato del dashboard de grupos.</p>
+      </div>
+
+      <div className="mb-4">
+        <TrainingLoad activities={activities} userEmail={myMember.email} />
       </div>
 
       <TeamOverview
