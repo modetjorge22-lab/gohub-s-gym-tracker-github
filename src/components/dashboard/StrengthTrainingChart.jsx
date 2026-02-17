@@ -92,8 +92,8 @@ export default function StrengthTrainingChart({ activities, userEmail }) {
               wrapperStyle={{ fontSize: 11, color: "#94a3b8", paddingTop: 8 }}
               formatter={(value) => value === "progress" ? "Progreso" : "Consolidación"}
             />
-            <Bar dataKey="progress" name="progress" stackId="a" fill="#6366f1" radius={[0, 0, 0, 0]} />
-            <Bar dataKey="consolidation" name="consolidation" stackId="a" fill="#10b981" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="progress" name="progress" fill="#6366f1" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="consolidation" name="consolidation" fill="#10b981" radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
         <p className="text-[10px] text-gray-500 text-center mt-1">Horas de fuerza · últimas 16 semanas</p>
