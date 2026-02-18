@@ -51,36 +51,23 @@ export default function Landing() {
 
   const isAdminCreator = currentUser?.email?.toLowerCase() === "modetjorge22@gmail.com";
 
+  // Auto-login: when authenticated and groups loaded, try to restore last session
   React.useEffect(() => {
-    if (!autoLoginAttempted && !isLoading && groups.length > 0) {
-      const lastGroupId = localStorage.getItem("base44_last_group_id");
-      const lastPassword = localStorage.getItem("base44_last_group_password");
+    if (!isAuthenticated || isLoading || groups.length === 0) return;
 
-      if (lastGroupId && lastPassword) {
-        const group = groups.find((g) => g.id === lastGroupId);
-        if (group && group.password === lastPassword) {
-          sessionStorage.setItem("base44_group_id", group.id);
-          sessionStorage.setItem("base44_group_name", group.name);
-          localStorage.setItem("base44_last_group_name", group.name);
-          navigate(createPageUrl("Feed"));
-        }
+    const lastGroupId = localStorage.getItem("base44_last_group_id");
+    const lastPassword = localStorage.getItem("base44_last_group_password");
+
+    if (lastGroupId && lastPassword) {
+      const group = groups.find((g) => g.id === lastGroupId);
+      if (group && group.password === lastPassword) {
+        sessionStorage.setItem("base44_group_id", group.id);
+        sessionStorage.setItem("base44_group_name", group.name);
+        localStorage.setItem("base44_last_group_name", group.name);
+        navigate(createPageUrl("Feed"));
       }
     }
-  }, [currentUser, navigate]);
-
-  React.useEffect(() => {
-    const activeGroupId = sessionStorage.getItem("base44_group_id");
-    const rememberedGroupId = localStorage.getItem("base44_last_group_id");
-
-    if (isAuthenticated && (activeGroupId || rememberedGroupId)) {
-      if (!activeGroupId && rememberedGroupId) {
-        sessionStorage.setItem("base44_group_id", rememberedGroupId);
-        const rememberedName = localStorage.getItem("base44_last_group_name");
-        if (rememberedName) sessionStorage.setItem("base44_group_name", rememberedName);
-      }
-      navigate(createPageUrl("Feed"));
-    }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, isLoading, groups, navigate]);
 
   const createGroupMutation = useMutation({
     mutationFn: (data) => base44.entities.Group.create(data),
