@@ -79,7 +79,7 @@ export default function WhoopSleepChart({ userEmail }) {
               <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10, fill: "#94a3b8" }} stroke="rgba(255,255,255,0.15)" tickLine={false} axisLine={false} width={28} domain={[0, 100]} />
               <Tooltip content={<CustomTooltip />} />
               <Legend wrapperStyle={{ fontSize: 11, color: "#94a3b8" }} />
-              <Bar yAxisId="left" dataKey="duration" name="Horas sueño" fill="#6366f1" radius={[4, 4, 0, 0]} opacity={0.85} barSize={16} />
+              <Bar yAxisId="left" dataKey="duration" name="Horas sueño" fill="#6366f1" radius={[4, 4, 0, 0]} opacity={0.85} barSize={8} />
               <Line yAxisId="right" type="monotone" dataKey="sleep" name="Calidad %" stroke="#10b981" strokeWidth={2} dot={false} connectNulls />
               <Line yAxisId="right" type="monotone" dataKey="recovery" name="Recuperación %" stroke="#f59e0b" strokeWidth={2} dot={false} connectNulls />
             </ComposedChart>
