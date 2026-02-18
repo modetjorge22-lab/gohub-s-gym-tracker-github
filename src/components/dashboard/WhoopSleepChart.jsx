@@ -74,7 +74,7 @@ export default function WhoopSleepChart({ userEmail }) {
           <ResponsiveContainer width="100%" height={200}>
             <ComposedChart data={chartData} margin={{ top: 10, right: 16, left: -10, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" vertical={false} />
-              <XAxis dataKey="date" tick={{ fontSize: 10, fill: "#94a3b8" }} stroke="rgba(255,255,255,0.15)" tickLine={false} />
+              <XAxis dataKey="date" tick={{ fontSize: 9, fill: "#94a3b8" }} stroke="rgba(255,255,255,0.15)" tickLine={false} interval={4} />
               <YAxis yAxisId="left" tick={{ fontSize: 10, fill: "#94a3b8" }} stroke="rgba(255,255,255,0.15)" tickLine={false} axisLine={false} width={28} domain={[0, 12]} />
               <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10, fill: "#94a3b8" }} stroke="rgba(255,255,255,0.15)" tickLine={false} axisLine={false} width={28} domain={[0, 100]} />
               <Tooltip content={<CustomTooltip />} />
