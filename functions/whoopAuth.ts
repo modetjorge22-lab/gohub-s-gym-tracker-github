@@ -17,7 +17,7 @@ Deno.serve(async (req) => {
       state: user.email,
     });
 
-    const authUrl = `https://api.prod.whoop.com/oauth/oauth2/auth?${params.toString()}`;
+    const authUrl = `https://api.prod.whoop.com/oauth/oauth2/authorize?${params.toString()}`;
     return Response.json({ url: authUrl });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
