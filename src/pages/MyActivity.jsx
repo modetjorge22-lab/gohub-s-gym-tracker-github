@@ -5,6 +5,7 @@ import { startOfWeek, endOfWeek, isWithinInterval, getDay } from "date-fns";
 import TeamOverview from "@/components/dashboard/TeamOverview";
 import TrainingLoad from "@/components/dashboard/TrainingLoad";
 import StrengthTrainingChart from "@/components/dashboard/StrengthTrainingChart";
+import WhoopSleepChart from "@/components/dashboard/WhoopSleepChart";
 
 export default function MyActivity() {
   const { data: user } = useQuery({
