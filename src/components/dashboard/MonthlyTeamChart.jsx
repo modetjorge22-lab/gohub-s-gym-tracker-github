@@ -95,7 +95,6 @@ export default function MonthlyTeamChart({ members, activities, currentDate = ne
   const isCurrentMonth = isSameMonth(currentDate, new Date());
   const lastDay = isCurrentMonth ? new Date() : monthEnd;
   const days = eachDayOfInterval({ start: monthStart, end: lastDay });
-
   const membersMap = React.useMemo(() => new Map(members.map((member) => [member.name, member])), [members]);
 
   const getLastVisibleIndex = (dataKey) => {
