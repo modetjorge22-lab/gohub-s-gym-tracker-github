@@ -16,31 +16,74 @@ const memberColors = [
   "#f97316"
 ];
 
+const CustomDot = ({ cx, cy, index, lastVisibleIndex, memberImage, memberName, memberColor }) => {
+  if (index !== lastVisibleIndex) return null;
 
-
-const CustomTooltip = ({ active, payload, label }) => {
-  if (!active || !payload?.length) return null;
-
-  const filtered = payload.filter(
-    (entry) => entry.value !== null && !String(entry.dataKey).includes("_planned")
-  );
-  if (!filtered.length) return null;
+  if (!memberImage) {
+    return (
+      <g>
+        <circle cx={cx} cy={cy} r={6} fill={memberColor} stroke="#fff" strokeWidth={2} />
+        <text x={cx + 12} y={cy + 4} fill="#fff" fontSize="11" fontWeight="700">{memberName}</text>
+      </g>
+    );
+  }
 
   return (
-    <div className="bg-[#11131a]/95 border border-white/15 rounded-xl px-3 py-2 shadow-xl">
-      <p className="text-[10px] text-gray-400 mb-1.5">{label}</p>
-      <div className="space-y-1.5">
-        {filtered.map((entry) => (
-          <div key={entry.dataKey} className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: entry.color }} />
-              <span className="text-xs text-white font-medium">{entry.name}</span>
-            </div>
-            <span className="text-xs font-bold" style={{ color: entry.color }}>
-              {entry.value} h
-            </span>
-          </div>
-        ))}
+    <g>
+      <defs>
+        <clipPath id={`clip-${memberName}-${cx}-${cy}`}>
+          <circle cx={cx} cy={cy} r={9} />
+        </clipPath>
+      </defs>
+      <circle cx={cx} cy={cy} r={10} fill="#fff" />
+      <image
+        x={cx - 9}
+        y={cy - 9}
+        width={18}
+        height={18}
+        href={memberImage}
+        clipPath={`url(#clip-${memberName}-${cx}-${cy})`}
+        preserveAspectRatio="xMidYMid slice"
+      />
+      <rect x={cx + 12} y={cy - 10} rx="8" ry="8" width="78" height="20" fill="rgba(17,19,26,0.9)" stroke="rgba(255,255,255,0.2)" />
+      <text x={cx + 20} y={cy + 4} fill="#fff" fontSize="11" fontWeight="700">{memberName}</text>
+    </g>
+  );
+};
+
+const CustomTooltip = ({ active, payload, label, membersMap }) => {
+  if (!active || !payload?.length) return null;
+
+  return (
+    <div className="bg-[#11131a]/95 border border-white/15 rounded-xl p-3 shadow-xl min-w-[200px]">
+      <p className="text-xs text-gray-300 mb-2">{label}</p>
+      <div className="space-y-2">
+        {payload
+          .filter((entry) => entry.value !== null && !String(entry.dataKey).includes("_planned"))
+          .map((entry) => {
+            const member = membersMap.get(entry.name);
+            return (
+              <div key={entry.dataKey} className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  {member?.profile_image ? (
+                    <img
+                      src={member.profile_image}
+                      alt={member.name}
+                      className="w-6 h-6 rounded-full object-cover border border-white/20"
+                    />
+                  ) : (
+                    <div className="w-6 h-6 rounded-full bg-white/10 border border-white/20 text-white text-xs font-bold flex items-center justify-center">
+                      {member?.name?.charAt(0)?.toUpperCase() || "?"}
+                    </div>
+                  )}
+                  <span className="text-sm text-white">{entry.name}</span>
+                </div>
+                <span className="text-sm font-semibold" style={{ color: entry.color }}>
+                  {entry.value} h
+                </span>
+              </div>
+            );
+          })}
       </div>
     </div>
   );
@@ -49,9 +92,12 @@ const CustomTooltip = ({ active, payload, label }) => {
 export default function MonthlyTeamChart({ members, activities, currentDate = new Date() }) {
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
+  const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
   const isCurrentMonth = isSameMonth(currentDate, new Date());
   const lastDay = isCurrentMonth ? new Date() : monthEnd;
   const days = eachDayOfInterval({ start: monthStart, end: lastDay });
+
+  const membersMap = React.useMemo(() => new Map(members.map((member) => [member.name, member])), [members]);
 
   const membersMap = React.useMemo(() => new Map(members.map((member) => [member.name, member])), [members]);
 
@@ -112,35 +158,30 @@ export default function MonthlyTeamChart({ members, activities, currentDate = ne
     return dataPoint;
   });
 
-
+  const memberLastIndexes = Object.fromEntries(
+    members.map((member) => [member.name, getLastVisibleIndex(member.name)])
+  );
 
   return (
     <Card className="backdrop-blur-xl bg-[#11131a]/80 border border-white/15 shadow-xl">
-      <CardHeader className="bg-gradient-to-r from-white/5 to-white/10 border-b border-white/10 py-3 px-4 md:px-6">
-        <CardTitle className="flex items-center gap-2 text-base text-white">
-          <TrendingUp className="w-4 h-4 text-white" strokeWidth={2.5} />
-          Carrera mensual
+      <CardHeader className="bg-gradient-to-r from-white/5 to-white/10 border-b border-white/10">
+        <CardTitle className="flex items-center gap-3 text-xl text-white">
+          <TrendingUp className="w-6 h-6 text-white" strokeWidth={2.5} />
+          Evolución Mensual del Equipo
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-3 md:p-6">
-        <ResponsiveContainer width="100%" height={200}>
-          <LineChart data={chartData} margin={{ top: 30, right: 16, left: -10, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.08)" vertical={false} />
-            <XAxis
-              dataKey="date"
-              tick={{ fontSize: 10, fill: "#94a3b8" }}
-              stroke="rgba(255,255,255,0.15)"
-              interval={Math.floor(chartData.length / 5)}
-              tickLine={false}
-            />
+      <CardContent className="p-6">
+        <ResponsiveContainer width="100%" height={400}>
+          <LineChart data={chartData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.12)" />
+            <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#cbd5e1" }} stroke="rgba(255,255,255,0.35)" />
             <YAxis
-              tick={{ fontSize: 10, fill: "#94a3b8" }}
-              stroke="rgba(255,255,255,0.15)"
-              tickLine={false}
-              axisLine={false}
-              width={28}
+              tick={{ fontSize: 11 }}
+              stroke="rgba(255,255,255,0.35)"
+              label={{ value: "Horas", angle: -90, position: "insideLeft", style: { fontSize: 11, fill: "#cbd5e1" } }}
             />
             <Tooltip content={<CustomTooltip membersMap={membersMap} />} />
+            <Legend wrapperStyle={{ fontSize: 14, paddingTop: 10, color: "#e2e8f0" }} />
             {members.map((member, index) => (
               <Line
                 key={member.id}
@@ -148,16 +189,24 @@ export default function MonthlyTeamChart({ members, activities, currentDate = ne
                 dataKey={member.name}
                 stroke={memberColors[index % memberColors.length]}
                 strokeWidth={2.5}
-                dot={false}
-                activeDot={{ r: 5 }}
+                dot={(props) => (
+                  <CustomDot
+                    {...props}
+                    memberImage={member.profile_image}
+                    memberName={member.name}
+                    memberColor={memberColors[index % memberColors.length]}
+                    lastVisibleIndex={memberLastIndexes[member.name]}
+                  />
+                )}
+                activeDot={{ r: 6 }}
                 connectNulls
                 name={member.name}
               />
             ))}
           </LineChart>
         </ResponsiveContainer>
-        <p className="text-xs text-gray-400 text-center mt-2">
-          Horas acumuladas · {format(currentDate, "MMMM yyyy", { locale: es })}
+        <p className="text-xs text-gray-300 text-center mt-4">
+          Horas acumuladas de actividad durante {format(currentDate, "MMMM yyyy", { locale: es })}
         </p>
       </CardContent>
     </Card>

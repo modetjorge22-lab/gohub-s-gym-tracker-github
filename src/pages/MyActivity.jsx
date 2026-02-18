@@ -3,9 +3,6 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import { startOfWeek, endOfWeek, isWithinInterval, getDay } from "date-fns";
 import TeamOverview from "@/components/dashboard/TeamOverview";
-import TrainingLoad from "@/components/dashboard/TrainingLoad";
-import StrengthTrainingChart from "@/components/dashboard/StrengthTrainingChart";
-import WhoopSleepChart from "@/components/dashboard/WhoopSleepChart";
 
 export default function MyActivity() {
   const { data: user } = useQuery({
@@ -79,15 +76,7 @@ export default function MyActivity() {
     <div className="max-w-7xl mx-auto px-3 md:px-6 py-4 md:py-8 text-white">
       <div className="mb-3 md:mb-4">
         <h3 className="text-lg md:text-xl font-bold text-white">Mi actividad</h3>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <TrainingLoad activities={activities} userEmail={myMember.email} />
-        <StrengthTrainingChart activities={activities} userEmail={myMember.email} />
-      </div>
-
-      <div className="mb-4">
-        <WhoopSleepChart userEmail={myMember.email} />
+        <p className="text-sm text-white/70">Vista personal con el mismo formato del dashboard de grupos.</p>
       </div>
 
       <TeamOverview

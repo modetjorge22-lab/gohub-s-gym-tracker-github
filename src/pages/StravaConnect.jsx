@@ -60,7 +60,29 @@ export default function StravaConnect() {
     mutationFn: () => base44.functions.invoke('stravaSyncActivities', {}),
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['activities'] });
+
+      if (response?.data?.error) {
+        const details = [response.data.error, response.data.strava_status && `status: ${response.data.strava_status}`]
+          .filter(Boolean)
+          .join(' | ');
+        alert(`Error de sincronización: ${details}`);
+        return;
+      }
+
       alert(response.data.message || `Sincronización completa: ${response.data.imported} nuevos, ${response.data.updated} actualizados`);
+    },
+    onError: (error) => {
+      const backendData = error?.response?.data || error?.data;
+      const details = [
+        backendData?.error || error?.message || 'Error desconocido',
+        backendData?.strava_status && `status: ${backendData.strava_status}`,
+        backendData?.strava_body,
+      ]
+        .filter(Boolean)
+        .join(' | ');
+
+      alert(`No se pudo sincronizar con Strava: ${details}`);
+      console.error('Error syncing Strava activities:', error);
     },
   });
 

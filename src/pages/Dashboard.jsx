@@ -111,6 +111,40 @@ export default function Dashboard() {
 
       <WeeklyWrap members={members} activities={activities} />
 
+      {/* Month Navigator - Mobile Only */}
+      <div className="md:hidden mb-4 flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-2 border border-white/15 shadow-sm w-fit mx-auto">
+        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => {
+          const newDate = new Date(currentDate);
+          newDate.setMonth(newDate.getMonth() - 1);
+          const searchParams = new URLSearchParams(window.location.search);
+          searchParams.set('date', format(newDate, 'yyyy-MM-dd'));
+          window.history.pushState({}, '', `?${searchParams.toString()}`);
+          window.location.reload();
+        }}>
+          <ChevronLeft className="w-4 h-4" />
+        </Button>
+        <span className="text-sm font-semibold text-white min-w-[120px] text-center capitalize">
+          {format(currentDate, 'MMMM yyyy', { locale: es })}
+        </span>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="h-8 w-8 rounded-full"
+          onClick={() => {
+            const newDate = new Date(currentDate);
+            newDate.setMonth(newDate.getMonth() + 1);
+            const searchParams = new URLSearchParams(window.location.search);
+            searchParams.set('date', format(newDate, 'yyyy-MM-dd'));
+            window.history.pushState({}, '', `?${searchParams.toString()}`);
+            window.location.reload();
+          }}
+        >
+          <MonthlyTeamChart members={members} activities={activities} currentDate={currentDate} />
+        </motion.div>
+      </div>
+
+      <WeeklyWrap members={members} activities={activities} />
+
       {/* Miembros del Equipo - Primero */}
       <div className="mb-3 md:mb-4">
         <h3 className="text-lg md:text-xl font-bold text-white">Miembros del Equipo</h3>
