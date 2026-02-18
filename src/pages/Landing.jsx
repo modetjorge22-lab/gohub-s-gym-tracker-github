@@ -189,17 +189,7 @@ export default function Landing() {
             </motion.div>
           )}
 
-          {isAdminCreator && (
-            <Button
-              size="sm"
-              variant="ghost"
-              className="text-white/40 hover:text-white/70 text-xs"
-              onClick={() => setViewState("create")}
-            >
-              <Plus className="w-3 h-3 mr-1" /> Crear grupo
-            </Button>
-          )}
-        </motion.div>
+        </AnimatePresence>
 
         <AnimatePresence mode="wait">
           {viewState === "join" && (
