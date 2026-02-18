@@ -60,6 +60,7 @@ import Settings from './pages/Settings';
 import StravaConnect from './pages/StravaConnect';
 import Team from './pages/Team';
 import Workouts from './pages/Workouts';
+import WhoopConnect from './pages/WhoopConnect';
 import __Layout from './Layout.jsx';
 
 
@@ -77,6 +78,7 @@ export const PAGES = {
     "StravaConnect": StravaConnect,
     "Team": Team,
     "Workouts": Workouts,
+    "WhoopConnect": WhoopConnect,
 }
 
 export const pagesConfig = {
