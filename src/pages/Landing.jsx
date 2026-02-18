@@ -31,12 +31,22 @@ export default function Landing() {
 
   const { data: groups = [], isLoading } = useQuery({
     queryKey: ["groups"],
-    queryFn: () => base44.entities.Group.list(),
+    queryFn: async () => {
+      const authed = await base44.auth.isAuthenticated();
+      if (!authed) return [];
+      return base44.entities.Group.list();
+    },
+    retry: false,
   });
 
   const { data: currentUser } = useQuery({
     queryKey: ["current-user"],
-    queryFn: () => base44.auth.me(),
+    queryFn: async () => {
+      const authed = await base44.auth.isAuthenticated();
+      if (!authed) return null;
+      return base44.auth.me();
+    },
+    retry: false,
   });
 
   const isAdminCreator = currentUser?.email?.toLowerCase() === "modetjorge22@gmail.com";
