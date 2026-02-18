@@ -64,7 +64,7 @@ export default function WhoopSleepChart({ userEmail }) {
       <CardHeader className="bg-gradient-to-r from-white/5 to-white/10 border-b border-white/10 py-3 px-4 md:px-6">
         <CardTitle className="flex items-center gap-2 text-base text-white">
           <Moon className="w-4 h-4 text-indigo-400" strokeWidth={2.5} />
-          Sueño — últimas 2 semanas
+          Sueño — último mes
         </CardTitle>
       </CardHeader>
       <CardContent className="p-3 md:p-6">
