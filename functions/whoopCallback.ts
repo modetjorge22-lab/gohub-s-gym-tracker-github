@@ -7,7 +7,7 @@ Deno.serve(async (req) => {
     const userEmail = url.searchParams.get("state");
 
     if (!code || !userEmail) {
-      return new Response("Missing code or state", { status: 400 });
+      return new Response(`Missing code or state. URL: ${url.toString()} | code: ${code} | state: ${userEmail}`, { status: 400 });
     }
 
     const clientId = Deno.env.get("WHOOP_CLIENT_ID");
