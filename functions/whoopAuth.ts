@@ -13,7 +13,7 @@ Deno.serve(async (req) => {
       client_id: clientId,
       redirect_uri: redirectUri,
       response_type: "code",
-      scope: "read:sleep read:recovery read:workout offline",
+      scope: "read:sleep offline",
       state: user.email,
     });
 
