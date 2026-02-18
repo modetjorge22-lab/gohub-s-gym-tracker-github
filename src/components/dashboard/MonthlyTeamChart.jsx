@@ -94,7 +94,9 @@ export default function MonthlyTeamChart({ members, activities, currentDate = ne
   const monthEnd = endOfMonth(currentDate);
   const isCurrentMonth = isSameMonth(currentDate, new Date());
   const lastDay = isCurrentMonth ? new Date() : monthEnd;
-  const days = eachDayOfInterval({ start: monthStart, end: lastDay });
+  const allDays = eachDayOfInterval({ start: monthStart, end: lastDay });
+  // Show every other day to reduce clutter on mobile
+  const days = allDays;
 
   const membersMap = React.useMemo(() => new Map(members.map((member) => [member.name, member])), [members]);
 
