@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { ensureStravaWebhookSubscription } from './stravaClient.ts';
 
 Deno.serve(async (req) => {
     try {
@@ -17,8 +18,6 @@ Deno.serve(async (req) => {
 
         const clientId = Deno.env.get("STRAVA_CLIENT_ID");
         const clientSecret = Deno.env.get("STRAVA_CLIENT_SECRET");
-        const redirectUri = new URL(req.headers.get('referer') || req.headers.get('origin')).origin;
-
         // Exchange code for tokens
         const tokenResponse = await fetch('https://www.strava.com/oauth/token', {
             method: 'POST',
@@ -50,9 +49,14 @@ Deno.serve(async (req) => {
             strava_athlete_id: tokenData.athlete.id,
         });
 
+        // Ensure global webhook exists so all connected users get auto-sync events.
+        const callbackUrl = `${new URL(req.url).origin}/functions/stravaWebhook`;
+        const webhook = await ensureStravaWebhookSubscription(callbackUrl);
+
         return Response.json({ 
             success: true,
-            athlete: tokenData.athlete 
+            athlete: tokenData.athlete,
+            webhook
         });
     } catch (error) {
         return Response.json({ error: error.message }, { status: 500 });

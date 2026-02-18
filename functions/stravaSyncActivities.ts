@@ -1,5 +1,6 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 import { format } from 'npm:date-fns@3.6.0';
+import { ensureValidStravaAccessToken, isStrengthTrainingActivity } from './stravaClient.ts';
 
 Deno.serve(async (req) => {
     try {
@@ -10,10 +11,14 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'No autorizado' }, { status: 401 });
         }
 
-        const accessToken = user.strava_access_token;
-        if (!accessToken) {
+        if (!user.strava_access_token) {
             return Response.json({ error: 'No estás conectado a Strava' }, { status: 400 });
         }
+
+        const accessToken = await ensureValidStravaAccessToken({
+            user,
+            updateUserTokens: (payload) => base44.auth.updateMe(payload),
+        });
 
         // Get activities from last 30 days
         const after = Math.floor(Date.now() / 1000) - (30 * 24 * 60 * 60);
@@ -28,13 +33,21 @@ Deno.serve(async (req) => {
         );
 
         if (!response.ok) {
-            return Response.json({ error: 'Error obteniendo actividades de Strava' }, { status: 400 });
+            const errorPayload = await response.text();
+            return Response.json(
+                {
+                    error: 'Error obteniendo actividades de Strava',
+                    strava_status: response.status,
+                    strava_body: errorPayload,
+                },
+                { status: 400 }
+            );
         }
 
         const activities = await response.json();
         
         // Filter only strength training
-        const workouts = activities.filter(a => a.type === 'WeightTraining');
+        const workouts = activities.filter((a) => isStrengthTrainingActivity(a));
 
         // Get existing activities for this user
         const existingActivities = await base44.entities.Activity.filter(
