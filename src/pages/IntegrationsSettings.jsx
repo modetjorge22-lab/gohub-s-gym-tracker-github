@@ -20,6 +20,18 @@ export default function IntegrationsSettings() {
           </Link>
         </CardContent>
       </Card>
+
+      <Card className="bg-[#11131a]/80 border border-white/10">
+        <CardHeader>
+          <CardTitle className="text-white">Whoop</CardTitle>
+          <CardDescription className="text-white/70">Conecta tu Whoop para importar datos de sueño y recuperación.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Link to={createPageUrl("WhoopConnect")}>
+            <Button>Abrir integración de Whoop</Button>
+          </Link>
+        </CardContent>
+      </Card>
     </div>
   );
 }
