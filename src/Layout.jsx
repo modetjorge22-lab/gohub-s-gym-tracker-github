@@ -47,24 +47,23 @@ export default function Layout({ children, currentPageName }) {
     queryFn: () => base44.auth.me(),
   });
 
-  const { data: members } = useQuery({
+  const { data: members, isLoading: loadingMembers } = useQuery({
     queryKey: ['team-members'],
     queryFn: () => base44.entities.TeamMember.list(),
   });
 
-  // Check if user has a profile in current group
   React.useEffect(() => {
-    if (user && members && groupId) {
-      // Filter members by group
+    // Only check once both user and members are fully loaded (not loading state)
+    if (user && members && !loadingMembers && groupId && !location.pathname.includes("Landing")) {
       const groupMembers = members.filter(m => m.group_id === groupId);
       const hasProfile = groupMembers.some(m => m.email === user.email);
-      
-      // Only show dialog if not on landing page
-      if (!hasProfile && !location.pathname.includes("Landing")) {
+      if (!hasProfile) {
         setShowCreateProfile(true);
+      } else {
+        setShowCreateProfile(false);
       }
     }
-  }, [user, members, groupId, location]);
+  }, [user, members, loadingMembers, groupId, location]);
 
   const currentDateParam = searchParams.get('date');
   const currentDate = currentDateParam ? new Date(currentDateParam) : new Date();
@@ -84,6 +83,11 @@ export default function Layout({ children, currentPageName }) {
       return params;
     });
   };
+
+  const isNextMonthDisabled = isWithinInterval(new Date(), {
+    start: startOfMonth(currentDate),
+    end: addMonths(startOfMonth(currentDate), 1)
+  });
 
   const navItems = [
     { name: "Feed", path: createPageUrl("Feed"), icon: Newspaper },
@@ -108,6 +112,7 @@ export default function Layout({ children, currentPageName }) {
                   sessionStorage.removeItem('base44_group_id');
                   sessionStorage.removeItem('base44_group_name');
                 }}
+                className="flex items-center gap-2"
               >
                 <div className="w-8 h-8 md:w-12 md:h-12 bg-gradient-to-br from-gray-900 to-gray-700 rounded-full flex items-center justify-center shadow-lg cursor-pointer hover:scale-105 transition-transform">
                   <span className="text-white font-bold text-sm md:text-xl">O</span>
@@ -119,26 +124,11 @@ export default function Layout({ children, currentPageName }) {
                 </h1>
                 <p className="text-xs text-gray-300 hidden md:block">Olympia</p>
               </div>
-            </div>
 
-            {/* Month Navigator - Centered - Hidden on mobile */}
-            <div className="hidden md:flex absolute left-1/2 transform -translate-x-1/2 items-center gap-2 bg-white/60 backdrop-blur-sm rounded-full px-2 py-1 border border-gray-200/50 shadow-sm">
-              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={handlePrevMonth}>
-                <ChevronLeft className="w-4 h-4" />
-              </Button>
-              <span className="text-sm font-semibold text-gray-800 w-32 text-center capitalize">
-                {format(currentDate, 'MMMM yyyy', { locale: es })}
-              </span>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-8 w-8 rounded-full" 
-                onClick={handleNextMonth}
-                disabled={isWithinInterval(new Date(), { start: startOfMonth(currentDate), end: addMonths(startOfMonth(currentDate), 1) })}
-              >
-                <ChevronRight className="w-4 h-4" />
-              </Button>
+              {/* Spacer to center month selector */}
+              <div className="w-8" />
             </div>
+          </header>
 
             {/* Navigation Pills */}
             <div className="flex items-center gap-2">
@@ -202,11 +192,9 @@ export default function Layout({ children, currentPageName }) {
       />
 
       {/* Main Content */}
-      <main className={!isLanding ? "pt-16 md:pt-28 pb-8 min-h-screen" : "min-h-screen"}>
+      <main className={!isLanding ? "pt-14 md:pt-28 pb-20 md:pb-8 min-h-screen" : "min-h-screen"}>
         {children}
       </main>
-
-
     </div>
   );
 }

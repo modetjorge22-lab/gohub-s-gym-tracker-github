@@ -139,9 +139,11 @@ export default function Dashboard() {
             window.location.reload();
           }}
         >
-          <ChevronRight className="w-4 h-4" />
-        </Button>
+          <MonthlyTeamChart members={members} activities={activities} currentDate={currentDate} />
+        </motion.div>
       </div>
+
+      <WeeklyWrap members={members} activities={activities} />
 
       {/* Miembros del Equipo - Primero */}
       <div className="mb-3 md:mb-4">
@@ -149,19 +151,6 @@ export default function Dashboard() {
       </div>
 
       <TeamOverview stats={weeklyStats} activities={activities} currentDate={currentDate} />
-
-      {/* Gráfica mensual del equipo - Aparece al hacer scroll */}
-      {showChart && (
-        <div className="mb-8 mt-8">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 30 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-          >
-            <MonthlyTeamChart members={members} activities={activities} currentDate={currentDate} />
-          </motion.div>
-        </div>
-      )}
 
       <div className="mt-8">
         <PerformanceAnalysis activities={activities} members={members} currentDate={currentDate} />

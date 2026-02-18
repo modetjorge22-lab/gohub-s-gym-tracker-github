@@ -494,7 +494,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
               transition={{ delay: index * 0.05 }}
             >
               {/* Refined card style */}
-              <div className={`group backdrop-blur-xl bg-gradient-to-br ${cardBg} rounded-2xl border border-white/40 shadow-lg hover:shadow-xl transition-all duration-300 p-4 md:p-6 hover:scale-[1.01]`}>
+              <div className={`group backdrop-blur-xl bg-gradient-to-br ${cardBg} rounded-2xl border border-white/10 shadow-lg hover:shadow-xl transition-all duration-300 p-4 md:p-6 hover:scale-[1.01]`}>
                 {/* Link now wraps the main display part of the card */}
                 <Link to={`${createPageUrl("MemberCalendar")}?email=${encodeURIComponent(member.email)}`}>
                   <div className="flex items-start justify-between mb-2">
@@ -536,7 +536,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                   <div className="mt-4 space-y-3">
                     {/* Plan Semanal */}
                     <div 
-                      className="bg-white/70 backdrop-blur-sm rounded-xl p-3 border border-gray-200 cursor-pointer hover:bg-white hover:shadow-sm transition-all"
+                      className="bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10 cursor-pointer hover:bg-white/10 transition-all"
                       onClick={(e) => {
                         e.preventDefault();
                         setSelectedMember(member);
@@ -545,14 +545,14 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                     >
                       <div className="flex justify-between items-center mb-2">
                         <div className="flex items-center gap-1">
-                          <span className="text-xs text-gray-600 font-semibold">Plan Semanal</span>
-                          <Settings className="w-3 h-3 text-gray-400" />
+                          <span className="text-xs text-white/70 font-semibold">Plan Semanal</span>
+                          <Settings className="w-3 h-3 text-white/40" />
                         </div>
-                        <span className="text-sm font-bold text-gray-900">
+                        <span className="text-sm font-bold text-white">
                           {completedPlannedActivities}/{totalPlannedActivities}
                         </span>
                       </div>
-                      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="h-2 bg-white/10 rounded-full overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${Math.min(planCompletionPercentage, 100)}%` }}
@@ -567,7 +567,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                               a => a.activity_type === plan.activity_type && a.status === 'completed'
                             ).length;
                             return (
-                              <span key={idx} className="text-[10px] bg-white px-2 py-0.5 rounded-full border text-gray-600">
+                              <span key={idx} className="text-[10px] bg-white/10 px-2 py-0.5 rounded-full border border-white/10 text-white/70">
                                 {activityEmojis[plan.activity_type]} {planActivitiesCompleted}/{plan.weekly_target}
                               </span>
                             );
@@ -575,24 +575,24 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                         </div>
                       )}
                       {memberPlans.length === 0 && (
-                        <div className="text-xs text-gray-500 mt-2">
+                        <div className="text-xs text-white/40 mt-2">
                           Clic para configurar tu plan
                         </div>
                       )}
                     </div>
 
                     {/* Fun Fact */}
-                    <div className="bg-gradient-to-br from-purple-50/80 to-indigo-50/80 backdrop-blur-sm rounded-xl p-3 border border-purple-200/50">
+                    <div className="bg-white/5 backdrop-blur-sm rounded-xl p-3 border border-white/10">
                       <div className="flex items-center gap-2 text-sm">
-                        <Sparkles className="w-4 h-4 text-purple-500" />
-                        <span className="text-gray-700 font-medium">{funFact}</span>
+                        <Sparkles className="w-4 h-4 text-purple-400" />
+                        <span className="text-white/70 font-medium">{funFact}</span>
                       </div>
                     </div>
 
                     {/* Suplementos */}
-                    <div className="bg-white/70 backdrop-blur-sm rounded-xl border border-gray-200 overflow-hidden">
+                    <div className="bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 overflow-hidden">
                       <div 
-                        className="p-3 cursor-pointer hover:bg-white transition-all"
+                        className="p-3 cursor-pointer hover:bg-white/10 transition-all"
                         onClick={(e) => {
                           e.preventDefault();
                           if (todaySupplements.total > 0) {
@@ -609,8 +609,8 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <span className="text-base">💊</span>
-                            <p className="text-xs text-gray-600 font-semibold">Suplementos</p>
-                            <span className="text-sm font-bold text-gray-900">
+                            <p className="text-xs text-white/70 font-semibold">Suplementos</p>
+                            <span className="text-sm font-bold text-white">
                               {todaySupplements.taken}/{todaySupplements.total}
                             </span>
                             {todaySupplements.allTaken && todaySupplements.total > 0 && (
@@ -628,7 +628,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                           )}
                         </div>
                         {todaySupplements.total > 0 && (
-                          <div className="h-2 bg-gray-200 rounded-full overflow-hidden mt-2">
+                          <div className="h-2 bg-white/10 rounded-full overflow-hidden mt-2">
                             <motion.div
                               initial={{ width: 0 }}
                               animate={{ width: `${(todaySupplements.taken / todaySupplements.total) * 100}%` }}
@@ -646,7 +646,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                             animate={{ height: "auto", opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
                             transition={{ duration: 0.2 }}
-                            className="border-t border-gray-200"
+                            className="border-t border-white/10"
                           >
                             <div className="p-3 space-y-2">
                               {supplements
@@ -661,7 +661,7 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                                   return (
                                     <div
                                       key={supp.id}
-                                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                                      className="flex items-center gap-2 p-2 rounded-lg hover:bg-white/10 cursor-pointer transition-colors"
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         handleSupplementToggle(member.email, supp, isTaken);
@@ -673,18 +673,18 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                                         className="data-[state=checked]:bg-emerald-600 data-[state=checked]:border-emerald-600"
                                       />
                                       <div className="flex-1 min-w-0">
-                                        <p className={`text-sm font-medium ${isTaken ? "text-gray-500 line-through" : "text-gray-900"}`}>
+                                        <p className={`text-sm font-medium ${isTaken ? "text-white/40 line-through" : "text-white"}`}>
                                           {supp.name}
                                         </p>
                                         {supp.dosage && (
-                                          <p className="text-xs text-gray-500">{supp.dosage}</p>
+                                          <p className="text-xs text-white/50">{supp.dosage}</p>
                                         )}
                                       </div>
                                     </div>
                                   );
                                 })}
                               <button
-                                className="w-full text-xs text-purple-600 hover:text-purple-700 font-semibold py-2 flex items-center justify-center gap-1"
+                                className="w-full text-xs text-purple-400 hover:text-purple-300 font-semibold py-2 flex items-center justify-center gap-1"
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   setSelectedMember(member);
@@ -702,8 +702,8 @@ export default function TeamOverview({ stats, activities, currentDate = new Date
                   </div>
                 </Link>
 
-                {/* Estadísticas Personales (fuera del Link para evitar navegación al hacer clic) */}
-                <div className="mt-3 pt-3 border-t border-gray-200"> {/* Added border-t for visual separation */}
+                {/* Estadísticas Personales */}
+                <div className="mt-3 pt-3 border-t border-white/10">
                   <MemberStats 
                     member={member} 
                     allActivities={activities}

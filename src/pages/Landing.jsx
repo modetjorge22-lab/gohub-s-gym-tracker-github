@@ -55,9 +55,8 @@ export default function Landing() {
           navigate(createPageUrl("Feed"));
         }
       }
-      setAutoLoginAttempted(true);
     }
-  }, [groups, isLoading, autoLoginAttempted, navigate]);
+  }, [isAuthenticated, isLoading, groups, navigate]);
 
   React.useEffect(() => {
     const activeGroupId = sessionStorage.getItem("base44_group_id");
@@ -190,6 +189,19 @@ export default function Landing() {
             </motion.div>
           )}
 
+          {isAdminCreator && (
+            <Button
+              size="sm"
+              variant="ghost"
+              className="text-white/40 hover:text-white/70 text-xs"
+              onClick={() => setViewState("create")}
+            >
+              <Plus className="w-3 h-3 mr-1" /> Crear grupo
+            </Button>
+          )}
+        </motion.div>
+
+        <AnimatePresence mode="wait">
           {viewState === "join" && (
             <motion.div
               key="join"
@@ -204,13 +216,12 @@ export default function Landing() {
                 </Button>
                 <h3 className="font-bold text-white">Selecciona un grupo</h3>
               </div>
-
               {isLoading ? (
                 <div className="flex justify-center py-8"><Loader2 className="animate-spin text-white/70" /></div>
               ) : groups.length === 0 ? (
                 <div className="text-center text-white/70 py-8">No hay grupos disponibles para unirse.</div>
               ) : (
-                <div className="space-y-3 max-h-[400px] overflow-y-auto pr-2">
+                <div className="space-y-2 max-h-[300px] overflow-y-auto">
                   {groups.map((group) => (
                     <motion.button
                       key={group.id}
@@ -283,6 +294,7 @@ export default function Landing() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
+              className="rounded-2xl border border-white/15 bg-[#11131a]/90 p-4 text-left space-y-4"
             >
               <Card className="border-white/15 bg-[#11131a]/90 text-white shadow-xl text-left">
                 <CardHeader>

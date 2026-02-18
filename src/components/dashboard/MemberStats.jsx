@@ -23,22 +23,26 @@ export default function MemberStats({ member, allActivities, teamAverage }) {
 
   const getWeeklyData = () => {
     const weeks = [];
-    // Use memberActivities last date or Today? 
-    // Let's assume we want to see the trend leading up to the current view.
-    // I'll stick to new Date() here as I didn't pass the prop in the previous step.
+    const today = new Date();
     for (let i = 3; i >= 0; i--) {
-      const weekStart = startOfWeek(subWeeks(new Date(), i), { weekStartsOn: 1 });
-      const weekEnd = endOfWeek(subWeeks(new Date(), i), { weekStartsOn: 1 });
+      const weekStart = startOfWeek(subWeeks(today, i), { weekStartsOn: 1 });
+      const weekEnd = endOfWeek(subWeeks(today, i), { weekStartsOn: 1 });
+      // Days elapsed in this week (up to today)
+      const effectiveEnd = weekEnd > today ? today : weekEnd;
+      const daysElapsed = Math.max(1, Math.round((effectiveEnd - weekStart) / 86400000) + 1);
 
       const weekActivities = memberActivities.filter(a =>
         isWithinInterval(new Date(a.date), { start: weekStart, end: weekEnd })
       );
 
       const hours = weekActivities.reduce((sum, a) => sum + (a.duration_minutes / 60), 0);
-      
+      // Daily pace: hours / days elapsed, projected to 7 days for fair comparison
+      const dailyPace = hours / daysElapsed;
+      const projectedHours = parseFloat((dailyPace * 7).toFixed(1));
+
       weeks.push({
         week: format(weekStart, "'Sem' w", { locale: es }),
-        miembro: parseFloat(hours.toFixed(1)),
+        miembro: projectedHours,
         equipo: teamAverage
       });
     }
@@ -167,135 +171,70 @@ export default function MemberStats({ member, allActivities, teamAverage }) {
   const { chartData, activityTypes, activityLabels, colors } = getMonthlyActivityHours();
 
   return (
-    <div className="bg-white/70 backdrop-blur-sm rounded-xl border border-gray-200 overflow-hidden">
-      <div className="p-4 space-y-4">
-              {/* Resumen de estadísticas */}
-              <div className="grid grid-cols-3 gap-2">
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-3 text-center">
-                  <Target className="w-4 h-4 text-blue-600 mx-auto mb-1" />
-                  <p className="text-xl font-bold text-gray-900">{totalHours.toFixed(1)}h</p>
-                  <p className="text-xs text-gray-600">Total Acumuladas</p>
-                </div>
-                <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-3 text-center">
-                  <Activity className="w-4 h-4 text-green-600 mx-auto mb-1" />
-                  <p className="text-xl font-bold text-gray-900">{monthlyHours.toFixed(1)}h</p>
-                  <p className="text-xs text-gray-600">Horas Mensuales</p>
-                </div>
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-3 text-center">
-                  <Award className="w-4 h-4 text-purple-600 mx-auto mb-1" />
-                  <p className="text-xl font-bold text-gray-900">{monthlyPacePercentage.toFixed(0)}%</p>
-                  <p className="text-xs text-gray-600">Ritmo del Mes</p>
-                </div>
-              </div>
+    <div className="rounded-xl overflow-hidden">
+      <div className="space-y-4">
+        {/* Resumen de estadísticas */}
+        <div className="grid grid-cols-3 gap-2">
+          <div className="bg-white/5 rounded-lg p-3 text-center border border-white/10">
+            <Target className="w-4 h-4 text-blue-400 mx-auto mb-1" />
+            <p className="text-xl font-bold text-white">{totalHours.toFixed(1)}h</p>
+            <p className="text-xs text-white/50">Total</p>
+          </div>
+          <div className="bg-white/5 rounded-lg p-3 text-center border border-white/10">
+            <Activity className="w-4 h-4 text-emerald-400 mx-auto mb-1" />
+            <p className="text-xl font-bold text-white">{monthlyHours.toFixed(1)}h</p>
+            <p className="text-xs text-white/50">Este mes</p>
+          </div>
+          <div className="bg-white/5 rounded-lg p-3 text-center border border-white/10">
+            <Award className="w-4 h-4 text-purple-400 mx-auto mb-1" />
+            <p className="text-xl font-bold text-white">{monthlyPacePercentage.toFixed(0)}%</p>
+            <p className="text-xs text-white/50">Ritmo</p>
+          </div>
+        </div>
 
-              {/* Gráfica comparativa últimas 4 semanas */}
-              <div>
-                <h4 className="text-xs font-bold text-gray-700 mb-2 flex items-center gap-2">
-                  <TrendingUp className="w-3 h-3" />
-                  Horas vs Media del Equipo
-                </h4>
-                <ResponsiveContainer width="100%" height={150}>
-                  <LineChart data={weeklyData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis 
-                      dataKey="week" 
-                      tick={{ fontSize: 10 }}
-                      stroke="#6b7280"
-                    />
-                    <YAxis 
-                      tick={{ fontSize: 10 }}
-                      stroke="#6b7280"
-                      width={30}
-                    />
-                    <Tooltip 
-                      contentStyle={{ 
-                        fontSize: 11, 
-                        backgroundColor: 'rgba(255,255,255,0.95)',
-                        border: '1px solid #e5e7eb',
-                        borderRadius: 8
-                      }}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="miembro" 
-                      stroke="#6366f1" 
-                      strokeWidth={2}
-                      name="Tú"
-                      dot={{ fill: '#6366f1', r: 4 }}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="equipo" 
-                      stroke="#10b981" 
-                      strokeWidth={2}
-                      strokeDasharray="5 5"
-                      name="Media equipo"
-                      dot={{ fill: '#10b981', r: 4 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
+        {/* Gráfica comparativa últimas 4 semanas */}
+        <div>
+          <h4 className="text-xs font-bold text-white/60 mb-2 flex items-center gap-2">
+            <TrendingUp className="w-3 h-3" />
+            Ritmo vs Media del Equipo
+          </h4>
+          <ResponsiveContainer width="100%" height={130}>
+            <LineChart data={weeklyData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
+              <XAxis dataKey="week" tick={{ fontSize: 10, fill: "#94a3b8" }} stroke="rgba(255,255,255,0.1)" tickLine={false} />
+              <YAxis tick={{ fontSize: 10, fill: "#94a3b8" }} stroke="rgba(255,255,255,0.1)" tickLine={false} axisLine={false} width={28} />
+              <Tooltip contentStyle={{ fontSize: 11, backgroundColor: 'rgba(17,19,26,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: '#fff' }} />
+              <Line type="monotone" dataKey="miembro" stroke="#6366f1" strokeWidth={2} name="Tú" dot={{ fill: '#6366f1', r: 3 }} />
+              <Line type="monotone" dataKey="equipo" stroke="#10b981" strokeWidth={2} strokeDasharray="5 5" name="Media equipo" dot={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
 
-              {/* Gráfica de horas por actividad este mes */}
-              {activityTypes.length > 0 && (
-                <div>
-                  <h4 className="text-xs font-bold text-gray-700 mb-2">Horas por Actividad este Mes</h4>
-                  <ResponsiveContainer width="100%" height={150}>
-                    <LineChart data={chartData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                      <XAxis 
-                        dataKey="date" 
-                        tick={{ fontSize: 9 }}
-                        angle={-45}
-                        textAnchor="end"
-                        height={50}
-                        stroke="#6b7280"
-                      />
-                      <YAxis 
-                        tick={{ fontSize: 10 }}
-                        stroke="#6b7280"
-                        width={30}
-                      />
-                      <Tooltip 
-                        contentStyle={{ 
-                          fontSize: 11,
-                          backgroundColor: 'rgba(255,255,255,0.95)',
-                          border: '1px solid #e5e7eb',
-                          borderRadius: 8
-                        }}
-                        labelFormatter={(value) => `${value}`}
-                        formatter={(value, name) => [
-                          `${value}h`, 
-                          activityLabels[name] || name
-                        ]}
-                      />
-                      {activityTypes.map((type) => (
-                        <Line
-                          key={type}
-                          type="monotone"
-                          dataKey={type}
-                          stroke={colors[type]}
-                          strokeWidth={2}
-                          dot={false}
-                          connectNulls={false}
-                          name={activityLabels[type] || type}
-                        />
-                      ))}
-                    </LineChart>
-                  </ResponsiveContainer>
-                  <div className="flex flex-wrap gap-2 mt-2 justify-center">
-                    {activityTypes.map((type) => (
-                      <div key={type} className="flex items-center gap-1">
-                        <div 
-                          className="w-3 h-3 rounded-full" 
-                          style={{ backgroundColor: colors[type] }}
-                        />
-                        <span className="text-xs text-gray-600">{activityLabels[type]}</span>
-                      </div>
-                    ))}
-                  </div>
+        {/* Gráfica de horas por actividad este mes */}
+        {activityTypes.length > 0 && (
+          <div>
+            <h4 className="text-xs font-bold text-white/60 mb-2">Horas por Actividad este Mes</h4>
+            <ResponsiveContainer width="100%" height={130}>
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
+                <XAxis dataKey="date" tick={{ fontSize: 9, fill: "#94a3b8" }} angle={-45} textAnchor="end" height={40} stroke="rgba(255,255,255,0.1)" tickLine={false} />
+                <YAxis tick={{ fontSize: 10, fill: "#94a3b8" }} stroke="rgba(255,255,255,0.1)" tickLine={false} axisLine={false} width={28} />
+                <Tooltip contentStyle={{ fontSize: 11, backgroundColor: 'rgba(17,19,26,0.95)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: '#fff' }} formatter={(value, name) => [`${value}h`, activityLabels[name] || name]} />
+                {activityTypes.map((type) => (
+                  <Line key={type} type="monotone" dataKey={type} stroke={colors[type]} strokeWidth={2} dot={false} connectNulls={false} name={activityLabels[type] || type} />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+            <div className="flex flex-wrap gap-2 mt-2 justify-center">
+              {activityTypes.map((type) => (
+                <div key={type} className="flex items-center gap-1">
+                  <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: colors[type] }} />
+                  <span className="text-xs text-white/50">{activityLabels[type]}</span>
                 </div>
-              )}
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

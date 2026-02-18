@@ -244,19 +244,19 @@ export default function PerformanceAnalysis({ activities, members, currentDate =
 
   return (
     <div>
-      <h3 className="text-xl font-bold text-gray-900 mb-4">Análisis de Rendimiento</h3>
+      <h3 className="text-xl font-bold text-white mb-4">Análisis de Rendimiento</h3>
       
       <Tabs defaultValue="members" className="w-full">
-        <TabsList className="grid w-full grid-cols-3 mb-6">
-          <TabsTrigger value="activities">
+        <TabsList className="grid w-full grid-cols-3 mb-6 bg-white/5 border border-white/10">
+          <TabsTrigger value="activities" className="data-[state=active]:bg-white/15 data-[state=active]:text-white text-white/50">
             <Activity className="w-4 h-4 mr-2" />
             Por Actividad
           </TabsTrigger>
-          <TabsTrigger value="members">
+          <TabsTrigger value="members" className="data-[state=active]:bg-white/15 data-[state=active]:text-white text-white/50">
             <Users className="w-4 h-4 mr-2" />
             Comparar Equipo
           </TabsTrigger>
-          <TabsTrigger value="yearly">
+          <TabsTrigger value="yearly" className="data-[state=active]:bg-white/15 data-[state=active]:text-white text-white/50">
             <TrendingUp className="w-4 h-4 mr-2" />
             Reporte Anual
           </TabsTrigger>
@@ -271,41 +271,34 @@ export default function PerformanceAnalysis({ activities, members, currentDate =
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
               >
-                <Card className="backdrop-blur-xl bg-white/80 border-2 border-gray-200 shadow-lg hover:shadow-xl transition-all">
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-2xl">{activityEmojis[metric.type]}</span>
-                          <h4 className="font-bold text-gray-900">{activityLabels[metric.type]}</h4>
-                        </div>
-                        <p className="text-xs text-gray-600">Este mes: {metric.currentMonthCount} actividades</p>
+                <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-lg p-5">
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-2xl">{activityEmojis[metric.type]}</span>
+                        <h4 className="font-bold text-white">{activityLabels[metric.type]}</h4>
                       </div>
-                      <Badge className={metric.pacePercentage >= 100 ? "bg-green-500" : "bg-red-500"}>
-                        Ritmo: {metric.pacePercentage}%
-                      </Badge>
+                      <p className="text-xs text-white/50">Este mes: {metric.currentMonthCount} actividades</p>
                     </div>
-
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Horas este mes</span>
-                        <span className="text-lg font-bold text-gray-900">{metric.currentMonthHours}h</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Mes anterior</span>
-                        <span className="text-sm text-gray-700">{metric.lastMonthHours}h</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Total año</span>
-                        <span className="text-sm text-gray-700">{metric.yearHours}h ({metric.yearCount})</span>
-                      </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Intensidad media</span>
-                        <span className="text-sm font-semibold text-gray-900">{metric.avgIntensity}/5</span>
-                      </div>
+                    <Badge className={metric.pacePercentage >= 100 ? "bg-emerald-500 text-white" : "bg-red-500/80 text-white"}>
+                      {metric.pacePercentage}%
+                    </Badge>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-white/60">Horas este mes</span>
+                      <span className="text-lg font-bold text-white">{metric.currentMonthHours}h</span>
                     </div>
-                  </CardContent>
-                </Card>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-white/60">Mes anterior</span>
+                      <span className="text-sm text-white/80">{metric.lastMonthHours}h</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-white/60">Total año</span>
+                      <span className="text-sm text-white/80">{metric.yearHours}h ({metric.yearCount})</span>
+                    </div>
+                  </div>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -320,60 +313,44 @@ export default function PerformanceAnalysis({ activities, members, currentDate =
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="backdrop-blur-xl bg-white/80 border-2 border-gray-200 shadow-lg">
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h4 className="font-bold text-gray-900 text-lg">{member.name}</h4>
-                        <p className="text-xs text-gray-600">{member.activitiesCount} actividades este mes</p>
-                      </div>
-                      {index === 0 && (
-                        <Trophy className="w-6 h-6 text-yellow-500" />
-                      )}
+                <div className="backdrop-blur-xl bg-white/5 border border-white/10 rounded-2xl shadow-lg p-5">
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h4 className="font-bold text-white text-lg">{member.name}</h4>
+                      <p className="text-xs text-white/50">{member.activitiesCount} actividades este mes</p>
                     </div>
-
-                    <div className="space-y-3">
-                      <div>
-                        <p className="text-3xl font-bold text-gray-900 text-center mb-1">{member.hours}h</p>
-                        <p className="text-xs text-gray-600 text-center">Horas entrenadas</p>
-                      </div>
-
-                      {/* Desglose de horas por actividad */}
-                      <div className="bg-gray-100 rounded-lg p-3">
-                        <p className="text-xs font-semibold text-gray-700 mb-2">Desglose por actividad</p>
-                        <div className="space-y-1">
-                          {Object.entries(member.activityHours || {})
-                            .sort((a, b) => b[1] - a[1])
-                            .slice(0, 3)
-                            .map(([type, hours]) => (
-                              <div key={type} className="flex justify-between items-center">
-                                <span className="text-xs text-gray-600">
-                                  {activityEmojis[type]} {activityLabels[type]}
-                                </span>
-                                <span className="text-xs font-bold text-gray-900">{hours.toFixed(1)}h</span>
-                              </div>
-                            ))}
-                        </div>
-                      </div>
-
-                      {/* Win Rate en Pádel */}
-                      {member.padelWinRate !== null && (
-                        <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                          <div className="flex justify-between items-center">
-                            <div className="flex items-center gap-2">
-                              <Trophy className="w-4 h-4 text-green-600" />
-                              <span className="text-xs font-semibold text-gray-700">Win Rate Pádel</span>
-                            </div>
-                            <span className="text-lg font-bold text-green-600">{member.padelWinRate}%</span>
+                    {index === 0 && <Trophy className="w-6 h-6 text-yellow-400" />}
+                  </div>
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-3xl font-bold text-white text-center mb-1">{member.hours}h</p>
+                      <p className="text-xs text-white/50 text-center">Horas entrenadas</p>
+                    </div>
+                    <div className="bg-white/5 rounded-lg p-3 border border-white/10">
+                      <p className="text-xs font-semibold text-white/60 mb-2">Desglose</p>
+                      <div className="space-y-1">
+                        {Object.entries(member.activityHours || {}).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([type, hours]) => (
+                          <div key={type} className="flex justify-between items-center">
+                            <span className="text-xs text-white/60">{activityEmojis[type]} {activityLabels[type]}</span>
+                            <span className="text-xs font-bold text-white">{hours.toFixed(1)}h</span>
                           </div>
-                          <p className="text-xs text-gray-600 mt-1 text-center">
-                            {member.padelMatches} partidos
-                          </p>
-                        </div>
-                      )}
+                        ))}
+                      </div>
                     </div>
-                  </CardContent>
-                </Card>
+                    {member.padelWinRate !== null && (
+                      <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-lg p-3">
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center gap-2">
+                            <Trophy className="w-4 h-4 text-emerald-400" />
+                            <span className="text-xs font-semibold text-white/70">Win Rate Pádel</span>
+                          </div>
+                          <span className="text-lg font-bold text-emerald-400">{member.padelWinRate}%</span>
+                        </div>
+                        <p className="text-xs text-white/50 mt-1 text-center">{member.padelMatches} partidos</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -382,100 +359,70 @@ export default function PerformanceAnalysis({ activities, members, currentDate =
         <TabsContent value="yearly">
           <div className="grid gap-6">
             <div className="grid md:grid-cols-3 gap-4">
-              <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200">
-                <CardContent className="p-6 text-center">
-                  <Activity className="w-8 h-8 text-blue-600 mx-auto mb-2" />
-                  <p className="text-4xl font-bold text-gray-900">{yearlyReport.totalActivities}</p>
-                  <p className="text-sm text-gray-600">Actividades totales</p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200">
-                <CardContent className="p-6 text-center">
-                  <TrendingUp className="w-8 h-8 text-green-600 mx-auto mb-2" />
-                  <p className="text-4xl font-bold text-gray-900">{yearlyReport.totalHours}h</p>
-                  <p className="text-sm text-gray-600">Horas totales</p>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-200">
-                <CardContent className="p-6 text-center">
-                  <Trophy className="w-8 h-8 text-purple-600 mx-auto mb-2" />
-                  <p className="text-4xl font-bold text-gray-900">{yearlyReport.avgIntensity}</p>
-                  <p className="text-sm text-gray-600">Intensidad media</p>
-                </CardContent>
-              </Card>
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 text-center">
+                <Activity className="w-7 h-7 text-blue-400 mx-auto mb-2" />
+                <p className="text-4xl font-bold text-white">{yearlyReport.totalActivities}</p>
+                <p className="text-sm text-white/50 mt-1">Actividades totales</p>
+              </div>
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 text-center">
+                <TrendingUp className="w-7 h-7 text-emerald-400 mx-auto mb-2" />
+                <p className="text-4xl font-bold text-white">{yearlyReport.totalHours}h</p>
+                <p className="text-sm text-white/50 mt-1">Horas totales</p>
+              </div>
+              <div className="bg-white/5 border border-white/10 rounded-2xl p-5 text-center">
+                <Trophy className="w-7 h-7 text-yellow-400 mx-auto mb-2" />
+                <p className="text-4xl font-bold text-white">{yearlyReport.totalActivities > 0 ? Math.round(parseFloat(yearlyReport.totalHours) / yearlyReport.totalActivities * 10) / 10 : 0}h</p>
+                <p className="text-sm text-white/50 mt-1">Media por sesión</p>
+              </div>
             </div>
 
-            <Card className="backdrop-blur-xl bg-white/80 border-2 border-gray-200">
-              <CardHeader>
-                <CardTitle>Evolución Mensual del Año (Equipo)</CardTitle>
-              </CardHeader>
-              <CardContent className="h-[400px]">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
+              <h4 className="text-sm font-bold text-white mb-4">Evolución Mensual del Año (Equipo)</h4>
+              <div className="h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={yearlyReport.monthlyData}>
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip 
-                      contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-                    />
-                    <Legend />
+                    <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#94a3b8" }} stroke="rgba(255,255,255,0.1)" tickLine={false} />
+                    <YAxis tick={{ fontSize: 11, fill: "#94a3b8" }} stroke="rgba(255,255,255,0.1)" tickLine={false} axisLine={false} />
+                    <Tooltip contentStyle={{ backgroundColor: 'rgba(17,19,26,0.95)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }} />
+                    <Legend wrapperStyle={{ color: '#94a3b8', fontSize: 12 }} />
                     {Object.keys(activityLabels).map((type) => (
-                      <Bar 
-                        key={type} 
-                        dataKey={type} 
-                        name={activityLabels[type]} 
-                        stackId="a" 
-                        fill={activityColors[type]} 
-                      />
+                      <Bar key={type} dataKey={type} name={activityLabels[type]} stackId="a" fill={activityColors[type]} />
                     ))}
                   </BarChart>
                 </ResponsiveContainer>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            <div className="space-y-4">
-              <h4 className="text-lg font-bold text-gray-900">Evolución Individual</h4>
+            <div className="space-y-3">
+              <h4 className="text-base font-bold text-white">Evolución Individual</h4>
               {members.map((member) => (
-                <Card key={member.email} className="overflow-hidden border-gray-200">
-                  <div 
-                    className="p-4 flex items-center justify-between cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors"
+                <div key={member.email} className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden">
+                  <div
+                    className="p-4 flex items-center justify-between cursor-pointer hover:bg-white/5 transition-colors"
                     onClick={() => setExpandedMember(expandedMember === member.email ? null : member.email)}
                   >
-                    <span className="font-bold text-gray-800">{member.name}</span>
-                    {expandedMember === member.email ? <ChevronUp className="w-5 h-5 text-gray-500" /> : <ChevronDown className="w-5 h-5 text-gray-500" />}
+                    <span className="font-bold text-white">{member.name}</span>
+                    {expandedMember === member.email ? <ChevronUp className="w-5 h-5 text-white/50" /> : <ChevronDown className="w-5 h-5 text-white/50" />}
                   </div>
                   <AnimatePresence>
                     {expandedMember === member.email && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <CardContent className="p-4 h-[300px]">
+                      <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }}>
+                        <div className="p-4 border-t border-white/10 h-[260px]">
                           <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={getMemberYearlyData(member.email)}>
-                              <XAxis dataKey="month" />
-                              <YAxis />
-                              <Tooltip />
-                              <Legend />
+                              <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#94a3b8" }} stroke="rgba(255,255,255,0.1)" tickLine={false} />
+                              <YAxis tick={{ fontSize: 11, fill: "#94a3b8" }} stroke="rgba(255,255,255,0.1)" tickLine={false} axisLine={false} />
+                              <Tooltip contentStyle={{ backgroundColor: 'rgba(17,19,26,0.95)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)', color: '#fff' }} />
                               {Object.keys(activityLabels).map((type) => (
-                                <Bar 
-                                  key={type} 
-                                  dataKey={type} 
-                                  name={activityLabels[type]} 
-                                  stackId="a" 
-                                  fill={activityColors[type]} 
-                                />
+                                <Bar key={type} dataKey={type} name={activityLabels[type]} stackId="a" fill={activityColors[type]} />
                               ))}
                             </BarChart>
                           </ResponsiveContainer>
-                        </CardContent>
+                        </div>
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </Card>
+                </div>
               ))}
             </div>
           </div>
