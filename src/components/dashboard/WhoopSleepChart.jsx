@@ -43,13 +43,13 @@ export default function WhoopSleepChart({ userEmail }) {
 
   if (tokenCheck.length === 0) return null;
 
-  // Last 14 days
-  const last14 = Array.from({ length: 14 }, (_, i) => {
-    const d = subDays(new Date(), 13 - i);
+  // Last 30 days
+  const last30 = Array.from({ length: 30 }, (_, i) => {
+    const d = subDays(new Date(), 29 - i);
     return format(d, "yyyy-MM-dd");
   });
 
-  const chartData = last14.map((dateStr) => {
+  const chartData = last30.map((dateStr) => {
     const record = sleepRecords.find((r) => r.date === dateStr);
     return {
       date: format(parseISO(dateStr), "d MMM", { locale: es }),
