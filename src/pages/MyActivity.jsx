@@ -86,6 +86,10 @@ export default function MyActivity() {
         <StrengthTrainingChart activities={activities} userEmail={myMember.email} />
       </div>
 
+      <div className="mb-4">
+        <WhoopSleepChart userEmail={myMember.email} />
+      </div>
+
       <TeamOverview
         stats={getMyWeeklyStats()}
         activities={activities}
