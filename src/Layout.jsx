@@ -47,20 +47,23 @@ export default function Layout({ children, currentPageName }) {
     queryFn: () => base44.auth.me(),
   });
 
-  const { data: members } = useQuery({
+  const { data: members, isLoading: loadingMembers } = useQuery({
     queryKey: ['team-members'],
     queryFn: () => base44.entities.TeamMember.list(),
   });
 
   React.useEffect(() => {
-    if (user && members && groupId) {
+    // Only check once both user and members are fully loaded (not loading state)
+    if (user && members && !loadingMembers && groupId && !location.pathname.includes("Landing")) {
       const groupMembers = members.filter(m => m.group_id === groupId);
       const hasProfile = groupMembers.some(m => m.email === user.email);
-      if (!hasProfile && !location.pathname.includes("Landing")) {
+      if (!hasProfile) {
         setShowCreateProfile(true);
+      } else {
+        setShowCreateProfile(false);
       }
     }
-  }, [user, members, groupId, location]);
+  }, [user, members, loadingMembers, groupId, location]);
 
   const currentDateParam = searchParams.get('date');
   const currentDate = currentDateParam ? new Date(currentDateParam) : new Date();
