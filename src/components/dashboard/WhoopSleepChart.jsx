@@ -52,7 +52,7 @@ export default function WhoopSleepChart({ userEmail }) {
   const chartData = last30.map((dateStr) => {
     const record = sleepRecords.find((r) => r.date === dateStr);
     return {
-      date: format(parseISO(dateStr), "d MMM", { locale: es }),
+      date: format(parseISO(dateStr), "d MMM", { locale: es }).replace(".", ""),
       duration: record ? parseFloat((record.total_duration_minutes / 60).toFixed(1)) : null,
       sleep: record?.sleep_performance ?? null,
       recovery: record?.recovery_score ?? null,
