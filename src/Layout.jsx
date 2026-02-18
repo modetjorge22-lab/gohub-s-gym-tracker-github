@@ -128,6 +128,7 @@ export default function Layout({ children, currentPageName }) {
               {/* Spacer to center month selector */}
               <div className="w-8" />
             </div>
+          </header>
 
             {/* Navigation Pills */}
             <div className="flex items-center gap-2">

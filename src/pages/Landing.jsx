@@ -189,9 +189,6 @@ export default function Landing() {
             </motion.div>
           )}
 
-        </AnimatePresence>
-
-        <AnimatePresence mode="wait">
           {viewState === "join" && (
             <motion.div
               key="join"

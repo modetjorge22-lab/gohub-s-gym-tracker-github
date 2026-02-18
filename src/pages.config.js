@@ -54,13 +54,13 @@ import ProfileSettings from './pages/ProfileSettings';
 import Settings from './pages/Settings';
 import Team from './pages/Team';
 import Workouts from './pages/Workouts';
-import Dashboard from './pages/Dashboard';
 import Feed from './pages/Feed';
 import IntegrationsSettings from './pages/IntegrationsSettings';
-import Landing from './pages/Landing';
 import MyActivity from './pages/MyActivity';
 import StravaConnect from './pages/StravaConnect';
 import WhoopConnect from './pages/WhoopConnect';
+import Dashboard from './pages/Dashboard';
+import Landing from './pages/Landing';
 import __Layout from './Layout.jsx';
 
 
@@ -72,13 +72,13 @@ export const PAGES = {
     "Settings": Settings,
     "Team": Team,
     "Workouts": Workouts,
-    "Dashboard": Dashboard,
     "Feed": Feed,
     "IntegrationsSettings": IntegrationsSettings,
-    "Landing": Landing,
     "MyActivity": MyActivity,
     "StravaConnect": StravaConnect,
     "WhoopConnect": WhoopConnect,
+    "Dashboard": Dashboard,
+    "Landing": Landing,
 }
 
 export const pagesConfig = {
