@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 
 export default function ProfileSettings() {
   const queryClient = useQueryClient();
-  const { logout } = useAuth();
   const inputRef = React.useRef(null);
 
   const { data: user } = useQuery({
