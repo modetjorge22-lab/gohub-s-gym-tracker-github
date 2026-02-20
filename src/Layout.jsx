@@ -94,72 +94,52 @@ export default function Layout({ children, currentPageName }) {
           <div className="backdrop-blur-xl bg-[#11131a]/65 border border-white/10 rounded-full shadow-xl px-8 py-4 relative">
             <div className="flex items-center justify-between">
               {/* Logo */}
-              <div className="flex items-center gap-4">
-                <Link
-                  to={createPageUrl("Landing")}
-                  onClick={() => {
-                    sessionStorage.removeItem('base44_group_id');
-                    sessionStorage.removeItem('base44_group_name');
-                  }}
-                  className="flex items-center gap-2"
-                >
-                  <div className="w-12 h-12 bg-gradient-to-br from-gray-900 to-gray-700 rounded-full flex items-center justify-center shadow-lg cursor-pointer hover:scale-105 transition-transform">
-                    <span className="text-white font-bold text-xl">O</span>
-                  </div>
-                </Link>
-                <div>
-                  <h1 className="text-xl font-bold text-white">{groupName}</h1>
-                  <p className="text-xs text-gray-300">Olympia</p>
+              <Link
+                to={createPageUrl("Landing")}
+                onClick={() => {
+                  sessionStorage.removeItem('base44_group_id');
+                  sessionStorage.removeItem('base44_group_name');
+                }}
+                className="flex items-center gap-3"
+              >
+                <div className="w-10 h-10 bg-gradient-to-br from-gray-900 to-gray-700 rounded-full flex items-center justify-center shadow-lg cursor-pointer hover:scale-105 transition-transform">
+                  <span className="text-white font-bold text-lg">O</span>
                 </div>
-              </div>
+                <h1 className="text-lg font-bold text-white">{groupName}</h1>
+              </Link>
 
               {/* Nav Pills */}
-              <div className="flex items-center gap-3">
-                <nav className="flex items-center gap-3">
-                  {navItems.map((item) => {
-                    const isActive = location.pathname === item.path;
-                    return (
-                      <Link
-                        key={item.name}
-                        to={`${item.path}?${searchParams.toString()}`}
-                        className={`flex items-center gap-2 px-8 py-3 rounded-full font-semibold transition-all duration-300 ${
-                          isActive
-                            ? "bg-gradient-to-r from-gray-900 to-gray-700 text-white shadow-lg scale-105"
-                            : "text-gray-300 hover:bg-white/20 hover:scale-105"
-                        }`}
-                      >
-                        <item.icon className="w-5 h-5" strokeWidth={2.5} />
-                        <span>{item.name}</span>
-                      </Link>
-                    );
-                  })}
-                </nav>
+              <nav className="flex items-center gap-1">
+                {navItems.map((item) => {
+                  const isActive = location.pathname === item.path;
+                  return (
+                    <Link
+                      key={item.name}
+                      to={`${item.path}?${searchParams.toString()}`}
+                      className={`flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 ${
+                        isActive
+                          ? "bg-gradient-to-r from-gray-900 to-gray-700 text-white shadow-lg scale-105"
+                          : "text-gray-300 hover:bg-white/20 hover:scale-105"
+                      }`}
+                    >
+                      <item.icon className="w-4 h-4" strokeWidth={2.5} />
+                      <span>{item.name}</span>
+                    </Link>
+                  );
+                })}
 
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="rounded-full text-white hover:bg-white/10">
-                      <MoreHorizontal className="w-5 h-5" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="bg-[#11131a] border border-white/10 text-white">
-                    <DropdownMenuItem asChild className="cursor-pointer">
-                      <Link to={createPageUrl("Settings")} className="flex items-center gap-2">
-                        <Settings className="w-4 h-4" /> Configuración
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild className="cursor-pointer">
-                      <Link to={createPageUrl("ProfileSettings")} className="flex items-center gap-2">
-                        <User className="w-4 h-4" /> Perfil
-                      </Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild className="cursor-pointer">
-                      <Link to={createPageUrl("IntegrationsSettings")} className="flex items-center gap-2">
-                        <Activity className="w-4 h-4" /> Integraciones
-                      </Link>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
+                {/* Settings como icono */}
+                <Link
+                  to={createPageUrl("Settings")}
+                  className={`flex items-center justify-center w-9 h-9 rounded-full text-sm font-semibold transition-all duration-300 ${
+                    location.pathname.includes("Settings")
+                      ? "bg-gradient-to-r from-gray-900 to-gray-700 text-white shadow-lg"
+                      : "text-gray-300 hover:bg-white/20"
+                  }`}
+                >
+                  <Settings className="w-4 h-4" strokeWidth={2.5} />
+                </Link>
+              </nav>
             </div>
           </div>
         </header>
