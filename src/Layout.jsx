@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Users, ChevronLeft, ChevronRight, Activity, Newspaper, User, MoreHorizontal, Settings } from "lucide-react";
+import { Users, ChevronLeft, ChevronRight, Activity, Newspaper, User, MoreHorizontal, Settings, LogIn, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { format, addMonths, subMonths, startOfMonth, isWithinInterval } from "date-fns";
