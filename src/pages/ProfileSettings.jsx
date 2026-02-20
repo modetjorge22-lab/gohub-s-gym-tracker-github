@@ -36,7 +36,8 @@ export default function ProfileSettings() {
     localStorage.removeItem("base44_last_group_id");
     localStorage.removeItem("base44_last_group_name");
     localStorage.removeItem("base44_last_group_password");
-    base44.auth.logout(createPageUrl("Landing"));
+    logout(false);
+    window.location.href = createPageUrl("Landing");
   };
 
   return (
