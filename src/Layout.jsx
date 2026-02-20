@@ -81,6 +81,8 @@ export default function Layout({ children, currentPageName }) {
     { name: "Feed", path: createPageUrl("Feed"), icon: Newspaper },
     { name: "Mi actividad", path: createPageUrl("MyActivity"), icon: User },
     { name: "Grupos", path: createPageUrl("Groups"), icon: Users },
+    { name: "Perfil", path: createPageUrl("ProfileSettings"), icon: User },
+    { name: "Integraciones", path: createPageUrl("IntegrationsSettings"), icon: Activity },
   ];
 
   const isLanding = location.pathname.includes("Landing");
