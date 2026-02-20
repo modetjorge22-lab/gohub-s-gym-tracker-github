@@ -3,7 +3,6 @@ import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Users, ChevronLeft, ChevronRight, Activity, Newspaper, User, MoreHorizontal, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { format, addMonths, subMonths, startOfMonth, isWithinInterval } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -44,7 +43,11 @@ export default function Layout({ children, currentPageName }) {
   
   const { data: user } = useQuery({
     queryKey: ['current-user'],
-    queryFn: () => base44.auth.me(),
+    queryFn: async () => {
+      const auth = await base44.auth.isAuthenticated();
+      if (!auth) return null;
+      return base44.auth.me();
+    },
   });
 
   const { data: members } = useQuery({
