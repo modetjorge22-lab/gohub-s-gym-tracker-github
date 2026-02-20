@@ -43,7 +43,11 @@ export default function Layout({ children, currentPageName }) {
   
   const { data: user } = useQuery({
     queryKey: ['current-user'],
-    queryFn: () => base44.auth.me(),
+    queryFn: async () => {
+      const auth = await base44.auth.isAuthenticated();
+      if (!auth) return null;
+      return base44.auth.me();
+    },
   });
 
   const { data: members } = useQuery({
