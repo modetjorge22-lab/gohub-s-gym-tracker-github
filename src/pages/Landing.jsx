@@ -1,368 +1,83 @@
-import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { motion, AnimatePresence } from "framer-motion";
-import { Lock, ArrowRight, Plus, Users, ChevronLeft, Loader2 } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
+import { motion } from "framer-motion";
 import { useAuth } from "@/lib/AuthContext";
+import { Button } from "@/components/ui/button";
+import { base44 } from "@/api/base44Client";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Landing() {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const { isAuthenticated, navigateToLogin } = useAuth();
-
-  const [viewState, setViewState] = useState("initial"); // initial, join, create, password
-  const [selectedGroup, setSelectedGroup] = useState(null);
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [autoLoginAttempted, setAutoLoginAttempted] = useState(false);
-
-  const [newGroupData, setNewGroupData] = useState({
-    name: "",
-    description: "",
-    password: "",
-  });
 
   const { data: groups = [], isLoading } = useQuery({
     queryKey: ["groups"],
     queryFn: () => base44.entities.Group.list(),
+    enabled: isAuthenticated,
   });
 
-  const { data: currentUser } = useQuery({
-    queryKey: ["current-user"],
-    queryFn: () => base44.auth.me(),
-  });
-
-  const isAdminCreator = currentUser?.email?.toLowerCase() === "modetjorge22@gmail.com";
-
+  // Si ya está autenticado y tiene grupo guardado → entrar directamente
   React.useEffect(() => {
-    if (!autoLoginAttempted && !isLoading && groups.length > 0) {
-      const lastGroupId = localStorage.getItem("base44_last_group_id");
-      const lastPassword = localStorage.getItem("base44_last_group_password");
+    if (!isAuthenticated) return;
 
-      if (lastGroupId && lastPassword) {
-        const group = groups.find((g) => g.id === lastGroupId);
-        if (group && group.password === lastPassword) {
-          sessionStorage.setItem("base44_group_id", group.id);
-          sessionStorage.setItem("base44_group_name", group.name);
-          localStorage.setItem("base44_last_group_name", group.name);
-          navigate(createPageUrl("Feed"));
-        }
+    const activeGroupId = sessionStorage.getItem("base44_group_id");
+    const rememberedGroupId = localStorage.getItem("base44_last_group_id");
+    const rememberedPassword = localStorage.getItem("base44_last_group_password");
+
+    if (activeGroupId) {
+      navigate(createPageUrl("Groups"));
+      return;
+    }
+
+    if (!isLoading && groups.length > 0 && rememberedGroupId && rememberedPassword) {
+      const group = groups.find((g) => g.id === rememberedGroupId);
+      if (group && group.password === rememberedPassword) {
+        sessionStorage.setItem("base44_group_id", group.id);
+        sessionStorage.setItem("base44_group_name", group.name);
+        navigate(createPageUrl("Groups"));
       }
     }
   }, [isAuthenticated, isLoading, groups, navigate]);
 
-  React.useEffect(() => {
-    const activeGroupId = sessionStorage.getItem("base44_group_id");
-    const rememberedGroupId = localStorage.getItem("base44_last_group_id");
-
-    if (isAuthenticated && (activeGroupId || rememberedGroupId)) {
-      if (!activeGroupId && rememberedGroupId) {
-        sessionStorage.setItem("base44_group_id", rememberedGroupId);
-        const rememberedName = localStorage.getItem("base44_last_group_name");
-        if (rememberedName) sessionStorage.setItem("base44_group_name", rememberedName);
-      }
-      navigate(createPageUrl("Feed"));
-    }
-  }, [isAuthenticated, navigate]);
-
-  const createGroupMutation = useMutation({
-    mutationFn: (data) => base44.entities.Group.create(data),
-    onSuccess: (newGroup) => {
-      queryClient.invalidateQueries({ queryKey: ["groups"] });
-      toast.success("Grupo creado correctamente");
-      setSelectedGroup(newGroup);
-      setViewState("password");
-    },
-  });
-
-  const handleJoin = (e) => {
-    e.preventDefault();
-    if (!selectedGroup) return;
-
-    if (password === selectedGroup.password) {
-      sessionStorage.setItem("base44_group_id", selectedGroup.id);
-      sessionStorage.setItem("base44_group_name", selectedGroup.name);
-      localStorage.setItem("base44_last_group_id", selectedGroup.id);
-      localStorage.setItem("base44_last_group_password", selectedGroup.password);
-      localStorage.setItem("base44_last_group_name", selectedGroup.name);
-      navigate(createPageUrl("Feed"));
-    } else {
-      setError("Contraseña incorrecta");
-      toast.error("Contraseña incorrecta");
-    }
-  };
-
-  const handleCreateGroup = (e) => {
-    e.preventDefault();
-
-    if (!isAdminCreator) {
-      toast.error("Solo el administrador puede crear grupos");
-      return;
-    }
-
-    if (!newGroupData.name || !newGroupData.password) {
-      toast.error("Nombre y contraseña son obligatorios");
-      return;
-    }
-
-    createGroupMutation.mutate(newGroupData);
-  };
-
   return (
-    <div className="min-h-screen bg-[#0B0B0F] text-white flex flex-col items-center justify-center p-4 relative overflow-hidden font-sans">
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.08),transparent_55%)]" />
-        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[30rem] h-[30rem] rounded-full bg-[radial-gradient(circle,rgba(99,102,241,0.2),transparent_60%)] blur-3xl" />
+    <div className="min-h-screen bg-[#0B0B0F] text-white flex flex-col items-center justify-center p-4 relative overflow-hidden">
+      {/* Background glow */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.06),transparent_55%)]" />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[28rem] h-[28rem] rounded-full bg-[radial-gradient(circle,rgba(99,102,241,0.18),transparent_60%)] blur-3xl" />
       </div>
 
-      <div className="z-10 w-full max-w-md space-y-6 text-center">
+      <div className="z-10 w-full max-w-sm text-center space-y-8">
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="space-y-3 rounded-2xl border border-white/15 bg-[#11131a]/75 backdrop-blur-xl p-4"
+          className="space-y-2"
         >
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-white/70">
-            Olympia · Performance Hub
-          </div>
-          <h1 className="text-6xl md:text-7xl font-black tracking-tight text-white">Olympia</h1>
-          <p className="text-sm text-white/65 tracking-wide">
-            Entrena en equipo. Mide progreso. Mantén consistencia.
-          </p>
-          <div className="flex items-center justify-center gap-2 text-xs text-white/55">
-            <span className="rounded-full bg-white/5 border border-white/10 px-2 py-1">{groups.length} grupos</span>
-            <span className="rounded-full bg-white/5 border border-white/10 px-2 py-1">Sincronización Strava</span>
-          </div>
+          <h1 className="text-7xl font-black tracking-tight text-white">Olympia</h1>
+          <p className="text-sm text-white/50 tracking-widest uppercase">Performance Hub</p>
         </motion.div>
 
-        <AnimatePresence mode="wait">
-          {viewState === "initial" && (
-            <motion.div
-              key="initial"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="space-y-3"
-            >
-              <Button
-                size="lg"
-                className="w-full h-14 text-lg font-bold bg-gray-900 hover:bg-gray-800 rounded-xl transition-all hover:scale-[1.01]"
-                onClick={() => setViewState("join")}
-              >
-                <Users className="w-5 h-5 mr-2" />
-                Entrar a mi grupo
-              </Button>
-
-              {!isAuthenticated && (
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="w-full h-14 text-lg font-semibold border-white/25 text-white hover:bg-white/10 rounded-xl"
-                  onClick={() => navigateToLogin()}
-                >
-                  Continuar con Google
-                </Button>
-              )}
-
-              {isAdminCreator && (
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="w-full h-14 text-lg font-semibold border-white/20 text-white hover:bg-white/10 rounded-xl"
-                  onClick={() => setViewState("create")}
-                >
-                  <Plus className="w-5 h-5 mr-2" />
-                  Crear Grupo
-                </Button>
-              )}
-
-              <p className="text-xs text-white/50 pt-1">
-                Si ya tienes sesión y grupo activo, entrarás automáticamente al Feed.
-              </p>
-            </motion.div>
-          )}
-
-          {isAdminCreator && (
-            <Button
-              size="sm"
-              variant="ghost"
-              className="text-white/40 hover:text-white/70 text-xs"
-              onClick={() => setViewState("create")}
-            >
-              <Plus className="w-3 h-3 mr-1" /> Crear grupo
-            </Button>
-          )}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+        >
+          <Button
+            size="lg"
+            className="w-full h-13 text-base font-semibold bg-white text-black hover:bg-white/90 rounded-xl flex items-center justify-center gap-3"
+            onClick={() => navigateToLogin()}
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+            </svg>
+            Continuar con Google
+          </Button>
         </motion.div>
-
-        <AnimatePresence mode="wait">
-          {viewState === "join" && (
-            <motion.div
-              key="join"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="space-y-4 text-left rounded-2xl border border-white/15 bg-[#11131a]/75 backdrop-blur-xl p-4"
-            >
-              <div className="flex items-center gap-2 mb-2">
-                <Button variant="ghost" size="icon" onClick={() => setViewState("initial")} className="rounded-full">
-                  <ChevronLeft className="w-5 h-5" />
-                </Button>
-                <h3 className="font-bold text-white">Selecciona un grupo</h3>
-              </div>
-              {isLoading ? (
-                <div className="flex justify-center py-8"><Loader2 className="animate-spin text-white/70" /></div>
-              ) : groups.length === 0 ? (
-                <div className="text-center text-white/70 py-8">No hay grupos disponibles para unirse.</div>
-              ) : (
-                <div className="space-y-2 max-h-[300px] overflow-y-auto">
-                  {groups.map((group) => (
-                    <motion.button
-                      key={group.id}
-                      whileHover={{ scale: 1.01 }}
-                      whileTap={{ scale: 0.99 }}
-                      onClick={() => {
-                        setSelectedGroup(group);
-                        setViewState("password");
-                        setError("");
-                      }}
-                      className="w-full p-4 bg-white/5 border border-white/15 rounded-xl hover:border-white/35 transition-all flex items-center justify-between group"
-                    >
-                      <span className="font-semibold text-white">{group.name}</span>
-                      <ArrowRight className="w-4 h-4 text-white/60 group-hover:text-white transition-colors" />
-                    </motion.button>
-                  ))}
-                </div>
-              )}
-            </motion.div>
-          )}
-
-          {viewState === "password" && selectedGroup && (
-            <motion.div
-              key="password"
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.96 }}
-            >
-              <Card className="border-white/15 bg-[#11131a]/90 text-white shadow-xl">
-                <CardHeader>
-                  <div className="flex items-center gap-2 mb-2">
-                    <Button variant="ghost" size="icon" onClick={() => setViewState("join")} className="h-8 w-8 -ml-2">
-                      <ChevronLeft className="w-4 h-4" />
-                    </Button>
-                    <CardTitle>{selectedGroup.name}</CardTitle>
-                  </div>
-                  <CardDescription className="text-white/70">Introduce la contraseña para acceder</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleJoin} className="space-y-4">
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-3 w-4 h-4 text-white/50" />
-                      <Input
-                        type="password"
-                        placeholder="Contraseña"
-                        value={password}
-                        onChange={(e) => {
-                          setPassword(e.target.value);
-                          setError("");
-                        }}
-                        className="pl-9 bg-white/5 border-white/15 text-white placeholder:text-white/45"
-                        autoFocus
-                      />
-                    </div>
-
-                    {error && <p className="text-red-400 text-sm font-medium">{error}</p>}
-
-                    <Button type="submit" className="w-full bg-gray-900 hover:bg-gray-800">
-                      Entrar
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
-
-          {viewState === "create" && isAdminCreator && (
-            <motion.div
-              key="create"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="rounded-2xl border border-white/15 bg-[#11131a]/90 p-4 text-left space-y-4"
-            >
-              <Card className="border-white/15 bg-[#11131a]/90 text-white shadow-xl text-left">
-                <CardHeader>
-                  <div className="flex items-center gap-2 mb-2">
-                    <Button variant="ghost" size="icon" onClick={() => setViewState("initial")} className="h-8 w-8 -ml-2">
-                      <ChevronLeft className="w-4 h-4" />
-                    </Button>
-                    <CardTitle>Crear Nuevo Grupo</CardTitle>
-                  </div>
-                  <CardDescription className="text-white/70">Configura tu espacio de equipo</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleCreateGroup} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="name" className="text-white/85">Nombre del Grupo</Label>
-                      <Input
-                        id="name"
-                        value={newGroupData.name}
-                        onChange={(e) => setNewGroupData({ ...newGroupData, name: e.target.value })}
-                        placeholder="Ej: Runners Club 2025"
-                        className="bg-white/5 border-white/15 text-white placeholder:text-white/45"
-                        required
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="description" className="text-white/85">Descripción (Opcional)</Label>
-                      <Input
-                        id="description"
-                        value={newGroupData.description}
-                        onChange={(e) => setNewGroupData({ ...newGroupData, description: e.target.value })}
-                        placeholder="Grupo de entrenamiento..."
-                        className="bg-white/5 border-white/15 text-white placeholder:text-white/45"
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="new-password" className="text-white/85">Contraseña de Acceso</Label>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-3 w-4 h-4 text-white/50" />
-                        <Input
-                          id="new-password"
-                          type="text"
-                          value={newGroupData.password}
-                          onChange={(e) => setNewGroupData({ ...newGroupData, password: e.target.value })}
-                          placeholder="Clave secreta"
-                          className="pl-9 bg-white/5 border-white/15 text-white placeholder:text-white/45"
-                          required
-                        />
-                      </div>
-                      <p className="text-xs text-white/60">Comparte esta contraseña con tu equipo para que puedan unirse.</p>
-                    </div>
-
-                    <Button
-                      type="submit"
-                      className="w-full bg-gray-900 hover:bg-gray-800"
-                      disabled={createGroupMutation.isPending}
-                    >
-                      {createGroupMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : "Crear Grupo"}
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <p className="text-[11px] text-white/40">Olympia te conecta con tu equipo, tus métricas y tu progreso diario.</p>
       </div>
     </div>
   );
