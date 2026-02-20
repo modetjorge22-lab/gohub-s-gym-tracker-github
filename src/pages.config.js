@@ -47,9 +47,11 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import Dashboard from './pages/Dashboard';
 import Feed from './pages/Feed';
 import Groups from './pages/Groups';
 import IntegrationsSettings from './pages/IntegrationsSettings';
+import Landing from './pages/Landing';
 import LogActivity from './pages/LogActivity';
 import MemberCalendar from './pages/MemberCalendar';
 import MyActivity from './pages/MyActivity';
@@ -59,15 +61,15 @@ import StravaConnect from './pages/StravaConnect';
 import Team from './pages/Team';
 import WhoopConnect from './pages/WhoopConnect';
 import Workouts from './pages/Workouts';
-import Dashboard from './pages/Dashboard';
-import Landing from './pages/Landing';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "Dashboard": Dashboard,
     "Feed": Feed,
     "Groups": Groups,
     "IntegrationsSettings": IntegrationsSettings,
+    "Landing": Landing,
     "LogActivity": LogActivity,
     "MemberCalendar": MemberCalendar,
     "MyActivity": MyActivity,
@@ -77,8 +79,6 @@ export const PAGES = {
     "Team": Team,
     "WhoopConnect": WhoopConnect,
     "Workouts": Workouts,
-    "Dashboard": Dashboard,
-    "Landing": Landing,
 }
 
 export const pagesConfig = {
