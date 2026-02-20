@@ -92,11 +92,12 @@ const CustomTooltip = ({ active, payload, label, membersMap }) => {
 export default function MonthlyTeamChart({ members, activities, currentDate = new Date() }) {
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
+  const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
   const isCurrentMonth = isSameMonth(currentDate, new Date());
   const lastDay = isCurrentMonth ? new Date() : monthEnd;
-  const allDays = eachDayOfInterval({ start: monthStart, end: lastDay });
-  // Show every other day to reduce clutter on mobile
-  const days = allDays;
+  const days = eachDayOfInterval({ start: monthStart, end: lastDay });
+
+  const membersMap = React.useMemo(() => new Map(members.map((member) => [member.name, member])), [members]);
 
   const membersMap = React.useMemo(() => new Map(members.map((member) => [member.name, member])), [members]);
 

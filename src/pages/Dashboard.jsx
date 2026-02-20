@@ -5,6 +5,10 @@ import { startOfWeek, endOfWeek, isWithinInterval, getDay } from "date-fns";
 import { useSearchParams } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { motion } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 
 import MonthlyTeamChart from "../components/dashboard/MonthlyTeamChart";
 import WeeklyWrap from "../components/dashboard/WeeklyWrap";
@@ -31,7 +35,11 @@ export default function Dashboard() {
     initialData: [],
   });
 
+
   const getWeeklyStats = () => {
+    // If looking at past months, calculate stats for the first week of that month or similar?
+    // Or maybe just adapt to show stats relative to the selected view.
+    // For now, let's stick to "week containing the selected date" logic
     const weekStart = startOfWeek(currentDate, { weekStartsOn: 1 });
     const weekEnd = endOfWeek(currentDate, { weekStartsOn: 1 });
     const weeklyGoalHours = 10;
@@ -39,16 +47,19 @@ export default function Dashboard() {
     let dayOfWeek = getDay(currentDate);
     if (dayOfWeek === 0) dayOfWeek = 7;
 
+    // Adjust expected hours based on if we are in the future or past relative to the view date
+    // If view date is today/past, use its day index.
     const expectedHours = (weeklyGoalHours / 7) * dayOfWeek;
 
     return members.map(member => {
-      const memberActivities = activities.filter(activity =>
+      const memberActivities = activities.filter(activity => 
         activity.user_email === member.email &&
         isWithinInterval(new Date(activity.date), { start: weekStart, end: weekEnd })
       );
 
       const totalMinutes = memberActivities.reduce((sum, a) => sum + (a.duration_minutes || 0), 0);
       const totalHours = totalMinutes / 60;
+      
       const rhythmPercentage = (totalHours / expectedHours) * 100;
       const weeklyPercentage = (totalHours / weeklyGoalHours) * 100;
 
@@ -100,6 +111,41 @@ export default function Dashboard() {
 
       <WeeklyWrap members={members} activities={activities} />
 
+      {/* Month Navigator - Mobile Only */}
+      <div className="md:hidden mb-4 flex items-center justify-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-3 py-2 border border-white/15 shadow-sm w-fit mx-auto">
+        <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full" onClick={() => {
+          const newDate = new Date(currentDate);
+          newDate.setMonth(newDate.getMonth() - 1);
+          const searchParams = new URLSearchParams(window.location.search);
+          searchParams.set('date', format(newDate, 'yyyy-MM-dd'));
+          window.history.pushState({}, '', `?${searchParams.toString()}`);
+          window.location.reload();
+        }}>
+          <ChevronLeft className="w-4 h-4" />
+        </Button>
+        <span className="text-sm font-semibold text-white min-w-[120px] text-center capitalize">
+          {format(currentDate, 'MMMM yyyy', { locale: es })}
+        </span>
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="h-8 w-8 rounded-full"
+          onClick={() => {
+            const newDate = new Date(currentDate);
+            newDate.setMonth(newDate.getMonth() + 1);
+            const searchParams = new URLSearchParams(window.location.search);
+            searchParams.set('date', format(newDate, 'yyyy-MM-dd'));
+            window.history.pushState({}, '', `?${searchParams.toString()}`);
+            window.location.reload();
+          }}
+        >
+          <MonthlyTeamChart members={members} activities={activities} currentDate={currentDate} />
+        </motion.div>
+      </div>
+
+      <WeeklyWrap members={members} activities={activities} />
+
+      {/* Miembros del Equipo - Primero */}
       <div className="mb-3 md:mb-4">
         <h3 className="text-lg md:text-xl font-bold text-white">Miembros del Equipo</h3>
       </div>

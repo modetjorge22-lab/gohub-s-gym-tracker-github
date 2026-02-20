@@ -47,36 +47,36 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import Feed from './pages/Feed';
 import Groups from './pages/Groups';
+import IntegrationsSettings from './pages/IntegrationsSettings';
 import LogActivity from './pages/LogActivity';
 import MemberCalendar from './pages/MemberCalendar';
+import MyActivity from './pages/MyActivity';
 import ProfileSettings from './pages/ProfileSettings';
 import Settings from './pages/Settings';
-import Team from './pages/Team';
-import Workouts from './pages/Workouts';
-import Feed from './pages/Feed';
-import IntegrationsSettings from './pages/IntegrationsSettings';
-import MyActivity from './pages/MyActivity';
 import StravaConnect from './pages/StravaConnect';
+import Team from './pages/Team';
 import WhoopConnect from './pages/WhoopConnect';
+import Workouts from './pages/Workouts';
 import Dashboard from './pages/Dashboard';
 import Landing from './pages/Landing';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "Feed": Feed,
     "Groups": Groups,
+    "IntegrationsSettings": IntegrationsSettings,
     "LogActivity": LogActivity,
     "MemberCalendar": MemberCalendar,
+    "MyActivity": MyActivity,
     "ProfileSettings": ProfileSettings,
     "Settings": Settings,
-    "Team": Team,
-    "Workouts": Workouts,
-    "Feed": Feed,
-    "IntegrationsSettings": IntegrationsSettings,
-    "MyActivity": MyActivity,
     "StravaConnect": StravaConnect,
+    "Team": Team,
     "WhoopConnect": WhoopConnect,
+    "Workouts": Workouts,
     "Dashboard": Dashboard,
     "Landing": Landing,
 }
