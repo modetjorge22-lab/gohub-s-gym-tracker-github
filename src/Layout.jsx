@@ -188,6 +188,27 @@ export default function Layout({ children, currentPageName }) {
                       <Activity className="w-4 h-4" /> Integraciones
                     </Link>
                   </DropdownMenuItem>
+                  {user ? (
+                    <DropdownMenuItem
+                      className="cursor-pointer text-red-400 hover:text-red-300"
+                      onClick={() => {
+                        sessionStorage.clear();
+                        localStorage.removeItem('base44_last_group_id');
+                        localStorage.removeItem('base44_last_group_name');
+                        localStorage.removeItem('base44_last_group_password');
+                        base44.auth.logout(createPageUrl("Landing"));
+                      }}
+                    >
+                      <LogOut className="w-4 h-4" /> Cerrar sesión
+                    </DropdownMenuItem>
+                  ) : (
+                    <DropdownMenuItem
+                      className="cursor-pointer text-green-400 hover:text-green-300"
+                      onClick={() => base44.auth.redirectToLogin()}
+                    >
+                      <LogIn className="w-4 h-4" /> Iniciar sesión
+                    </DropdownMenuItem>
+                  )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
