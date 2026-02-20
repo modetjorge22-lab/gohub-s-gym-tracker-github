@@ -110,7 +110,6 @@ export default function Layout({ children, currentPageName }) {
               <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-gray-900 to-gray-700 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition-transform">
                 <span className="text-white font-bold text-sm md:text-base">O</span>
               </div>
-              <span className="hidden sm:block text-base md:text-lg font-bold text-white">{groupName}</span>
             </Link>
 
             {/* Month Navigator - Centered */}
