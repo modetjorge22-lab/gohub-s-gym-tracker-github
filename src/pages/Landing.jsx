@@ -8,7 +8,11 @@ import { useQuery } from "@tanstack/react-query";
 
 export default function Landing() {
   const navigate = useNavigate();
-  const { isAuthenticated, navigateToLogin } = useAuth();
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+
+  React.useEffect(() => {
+    base44.auth.isAuthenticated().then(setIsAuthenticated);
+  }, []);
 
   const { data: groups = [], isLoading } = useQuery({
     queryKey: ["groups"],
