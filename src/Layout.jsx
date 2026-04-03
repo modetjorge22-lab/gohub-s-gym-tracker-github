@@ -1,15 +1,14 @@
 import React from "react";
-import { Link, useLocation, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useSearchParams, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Users, ChevronLeft, ChevronRight, Activity, Newspaper, User, MoreHorizontal, Settings, LogIn, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { format, addMonths, subMonths, startOfMonth, isWithinInterval } from "date-fns";
 import { es } from "date-fns/locale";
-
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/lib/AuthContext";
 import AddMemberDialog from "@/components/team/AddMemberDialog";
 
 export default function Layout({ children, currentPageName }) {
@@ -42,23 +41,17 @@ export default function Layout({ children, currentPageName }) {
     }
   }, [groupId, location, navigate]);
   
-  const { data: user } = useQuery({
-    queryKey: ['current-user'],
-    queryFn: async () => {
-      const auth = await base44.auth.isAuthenticated();
-      if (!auth) return null;
-      return base44.auth.me();
-    },
-  });
+  const { user, isAuthenticated } = useAuth();
 
   const { data: members } = useQuery({
     queryKey: ['team-members'],
     queryFn: () => base44.entities.TeamMember.list(),
+    enabled: !!user,
   });
 
   // Check if user has a profile in current group
   React.useEffect(() => {
-    if (user && members && groupId) {
+    if (user && isAuthenticated && members && groupId) {
       // Filter members by group
       const groupMembers = members.filter(m => m.group_id === groupId);
       const hasProfile = groupMembers.some(m => m.email === user.email);
