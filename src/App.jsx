@@ -9,6 +9,7 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import OlympiaLoadingScreen from '@/components/OlympiaLoadingScreen';
+import Landing from './pages/Landing';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -20,26 +21,27 @@ const LayoutWrapper = ({ children, currentPageName }) => Layout
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError } = useAuth();
-  const [showStartupLoader, setShowStartupLoader] = React.useState(true);
 
-  React.useEffect(() => {
-    let timer;
-    if (!isLoadingPublicSettings && !isLoadingAuth && !authError) {
-      timer = setTimeout(() => setShowStartupLoader(false), 1400);
-    }
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
-  }, [isLoadingPublicSettings, isLoadingAuth, authError]);
-
-  if (isLoadingPublicSettings || isLoadingAuth || (showStartupLoader && !authError)) {
+  // Mostrar loader mientras carga
+  if (isLoadingPublicSettings || isLoadingAuth) {
     return <OlympiaLoadingScreen />;
   }
 
+  // Usuario no registrado en la app
   if (authError?.type === 'user_not_registered') {
     return <UserNotRegisteredError />;
   }
 
+  // No autenticado → mostrar Landing
+  if (authError?.type === 'auth_required') {
+    return (
+      <Routes>
+        <Route path="*" element={<Landing />} />
+      </Routes>
+    );
+  }
+
+  // Autenticado → mostrar la app completa
   return (
     <Routes>
       <Route
