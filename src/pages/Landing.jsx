@@ -5,14 +5,11 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/lib/AuthContext";
 
 export default function Landing() {
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
-
-  React.useEffect(() => {
-    base44.auth.isAuthenticated().then(setIsAuthenticated);
-  }, []);
+  const { user, isAuthenticated } = useAuth();
 
   const { data: groups = [], isLoading } = useQuery({
     queryKey: ["groups"],
@@ -20,9 +17,9 @@ export default function Landing() {
     enabled: isAuthenticated,
   });
 
-  // Si ya está autenticado y tiene grupo guardado → entrar directamente
+  // Si ya está autenticado → intentar entrar al grupo guardado
   React.useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated || !user) return;
 
     const activeGroupId = sessionStorage.getItem("base44_group_id");
     const rememberedGroupId = localStorage.getItem("base44_last_group_id");
@@ -41,7 +38,7 @@ export default function Landing() {
         navigate(createPageUrl("Groups"));
       }
     }
-  }, [isAuthenticated, isLoading, groups, navigate]);
+  }, [isAuthenticated, user, isLoading, groups, navigate]);
 
   return (
     <div className="min-h-screen bg-[#0B0B0F] text-white flex flex-col items-center justify-center p-4 relative overflow-hidden">
@@ -70,7 +67,7 @@ export default function Landing() {
           <Button
             size="lg"
             className="w-full h-13 text-base font-semibold bg-white text-black hover:bg-white/90 rounded-xl flex items-center justify-center gap-3"
-            onClick={() => base44.auth.redirectToLogin(window.location.href)}
+            onClick={() => base44.auth.redirectToLogin(window.location.origin)}
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>

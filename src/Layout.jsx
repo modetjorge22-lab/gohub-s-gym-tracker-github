@@ -22,24 +22,22 @@ export default function Layout({ children, currentPageName }) {
 
   React.useEffect(() => {
     const isLanding = location.pathname.includes("Landing");
+    if (isLanding) return;
 
-    if (!groupId) {
+    // Intentar restaurar grupo desde localStorage
+    const activeGroupId = sessionStorage.getItem('base44_group_id');
+    if (!activeGroupId) {
       const lastGroupId = localStorage.getItem('base44_last_group_id');
       const lastGroupName = localStorage.getItem('base44_last_group_name');
-
       if (lastGroupId) {
         sessionStorage.setItem('base44_group_id', lastGroupId);
-        if (lastGroupName) {
-          sessionStorage.setItem('base44_group_name', lastGroupName);
-        }
+        if (lastGroupName) sessionStorage.setItem('base44_group_name', lastGroupName);
         return;
       }
+      // Sin grupo → ir a Landing
+      navigate(createPageUrl("Landing"), { replace: true });
     }
-
-    if (!groupId && !isLanding) {
-      navigate(createPageUrl("Landing"));
-    }
-  }, [groupId, location, navigate]);
+  }, [location.pathname]);
   
   const { user, isAuthenticated } = useAuth();
 

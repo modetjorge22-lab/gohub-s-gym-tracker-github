@@ -9,7 +9,6 @@ import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import OlympiaLoadingScreen from '@/components/OlympiaLoadingScreen';
-import Landing from './pages/Landing';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -39,12 +38,6 @@ const AuthenticatedApp = () => {
 
   if (authError?.type === 'user_not_registered') {
     return <UserNotRegisteredError />;
-  }
-
-  // Important UX: for unauthenticated users we keep them in-app on Landing,
-  // where they can click Google login without popup-driven flows.
-  if (authError?.type === 'auth_required') {
-    return <Landing />;
   }
 
   return (
