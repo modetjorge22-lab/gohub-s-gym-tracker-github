@@ -23,6 +23,8 @@ export default function Layout({ children, currentPageName }) {
   React.useEffect(() => {
     const isLanding = location.pathname.includes("Landing");
     if (isLanding) return;
+    // Only redirect unauthenticated users — never interrupt a fresh login
+    if (!isAuthenticated) return;
 
     // Intentar restaurar grupo desde localStorage
     const activeGroupId = sessionStorage.getItem('base44_group_id');
@@ -34,10 +36,10 @@ export default function Layout({ children, currentPageName }) {
         if (lastGroupName) sessionStorage.setItem('base44_group_name', lastGroupName);
         return;
       }
-      // Sin grupo → ir a Landing
+      // Authenticated but no group → go to Landing for group selection
       navigate(createPageUrl("Landing"), { replace: true });
     }
-  }, [location.pathname]);
+  }, [location.pathname, isAuthenticated]);
   
   const { user, isAuthenticated } = useAuth();
 
