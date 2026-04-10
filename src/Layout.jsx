@@ -20,6 +20,8 @@ export default function Layout({ children, currentPageName }) {
   const groupId = sessionStorage.getItem('base44_group_id');
   const groupName = sessionStorage.getItem('base44_group_name') || "Olympia";
 
+  const { user, isAuthenticated } = useAuth();
+
   React.useEffect(() => {
     const isLanding = location.pathname.includes("Landing");
     if (isLanding) return;
@@ -41,8 +43,6 @@ export default function Layout({ children, currentPageName }) {
     }
   }, [location.pathname, isAuthenticated]);
   
-  const { user, isAuthenticated } = useAuth();
-
   const { data: members } = useQuery({
     queryKey: ['team-members'],
     queryFn: () => base44.entities.TeamMember.list(),
