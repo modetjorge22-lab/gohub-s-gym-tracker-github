@@ -31,6 +31,8 @@ const activityTypes = [
   { value: "basketball", label: "Baloncesto", emoji: "🏀", basePoints: 12 },
   { value: "yoga", label: "Yoga", emoji: "🧘", basePoints: 8 },
   { value: "hiking", label: "Senderismo", emoji: "🥾", basePoints: 10 },
+  { value: "golf", label: "Golf", emoji: "⛳", basePoints: 8 },
+  { value: "stretching", label: "Estiramientos", emoji: "🧘‍♂️", basePoints: 6 },
   { value: "other", label: "Otro", emoji: "🏅", basePoints: 8 }
 ];
 

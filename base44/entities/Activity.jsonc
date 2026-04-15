@@ -1,0 +1,127 @@
+{
+  "name": "Activity",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email del usuario que realiz\u00f3 la actividad"
+    },
+    "user_name": {
+      "type": "string",
+      "description": "Nombre del usuario"
+    },
+    "activity_type": {
+      "type": "string",
+      "enum": [
+        "running",
+        "strength_training",
+        "padel",
+        "tennis",
+        "martial_arts",
+        "cycling",
+        "swimming",
+        "football",
+        "basketball",
+        "yoga",
+        "hiking",
+        "golf",
+        "stretching",
+        "other"
+      ],
+      "description": "Tipo de actividad realizada"
+    },
+    "duration_minutes": {
+      "type": "number",
+      "description": "Duraci\u00f3n de la actividad en minutos"
+    },
+    "points": {
+      "type": "number",
+      "description": "Puntos obtenidos por la actividad"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Notas adicionales sobre la actividad"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Fecha de la actividad"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "completed",
+        "planned"
+      ],
+      "default": "completed",
+      "description": "Estado de la actividad: completada o planificada"
+    },
+    "match_result": {
+      "type": "string",
+      "enum": [
+        "win",
+        "loss"
+      ],
+      "description": "Resultado del partido (solo para padel/tennis)"
+    },
+    "workout_id": {
+      "type": "string",
+      "description": "ID del entrenamiento realizado (si aplica)"
+    },
+    "workout_data": {
+      "type": "object",
+      "description": "Snapshot de los ejercicios realizados y pesos usados",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "exercises": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "sets": {
+                "type": "number"
+              },
+              "reps": {
+                "type": "string"
+              },
+              "weight": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "training_type": {
+      "type": "string",
+      "enum": [
+        "progress",
+        "consolidation"
+      ],
+      "description": "Tipo de entrenamiento de fuerza: progreso (al l\u00edmite) o consolidaci\u00f3n"
+    }
+  },
+  "required": [
+    "user_email",
+    "user_name",
+    "activity_type",
+    "duration_minutes",
+    "date",
+    "status"
+  ],
+  "rls": {
+    "create": {},
+    "read": {},
+    "update": {
+      "data.user_email": "{{user.email}}"
+    },
+    "delete": {
+      "data.user_email": "{{user.email}}"
+    }
+  }
+}
