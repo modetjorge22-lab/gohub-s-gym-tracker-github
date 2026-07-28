@@ -1,0 +1,57 @@
+{
+  "name": "Workout",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email del usuario propietario del entrenamiento"
+    },
+    "name": {
+      "type": "string",
+      "description": "Nombre de la rutina (ej: Pecho y Tr\u00edceps)"
+    },
+    "exercises": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "sets_data": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "reps": {
+                  "type": "string"
+                },
+                "weight": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "sets": {
+            "type": "number",
+            "description": "Legacy/Count"
+          },
+          "reps": {
+            "type": "string",
+            "description": "Legacy"
+          },
+          "weight": {
+            "type": "string",
+            "description": "Legacy"
+          }
+        }
+      },
+      "description": "Lista de ejercicios con series detalladas"
+    }
+  },
+  "required": [
+    "user_email",
+    "name",
+    "exercises"
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "name": "Goal",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email del usuario"
+    },
+    "user_name": {
+      "type": "string",
+      "description": "Nombre del usuario"
+    },
+    "goal_type": {
+      "type": "string",
+      "enum": [
+        "general",
+        "activity_specific"
+      ],
+      "default": "general",
+      "description": "Tipo de objetivo: general o por actividad espec\u00edfica"
+    },
+    "activity_type": {
+      "type": "string",
+      "enum": [
+        "running",
+        "strength_training",
+        "padel",
+        "tennis",
+        "martial_arts",
+        "cycling",
+        "swimming",
+        "football",
+        "basketball",
+        "yoga",
+        "hiking",
+        "other"
+      ],
+      "description": "Tipo de actividad (solo si es activity_specific)"
+    },
+    "weekly_hours_target": {
+      "type": "number",
+      "description": "Objetivo de horas semanales"
+    }
+  },
+  "required": [
+    "user_email",
+    "user_name",
+    "goal_type",
+    "weekly_hours_target"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "name": "Supplement",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email del usuario"
+    },
+    "name": {
+      "type": "string",
+      "description": "Nombre del suplemento"
+    },
+    "dosage": {
+      "type": "string",
+      "description": "Dosis (ej: 1 c\u00e1psula, 5g)"
+    },
+    "time_of_day": {
+      "type": "string",
+      "enum": [
+        "morning",
+        "afternoon",
+        "evening",
+        "anytime"
+      ],
+      "default": "anytime",
+      "description": "Momento del d\u00eda para tomar el suplemento"
+    }
+  },
+  "required": [
+    "user_email",
+    "name"
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "name": "WhoopSleep",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email del usuario"
+    },
+    "whoop_id": {
+      "type": "string",
+      "description": "ID \u00fanico del ciclo de sue\u00f1o en Whoop"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Fecha del sue\u00f1o"
+    },
+    "total_duration_minutes": {
+      "type": "number",
+      "description": "Duraci\u00f3n total del sue\u00f1o en minutos"
+    },
+    "sleep_performance": {
+      "type": "number",
+      "description": "Puntuaci\u00f3n de rendimiento del sue\u00f1o (0-100)"
+    },
+    "recovery_score": {
+      "type": "number",
+      "description": "Puntuaci\u00f3n de recuperaci\u00f3n (0-100)"
+    },
+    "hrv_rmssd": {
+      "type": "number",
+      "description": "HRV (RMSSD) en ms"
+    },
+    "resting_heart_rate": {
+      "type": "number",
+      "description": "Frecuencia card\u00edaca en reposo"
+    }
+  },
+  "required": [
+    "user_email",
+    "whoop_id",
+    "date"
+  ]
+}

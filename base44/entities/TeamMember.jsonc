@@ -1,0 +1,46 @@
+{
+  "name": "TeamMember",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Nombre completo del miembro"
+    },
+    "email": {
+      "type": "string",
+      "description": "Email del miembro"
+    },
+    "group_id": {
+      "type": "string",
+      "description": "ID del grupo al que pertenece"
+    },
+    "weekly_goal": {
+      "type": "number",
+      "default": 300,
+      "description": "Objetivo semanal en puntos"
+    },
+    "avatar_color": {
+      "type": "string",
+      "enum": [
+        "blue",
+        "green",
+        "purple",
+        "orange",
+        "pink",
+        "indigo",
+        "red",
+        "teal"
+      ],
+      "default": "blue",
+      "description": "Color del avatar"
+    },
+    "profile_image": {
+      "type": "string",
+      "description": "URL de la imagen de perfil"
+    }
+  },
+  "required": [
+    "name",
+    "email"
+  ]
+}

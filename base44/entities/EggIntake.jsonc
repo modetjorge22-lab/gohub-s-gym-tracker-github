@@ -1,0 +1,33 @@
+{
+  "name": "EggIntake",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email del usuario"
+    },
+    "user_name": {
+      "type": "string",
+      "description": "Nombre del usuario"
+    },
+    "egg_count": {
+      "type": "number",
+      "description": "N\u00famero de huevos consumidos"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Fecha del registro"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Notas adicionales"
+    }
+  },
+  "required": [
+    "user_email",
+    "user_name",
+    "egg_count",
+    "date"
+  ]
+}

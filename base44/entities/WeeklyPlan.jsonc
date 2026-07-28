@@ -1,0 +1,52 @@
+{
+  "name": "WeeklyPlan",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email del usuario"
+    },
+    "activity_type": {
+      "type": "string",
+      "enum": [
+        "running",
+        "strength_training",
+        "padel",
+        "tennis",
+        "martial_arts",
+        "cycling",
+        "swimming",
+        "football",
+        "basketball",
+        "yoga",
+        "hiking",
+        "other"
+      ],
+      "description": "Tipo de actividad"
+    },
+    "weekly_target": {
+      "type": "number",
+      "description": "N\u00famero de actividades planeadas por semana"
+    },
+    "subtypes": {
+      "type": "array",
+      "description": "Subtipos espec\u00edficos (ej: Push, Pull, Legs para fuerza)",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "count": {
+            "type": "number"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "user_email",
+    "activity_type",
+    "weekly_target"
+  ]
+}

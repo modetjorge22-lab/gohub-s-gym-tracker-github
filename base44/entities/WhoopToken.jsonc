@@ -1,0 +1,27 @@
+{
+  "name": "WhoopToken",
+  "type": "object",
+  "properties": {
+    "user_email": {
+      "type": "string",
+      "description": "Email del usuario"
+    },
+    "access_token": {
+      "type": "string",
+      "description": "Token de acceso Whoop"
+    },
+    "refresh_token": {
+      "type": "string",
+      "description": "Token de refresco Whoop"
+    },
+    "expires_at": {
+      "type": "number",
+      "description": "Timestamp de expiraci\u00f3n del access token"
+    }
+  },
+  "required": [
+    "user_email",
+    "access_token",
+    "refresh_token"
+  ]
+}

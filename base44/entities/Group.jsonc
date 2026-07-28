@@ -1,0 +1,26 @@
+{
+  "name": "Group",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Nombre del grupo"
+    },
+    "description": {
+      "type": "string",
+      "description": "Descripci\u00f3n del grupo"
+    },
+    "password": {
+      "type": "string",
+      "description": "Contrase\u00f1a para acceder al grupo"
+    },
+    "cover_image": {
+      "type": "string",
+      "description": "URL de la imagen de portada"
+    }
+  },
+  "required": [
+    "name",
+    "password"
+  ]
+}
